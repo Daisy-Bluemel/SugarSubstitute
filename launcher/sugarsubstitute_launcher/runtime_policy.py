@@ -23,6 +23,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from sugarsubstitute_shared.app_runtime_torch import app_runtime_torch_policy
 from sugarsubstitute_shared.windows_long_paths import subprocess_path
 
 if TYPE_CHECKING:
@@ -149,8 +150,7 @@ def verify_runtime_imports(
 def _torch_backend_arguments(target: LauncherTarget) -> list[str]:
     """Select a portable PyTorch distribution for the app support runtime."""
 
-    from launcher.sugarsubstitute_launcher.platforms import LauncherOperatingSystem
-
-    if target.operating_system is LauncherOperatingSystem.LINUX:
-        return ["--torch-backend", "cpu"]
+    policy = app_runtime_torch_policy(target.operating_system.value)
+    if policy is not None:
+        return ["--torch-backend", policy.backend]
     return []

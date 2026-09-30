@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import subprocess
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -168,9 +169,14 @@ def test_generation_payload_defaults_to_its_paired_launcher_runtime(
     installation = bundle.installation_service.create_default()
     assert installation.runtime_dir == (tmp_path / "runtime").resolve()
     assert runtime.runtime_root == (generation_root / "runtime").resolve()
+    interpreter = (
+        Path("Scripts") / "python.exe"
+        if sys.platform == "win32"
+        else Path("bin") / "python"
+    )
     assert (
         runtime.python_executable
-        == (generation_root / "runtime" / ".venv" / "Scripts" / "python.exe").resolve()
+        == (generation_root / "runtime" / ".venv" / interpreter).resolve()
     )
 
 

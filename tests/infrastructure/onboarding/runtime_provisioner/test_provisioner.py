@@ -53,10 +53,15 @@ def test_runtime_provisioner_bootstraps_missing_pip(
         check: bool,
         stdout: object | None = None,
         stderr: object | None = None,
+        capture_output: bool = False,
+        text: bool = False,
+        timeout: int | None = None,
     ) -> SimpleNamespace:
         nonlocal pip_version_checks
         _ = stdout, stderr
         commands.append(command)
+        if command[1] == "-c":
+            return SimpleNamespace(returncode=0, stdout='["2.14.1+cpu", "0.29.1+cpu"]')
         if command[1:] == ["-m", "pip", "--version"]:
             pip_version_checks += 1
             return SimpleNamespace(returncode=0 if pip_version_checks > 1 else 1)
