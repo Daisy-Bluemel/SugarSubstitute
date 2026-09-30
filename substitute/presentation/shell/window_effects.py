@@ -24,6 +24,7 @@ import sys
 from typing import Any, cast
 
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget
 
 from substitute.shared.logging.logger import get_logger, log_warning
 
@@ -32,7 +33,7 @@ _LOGGER = get_logger("presentation.shell.window_effects")
 ACRYLIC_BLEND_COLOR = "A0A0A044"
 _PLATFORM = sys.platform
 
-if _PLATFORM == "win32":
+if sys.platform == "win32":
     import win32con  # type: ignore[import-untyped]
     import win32gui  # type: ignore[import-untyped]
 
@@ -78,6 +79,25 @@ def restore_rounded_window_corners(window_id: object) -> None:
             "Failed to restore rounded acrylic window corners",
             window_id=repr(window_id),
             error=repr(error),
+        )
+
+
+def remove_native_background(window: QWidget) -> None:
+    """Clear toolkit accent effects and Windows 11's separate system backdrop."""
+
+    if _PLATFORM != "win32":
+        return
+    effect = getattr(window, "windowEffect", None)
+    if effect is not None:
+        effect.removeBackgroundEffect(window.winId())
+    if _DWMAPI is not None and _WINDOWS_BUILD >= 22000:
+        legacy_mica = _WINDOWS_BUILD < 22523
+        backdrop_none = ctypes.c_int(0 if legacy_mica else 1)
+        _DWMAPI.DwmSetWindowAttribute(
+            int(window.winId()),
+            1029 if legacy_mica else 38,
+            ctypes.byref(backdrop_none),
+            4,
         )
 
 
@@ -139,5 +159,6 @@ __all__ = [
     "ShellBackdropMode",
     "apply_acrylic_effect",
     "normalize_acrylic_frameless_chrome",
+    "remove_native_background",
     "restore_rounded_window_corners",
 ]

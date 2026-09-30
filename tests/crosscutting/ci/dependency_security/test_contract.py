@@ -95,8 +95,7 @@ def test_authoritative_ci_blocks_known_dependency_vulnerabilities() -> None:
         encoding="utf-8"
     )
     assert '"@semantic-release/npm"' not in release_configuration
-    assert "-m pip_audit" in platform_script
-    assert "--local --strict --progress-spinner off" in platform_script
+    assert "-m tools.ci.audit_installed_dependencies" in platform_script
     assert platform_workflow["env"]["PIP_AUDIT_IGNORED_VULNERABILITY"] == (
         "CVE-2026-24049"
     )

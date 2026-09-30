@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+from importlib.util import find_spec
 import platform
 import sys
 
@@ -28,9 +29,13 @@ def probe_window_material_capabilities(
     platform_name: str | None = None,
     platform_version: str | None = None,
 ) -> WindowMaterialCapabilities:
-    """Return Windows material support for the requested or current host."""
+    """Return portable Mica or native Windows materials without importing renderers."""
 
     current_platform = platform_name or sys.platform
+    if current_platform == "linux":
+        return WindowMaterialCapabilities(
+            mica_alt_available=find_spec("cutemica") is not None
+        )
     if current_platform != "win32":
         return WindowMaterialCapabilities()
     build = _windows_build_number(platform_version or platform.version())

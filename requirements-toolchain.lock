@@ -677,6 +677,11 @@ cutecanvas==1.0.9 \
     --hash=sha256:0bd43bc2ee0cf5b47a52c833678b634a841b040dca2e3e04218ff729711ca2a4 \
     --hash=sha256:84fbebb4e680494a6dd64288cc5d6186f6ae69197f736f340c3340ccacd38840
     # via -r requirements.txt
+cutemica @ https://github.com/Artificial-Sweetener/CuteMica/archive/5cbf43d201526e004f28f86785714c56f37067bc.tar.gz#sha256=46f6e27b8dd9df7969d279778ab66e4595432b4394c42e097e9ae58d9e21d617 ; sys_platform == 'darwin' or sys_platform == 'linux' or sys_platform == 'win32' \
+    --hash=sha256:46f6e27b8dd9df7969d279778ab66e4595432b4394c42e097e9ae58d9e21d617
+    # via
+    #   -r requirements-toolchain.txt
+    #   -r requirements.txt
 cyclonedx-python-lib==11.12.0 \
     --hash=sha256:0e807521a921a5c3cb8ce1153f8a61d29eedfe76a46aac2796b7c6b573391a54 \
     --hash=sha256:16767c4039de90c04e9f03348f8f0ed4b8ff842eaa7eefcad3a95685f970dacf
@@ -1431,6 +1436,7 @@ numpy==2.5.2 \
     --hash=sha256:fd0d703772bba096843785bd38371e31bb4a0c1151497ad5739d182114a73f7f
     # via
     #   cutecanvas
+    #   cutemica
     #   qpane
     #   scipy
     #   torchvision
@@ -1634,6 +1640,7 @@ pillow==12.3.0 \
     # via
     #   -r requirements.txt
     #   colorthief
+    #   cutemica
     #   pyside6-fluent-widgets
     #   python-mpv
     #   torchvision
@@ -2048,6 +2055,7 @@ pyobjc-core==12.2.2 ; sys_platform == 'darwin' \
     #   pyobjc-framework-photos
     #   pyobjc-framework-photosui
     #   pyobjc-framework-preferencepanes
+    #   pyobjc-framework-pubsub
     #   pyobjc-framework-pushkit
     #   pyobjc-framework-quartz
     #   pyobjc-framework-quicklookthumbnailing
@@ -2335,6 +2343,7 @@ pyobjc-framework-cocoa==12.2.2 ; sys_platform == 'darwin' \
     --hash=sha256:e106f395531e67694376b0f1184612cbeea3ec8b9bf56b55ef41d026171d2a2d
     # via
     #   -r requirements.txt
+    #   cutemica
     #   pyobjc
     #   pyobjc-framework-accessibility
     #   pyobjc-framework-accounts
@@ -2446,6 +2455,7 @@ pyobjc-framework-cocoa==12.2.2 ; sys_platform == 'darwin' \
     #   pyobjc-framework-photos
     #   pyobjc-framework-photosui
     #   pyobjc-framework-preferencepanes
+    #   pyobjc-framework-pubsub
     #   pyobjc-framework-pushkit
     #   pyobjc-framework-quartz
     #   pyobjc-framework-quicklookthumbnailing
@@ -3327,6 +3337,10 @@ pyobjc-framework-preferencepanes==12.2.2 ; sys_platform == 'darwin' \
     --hash=sha256:dcaee255acf5944c1fba2b2de6d35961b02d37de4a76cfe43c254a2f8a6a2ad6 \
     --hash=sha256:e47004e4ef195d7a7076766e30abfd0e197e430191e1f1d35c3e6b4af9b15114
     # via pyobjc
+pyobjc-framework-pubsub==12.2.2 ; platform_release >= '9' and platform_release < '18' and sys_platform == 'darwin' \
+    --hash=sha256:57bfdf6cc4d640cc0e8741c32e8124c613f4886fae489020a894e57b7d3abf6f \
+    --hash=sha256:c23af3059ab7108c0173f39c994b15c79e59cdc1a62e50ba4bfbbdaf80b38a40
+    # via pyobjc
 pyobjc-framework-pushkit==12.2.2 ; platform_release >= '19' and sys_platform == 'darwin' \
     --hash=sha256:10243351274c84d33a87a2a0c1a2c6aa7e3ef2f140773f1e1a73cdb26b401ccc \
     --hash=sha256:24631997e921f8adffc8473801ddc2806c95ec4f773b8d34cf4c87d5f89a6938 \
@@ -3807,6 +3821,7 @@ pyside6-essentials==6.11.2 \
     --hash=sha256:d3ec6e1885c46e57f16364f38ea8040ffc5dc0b18341058f608fede3ba930567 \
     --hash=sha256:fadd75c5c20800d64dd0a586ea8cb337c5e630aa2246df0e5105738afa46e02c
     # via
+    #   cutemica
     #   pyside6
     #   pyside6-addons
 pyside6-fluent-widgets==1.11.3 \

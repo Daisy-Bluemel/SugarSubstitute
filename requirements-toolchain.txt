@@ -4,6 +4,9 @@
 
 -r requirements.txt
 
+# Other platforms type-check portable imports; their native builds exclude it.
+CuteMica @ https://github.com/Artificial-Sweetener/CuteMica/archive/5cbf43d201526e004f28f86785714c56f37067bc.tar.gz#sha256=46f6e27b8dd9df7969d279778ab66e4595432b4394c42e097e9ae58d9e21d617 ; sys_platform == "win32" or sys_platform == "darwin"
+
 certifi==2026.7.22
 pip==26.2.1
 pip-audit==2.10.1

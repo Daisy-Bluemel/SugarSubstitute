@@ -22,6 +22,7 @@ from pathlib import Path
 
 from packaging.requirements import Requirement
 from packaging.utils import canonicalize_name
+import pytest
 
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 _EXPECTED_RUNTIME_DEPENDENCIES = frozenset(
@@ -29,6 +30,7 @@ _EXPECTED_RUNTIME_DEPENDENCIES = frozenset(
         "comtypes",
         "cryptography",
         "cutecanvas",
+        "cutemica",
         "ferrastra",
         "ijson",
         "jeepney",
@@ -55,6 +57,7 @@ _EXPECTED_RUNTIME_DEPENDENCIES = frozenset(
 _EXPECTED_TOOLCHAIN_DEPENDENCIES = frozenset(
     {
         "certifi",
+        "cutemica",
         "mypy",
         "pip",
         "pip-audit",
@@ -76,7 +79,7 @@ def test_runtime_requirements_match_verified_versions() -> None:
 
     assert requirements.keys() == _EXPECTED_RUNTIME_DEPENDENCIES
     for requirement in requirements.values():
-        _assert_exact_registry_pin(requirement)
+        _assert_verified_pin(requirement)
 
 
 def test_toolchain_requirements_match_verified_versions() -> None:
@@ -86,7 +89,70 @@ def test_toolchain_requirements_match_verified_versions() -> None:
 
     assert requirements.keys() == _EXPECTED_TOOLCHAIN_DEPENDENCIES
     for requirement in requirements.values():
-        _assert_exact_registry_pin(requirement)
+        _assert_verified_pin(requirement)
+
+
+@pytest.mark.parametrize(
+    ("platform", "runtime", "toolchain"),
+    (("linux", True, False), ("darwin", False, True), ("win32", False, True)),
+)
+def test_cutemica_platform_dependencies(
+    platform: str, runtime: bool, toolchain: bool
+) -> None:
+    """Install the portable renderer at runtime only on validated Linux targets."""
+
+    runtime_requirement = _read_runtime_requirements()["cutemica"]
+    toolchain_requirement = _read_requirements("requirements-toolchain.txt")["cutemica"]
+
+    assert runtime_requirement.marker is not None
+    assert toolchain_requirement.marker is not None
+    assert runtime_requirement.marker.evaluate({"sys_platform": platform}) is runtime
+    assert (
+        toolchain_requirement.marker.evaluate({"sys_platform": platform}) is toolchain
+    )
+    assert runtime_requirement.url == toolchain_requirement.url
+
+
+def test_cutemica_toolchain_lock_preserves_reviewed_archive_digest() -> None:
+    """Require hash-locked CI installs to use the same portable source revision."""
+
+    lines = (
+        (_REPOSITORY_ROOT / "requirements-toolchain.lock")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    )
+    entries = [
+        (index, Requirement(line.rstrip("\\").strip()))
+        for index, line in enumerate(lines)
+        if line.lower().startswith("cutemica ")
+    ]
+
+    assert len(entries) == 1
+    index, locked = entries[0]
+    runtime = _read_runtime_requirements()["cutemica"]
+    assert runtime.url is not None
+    _, fragment = runtime.url.split("#", maxsplit=1)
+    assert locked.url == runtime.url
+    assert lines[index + 1].strip() == f"--hash={fragment.replace('=', ':', 1)}"
+    for platform in ("linux", "darwin", "win32"):
+        assert locked.marker is None or locked.marker.evaluate(
+            {"sys_platform": platform}
+        )
+
+
+def _assert_verified_pin(requirement: Requirement) -> None:
+    """Allow only the reviewed immutable CuteMica archive outside the registry."""
+
+    if canonicalize_name(requirement.name) == "cutemica":
+        assert requirement.url == (
+            "https://github.com/Artificial-Sweetener/CuteMica/archive/"
+            "5cbf43d201526e004f28f86785714c56f37067bc.tar.gz"
+            "#sha256=46f6e27b8dd9df7969d279778ab66e4595432b4394c42e097e9ae58d9e21d617"
+        )
+        assert not requirement.specifier
+        assert not requirement.extras
+        return
+    _assert_exact_registry_pin(requirement)
 
 
 def _assert_exact_registry_pin(requirement: Requirement) -> None:

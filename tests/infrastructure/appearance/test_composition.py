@@ -40,14 +40,15 @@ def test_factory_selects_one_adapter_per_platform() -> None:
     )
 
 
-def test_window_material_probe_is_independent_and_windows_only() -> None:
+def test_window_material_probe_keeps_acrylic_native_and_mica_portable() -> None:
     """Gate native shell effects without changing system color support."""
 
     linux = probe_window_material_capabilities("linux", "6.8")
     windows_10 = probe_window_material_capabilities("win32", "10.0.19045")
     windows_11 = probe_window_material_capabilities("win32", "10.0.26100")
 
-    assert linux.backdrop_available is False
+    assert linux.mica_alt_available is True
+    assert linux.acrylic_available is False
     assert windows_10.acrylic_available is True
     assert windows_10.mica_alt_available is False
     assert windows_11.mica_alt_available is True

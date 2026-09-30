@@ -1,6 +1,6 @@
 ###############################################
 # Sugar Substitute (GUI) requirements (no ComfyUI)
-# Uses PyPI simple index packages for installable runtime dependencies.
+# Uses exact registry versions and verified immutable source archives.
 ###############################################
 
 # Exact direct dependency versions are validated by the project gates.
@@ -12,6 +12,8 @@ PySideSix-Frameless-Window==0.8.2
 ferrastra==1.0.2
 qpane==3.0.5
 cutecanvas[sam]==1.0.9
+# CuteMica 0.1.0 has no registry release; preserve the reviewed source digest.
+CuteMica @ https://github.com/Artificial-Sweetener/CuteMica/archive/5cbf43d201526e004f28f86785714c56f37067bc.tar.gz#sha256=46f6e27b8dd9df7969d279778ab66e4595432b4394c42e097e9ae58d9e21d617 ; sys_platform == "linux"
 
 # Networking and IO
 cryptography==50.0.1

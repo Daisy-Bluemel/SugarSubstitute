@@ -37,7 +37,9 @@ from PySide6.QtWidgets import QAbstractButton, QHBoxLayout, QLabel, QWidget
 from qframelesswindow import AcrylicWindow  # type: ignore[import-untyped]
 
 from substitute.presentation.resources.app_icon import application_icon
+from substitute.presentation.shell.rounded_window_corners import RoundedWindowCorners
 from substitute.presentation.shell.splash_feedback import SplashFeedback
+from substitute.presentation.shell.window_backdrop import WindowBackdrop
 
 if TYPE_CHECKING:
     from sugarsubstitute_shared.launch_splash.progress import SplashProgress
@@ -136,6 +138,7 @@ class SplashWindow(AcrylicWindow):  # type: ignore[misc]
         self._defer_animation_until_first_paint = (
             defer_animation_until_first_paint and icon is None
         )
+        self._window_backdrop = WindowBackdrop(self)
         self._configure_titlebar_buttons()
         self._apply_backdrop()
 
@@ -158,6 +161,7 @@ class SplashWindow(AcrylicWindow):  # type: ignore[misc]
         self.log_view = self._feedback.log_view
 
         self.setFixedSize(_SPLASH_WINDOW_RECT.size())
+        self._rounded_corners = RoundedWindowCorners(self)
         self._apply_content_geometry()
         self.failureRequested.connect(self._do_show_failure)
         self.progressRequested.connect(self._do_set_progress)
@@ -291,6 +295,7 @@ class SplashWindow(AcrylicWindow):  # type: ignore[misc]
             return
         self._first_frame_painted = True
         self.firstFramePainted.emit()
+        QTimer.singleShot(0, self, self._enable_portable_backdrop)
         if self._defer_animation_until_first_paint:
             QTimer.singleShot(0, self, self._finish_deferred_animation)
 
@@ -381,25 +386,17 @@ class SplashWindow(AcrylicWindow):  # type: ignore[misc]
         titlebar.closeBtn.setStyleSheet("CloseButton { background: transparent; }")
 
     def _apply_backdrop(self) -> None:
-        """Apply the resolved native material while the splash is still hidden."""
+        """Prepare native material or an opaque themed base before the first frame."""
 
-        from substitute.presentation.shell.window_effects import apply_acrylic_effect
+        self._window_backdrop.apply(
+            self._backdrop_mode, dark=self._dark_theme_enabled, portable=False
+        )
 
-        backdrop_mode = _enum_value(self._backdrop_mode)
-        try:
-            if backdrop_mode == "acrylic":
-                apply_acrylic_effect(self)
-            elif backdrop_mode is not None:
-                self.windowEffect.setMicaEffect(
-                    self.winId(),
-                    isDarkMode=self._dark_theme_enabled,
-                    isAlt=backdrop_mode == "mica_alt",
-                )
-        except (AttributeError, RuntimeError) as error:
-            _log_splash_warning(
-                "Failed to enable splash backdrop effect",
-                error=repr(error),
-            )
+    @Slot()
+    def _enable_portable_backdrop(self) -> None:
+        """Allow portable rendering only after publishing the lightweight first frame."""
+
+        self._window_backdrop.apply(self._backdrop_mode, dark=self._dark_theme_enabled)
 
     def _ensure_runtime_enrichment(self) -> None:
         """Attach localization and activity animation outside deferred first paint."""

@@ -23,7 +23,6 @@ from typing import Any, Protocol
 from PySide6.QtCore import QEvent, QTimer
 from PySide6.QtGui import (
     QColor,
-    QPalette,
     QPlatformSurfaceEvent,
     QResizeEvent,
     QShowEvent,
@@ -50,11 +49,12 @@ from substitute.presentation.shell.titlebar_buttons import (
     GenerationTitleBarRunControl,
     StartupDiagnosticsTitleBarButton,
 )
+from substitute.presentation.shell.window_backdrop import WindowBackdrop
+from substitute.presentation.shell.rounded_window_corners import RoundedWindowCorners
 from substitute.presentation.shell.window_effects import (
     ShellBackdropMode,
-    apply_acrylic_effect,
 )
-from substitute.shared.logging.logger import get_logger, log_warning
+from substitute.shared.logging.logger import get_logger
 
 try:
     from qfluentwidgets.common.style_sheet import (  # type: ignore[import-untyped]
@@ -172,6 +172,8 @@ class SubstituteWindowFrame(AcrylicWindow):  # type: ignore[misc]
 
         super().__init__(parent)
         self._backdrop_mode = backdrop_mode
+        self._window_backdrop = WindowBackdrop(self)
+        self._rounded_corners = RoundedWindowCorners(self)
         self.menuContainer: QWidget | None = None
         self.comfyOutputToggleButton: ComfyOutputToggleButton | None = None
         self.generationActionCluster: GenerationTitleBarRunControl | None = None
@@ -285,29 +287,11 @@ class SubstituteWindowFrame(AcrylicWindow):  # type: ignore[misc]
         return self._bodyLayout
 
     def _apply_backdrop(self) -> None:
-        """Apply the configured native shell backdrop to the top-level window."""
+        """Delegate material selection and fallback to the window-owned adapter."""
 
-        try:
-            if self._backdrop_mode is None:
-                return
-            if self._backdrop_mode is ShellBackdropMode.ACRYLIC:
-                apply_acrylic_effect(self)
-                return
-            self.windowEffect.setMicaEffect(
-                self.winId(),
-                isDarkMode=self._is_dark_backdrop_enabled(),
-                isAlt=self._backdrop_mode is ShellBackdropMode.MICA_ALT,
-            )
-        except (AttributeError, RuntimeError) as error:
-            backdrop_mode = (
-                "none" if self._backdrop_mode is None else self._backdrop_mode.value
-            )
-            log_warning(
-                _LOGGER,
-                "Failed to apply shell backdrop",
-                backdrop_mode=backdrop_mode,
-                error=repr(error),
-            )
+        self._window_backdrop.apply(
+            self._backdrop_mode, dark=self._is_dark_backdrop_enabled()
+        )
 
     def add_body_widget(self, widget: QWidget) -> None:
         """Add one widget to the shell body, using the material surface when present."""
@@ -384,7 +368,7 @@ class SubstituteWindowFrame(AcrylicWindow):  # type: ignore[misc]
     def _apply_theme_styles(self) -> None:
         """Reapply titlebar and body-material styles after theme changes."""
 
-        self._apply_non_material_surface()
+        self._apply_backdrop()
         apply_shell_titlebar_button_theme(self._titleBar)
         if self.comfyOutputToggleButton is not None:
             icon_color = QColor("#ffffff") if isDarkTheme() else QColor("#000000")
@@ -415,17 +399,3 @@ class SubstituteWindowFrame(AcrylicWindow):  # type: ignore[misc]
         self._titleBar.setStyleSheet(
             f"background-color: {titlebar_background}; border: none;"
         )
-
-    def _apply_non_material_surface(self) -> None:
-        """Paint an opaque theme surface when no native material owns the shell."""
-
-        if self._backdrop_mode is not None:
-            self.setAutoFillBackground(False)
-            return
-        palette = self.palette()
-        palette.setColor(
-            QPalette.ColorRole.Window,
-            QColor("#202020") if isDarkTheme() else QColor("#F8F8F8"),
-        )
-        self.setPalette(palette)
-        self.setAutoFillBackground(True)

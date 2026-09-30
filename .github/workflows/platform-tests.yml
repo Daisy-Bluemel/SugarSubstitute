@@ -58,8 +58,7 @@ jobs:
       - name: Audit installed Python dependency graph
         if: matrix.partition == 'ordinary'
         run: >-
-          ${{ matrix.python }} -m pip_audit
-          --local --strict --progress-spinner off
+          ${{ matrix.python }} -m tools.ci.audit_installed_dependencies
           --ignore-vuln ${{ env.PIP_AUDIT_IGNORED_VULNERABILITY }}
       - name: Prepare test result directory
         run: >-

@@ -51,6 +51,7 @@ a = Analysis(
     hooksconfig={},
     runtime_hooks=[],
     excludes=[
+        "cutemica",
         "cv2",
         "numpy",
         "PIL",

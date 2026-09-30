@@ -30,7 +30,7 @@ from sugarsubstitute_shared.launch_splash import SplashActivity
 
 import substitute.presentation.shell.splash_window as splash_window
 import substitute.presentation.splash_animation as splash_animation
-import substitute.presentation.shell.window_effects as window_effects
+import substitute.presentation.shell.window_backdrop as window_backdrop
 from substitute.presentation.splash_animation import (
     SplashPaperFlipWidget,
     SplashPoseLibraryError,
@@ -263,11 +263,18 @@ def test_splash_window_acrylic_uses_caption_fix_helper(
     monkeypatch: pytest.MonkeyPatch,
     splash_window_factory: SplashWindowFactory,
 ) -> None:
-    """Splash acrylic path should route through the shared caption-style fix."""
+    """Route Windows splash acrylic through the shared native caption-style fix."""
 
     acrylic_calls: list[object] = []
+
+    def create_windows_backdrop(window: QWidget) -> window_backdrop.WindowBackdrop:
+        """Select the Windows provider without changing the host Qt implementation."""
+
+        return window_backdrop.WindowBackdrop(window, platform_name="win32")
+
+    monkeypatch.setattr(splash_window, "WindowBackdrop", create_windows_backdrop)
     monkeypatch.setattr(
-        window_effects,
+        window_backdrop,
         "apply_acrylic_effect",
         lambda window: acrylic_calls.append(window),
     )

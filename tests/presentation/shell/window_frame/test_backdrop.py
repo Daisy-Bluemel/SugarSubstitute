@@ -20,18 +20,20 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from types import SimpleNamespace
-from typing import Any, cast
+from typing import cast
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QWidget
 import pytest
 
+from substitute.presentation.shell.window_backdrop import WindowBackdrop
+import substitute.presentation.shell.window_backdrop as window_backdrop
 from substitute.presentation.shell.window_effects import ShellBackdropMode
 import substitute.presentation.shell.window_effects as window_effects
 from substitute.presentation.shell.window_frame import SubstituteWindowFrame
 import substitute.presentation.shell.window_frame as window_frame
-from tests.support.qt.lifecycle import ensure_qt_application
+from tests.support.qt.lifecycle import destroy_qt_object, ensure_qt_application
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -51,43 +53,48 @@ def _app() -> QApplication:
 def test_shell_frame_backdrop_modes_route_to_expected_native_effects(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Backdrop mode selection should map materials and respect dark/light state."""
+    """Route Windows materials through the existing native boundary exactly once."""
 
-    effect_calls: list[tuple[str, dict[str, object]]] = []
+    effect_calls: list[tuple[bool, bool]] = []
+    acrylic_calls: list[QWidget] = []
+    plain_calls: list[QWidget] = []
 
-    def record_mica(_handle: object, **kwargs: object) -> None:
-        """Record one fake Mica call."""
+    class NativeEffect:
+        """Record the external qframeless Mica operation."""
 
-        effect_calls.append(("mica", kwargs))
+        def setMicaEffect(
+            self, handle: object, *, isDarkMode: bool, isAlt: bool
+        ) -> None:
+            """Capture requested theme and native Mica variant."""
 
-    acrylic_fix_calls: list[object] = []
+            effect_calls.append((isDarkMode, isAlt))
 
-    def record_acrylic_fix(window: object) -> None:
-        """Record acrylic helper routing without invoking Win32 APIs."""
+    class NativeWindow(QWidget):
+        """Expose the qframeless effect boundary without a real native call."""
 
-        acrylic_fix_calls.append(window)
+        def __init__(self) -> None:
+            """Attach one deterministic effect recorder."""
 
-    fake_frame = SimpleNamespace(
-        _backdrop_mode=ShellBackdropMode.MICA,
-        windowEffect=SimpleNamespace(
-            setMicaEffect=record_mica,
-            setAcrylicEffect=lambda *_args: None,
-        ),
-        winId=lambda: 123,
-        _is_dark_backdrop_enabled=lambda: False,
-    )
-    monkeypatch.setattr(window_frame, "apply_acrylic_effect", record_acrylic_fix)
-    SubstituteWindowFrame._apply_backdrop(cast(Any, fake_frame))
-    fake_frame._backdrop_mode = ShellBackdropMode.MICA_ALT
-    SubstituteWindowFrame._apply_backdrop(cast(Any, fake_frame))
-    fake_frame._backdrop_mode = ShellBackdropMode.ACRYLIC
-    SubstituteWindowFrame._apply_backdrop(cast(Any, fake_frame))
+            super().__init__()
+            self.windowEffect = NativeEffect()
 
-    assert effect_calls == [
-        ("mica", {"isDarkMode": False, "isAlt": False}),
-        ("mica", {"isDarkMode": False, "isAlt": True}),
-    ]
-    assert acrylic_fix_calls == [fake_frame]
+    window = NativeWindow()
+    owner = WindowBackdrop(window, platform_name="win32")
+    monkeypatch.setattr(window_backdrop, "apply_acrylic_effect", acrylic_calls.append)
+    monkeypatch.setattr(window_backdrop, "remove_native_background", plain_calls.append)
+    try:
+        owner.apply(ShellBackdropMode.MICA, dark=False)
+        owner.apply(ShellBackdropMode.MICA, dark=False, portable=False)
+        owner.apply(ShellBackdropMode.MICA_ALT, dark=True)
+        owner.apply(ShellBackdropMode.ACRYLIC, dark=True)
+        assert owner.provider_name == "windows-acrylic"
+        owner.apply(None, dark=True)
+        assert owner.provider_name == "plain"
+        assert effect_calls == [(False, False), (True, True)]
+        assert acrylic_calls == [window]
+        assert plain_calls == [window]
+    finally:
+        destroy_qt_object(window)
 
 
 def test_apply_acrylic_effect_applies_native_effect_then_normalizes_chrome(
@@ -270,3 +277,62 @@ def test_restore_rounded_window_corners_requests_windows_11_rounding(
     window_effects.restore_rounded_window_corners(123)
 
     assert calls == [(123, 33, 2, 4)]
+
+
+@pytest.mark.parametrize(
+    ("build", "attribute", "value"), ((22000, 1029, 0), (22523, 38, 1), (22621, 38, 1))
+)
+def test_plain_clears_both_windows_mica_protocol_generations(
+    monkeypatch: pytest.MonkeyPatch, build: int, attribute: int, value: int
+) -> None:
+    """Clear the same legacy or modern DWM setting used by native Mica."""
+
+    import ctypes
+
+    observed: list[tuple[int, int]] = []
+    removed: list[object] = []
+
+    class Effect:
+        """Record native toolkit accent removal."""
+
+        def removeBackgroundEffect(self, handle: object) -> None:
+            """Record the requested native handle."""
+
+            removed.append(handle)
+
+    class Dwm:
+        """Observe the Win32 API boundary without changing system state."""
+
+        def DwmSetWindowAttribute(
+            self, handle: int, selected: int, pointer: object, size: int
+        ) -> None:
+            """Read the concrete integer passed through ctypes to DWM."""
+
+            observed.append(
+                (
+                    selected,
+                    ctypes.cast(
+                        cast(ctypes.c_void_p, pointer), ctypes.POINTER(ctypes.c_int)
+                    ).contents.value,
+                )
+            )
+
+    class NativeWindow(QWidget):
+        """Expose native toolkit effects to the Plain cleanup helper."""
+
+        def __init__(self) -> None:
+            """Create the real widget and fake only its external native effect."""
+
+            super().__init__()
+            self.windowEffect = Effect()
+
+    monkeypatch.setattr(window_effects, "_PLATFORM", "win32")
+    monkeypatch.setattr(window_effects, "_WINDOWS_BUILD", build)
+    monkeypatch.setattr(window_effects, "_DWMAPI", Dwm())
+    window = NativeWindow()
+    try:
+        window_effects.remove_native_background(window)
+        assert removed == [window.winId()]
+        assert observed == [(attribute, value)]
+    finally:
+        destroy_qt_object(window)
