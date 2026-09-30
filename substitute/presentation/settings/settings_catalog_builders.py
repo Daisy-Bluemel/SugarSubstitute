@@ -41,7 +41,6 @@ from qfluentwidgets import (  # type: ignore[import-untyped]
 
 from substitute.application.appearance import (
     AppearanceAccentSource,
-    AppearanceBackdropMode,
     AppearanceErrorColorMode,
     AppearanceRestartCoordinator,
     AppearanceThemeMode,
@@ -90,6 +89,9 @@ from substitute.presentation.settings.civitai_credential_status import (
 )
 from substitute.presentation.settings.appearance_runtime_protocol import (
     AppearanceRuntimeProtocol,
+)
+from substitute.presentation.settings.appearance_material_settings import (
+    AppearanceMaterialSettings,
 )
 from substitute.presentation.settings.generation_output_settings_catalog import (
     build_generation_output_settings_section,
@@ -607,22 +609,11 @@ def build_appearance_settings_page(
                     ),
                 ),
             ),
-            SettingsSectionEntry(
-                "appearance.window",
-                "Window",
-                "",
-                20,
-                (
-                    SettingsControlEntry(
-                        "appearance.window.material",
-                        "Window material",
-                        "Change the main window backdrop material.",
-                        _THEME_KEYWORDS + ("window", "material", "mica", "acrylic"),
-                        10,
-                        lambda parent: _appearance_material_row(context, parent),
-                    ),
-                ),
-            ),
+            AppearanceMaterialSettings(
+                appearance_runtime=context.appearance_runtime,
+                restart_coordinator=context.appearance_restart_coordinator,
+                show_restart_requirements=context.show_restart_requirements,
+            ).section(),
             SettingsSectionEntry(
                 "appearance.system_colors",
                 "System colors",
@@ -1830,39 +1821,6 @@ def _combo_index_for_data(combo: ComboBox, value: object) -> int:
         if combo.itemData(index) == value:
             return index
     return -1
-
-
-def _appearance_material_row(
-    context: AppearanceSettingsContext,
-    parent: QWidget,
-) -> SettingsCard:
-    """Create the appearance window material row."""
-
-    resolved = context.appearance_runtime.resolve_preferences()
-    return _combo_row(
-        parent=parent,
-        icon=FIF.BACKGROUND_FILL,
-        title=app_text("Window material"),
-        description=app_text("Change the main window backdrop material."),
-        options=(
-            ("Mica", AppearanceBackdropMode.MICA_ALT),
-            ("Acrylic", AppearanceBackdropMode.ACRYLIC),
-        ),
-        selected=resolved.requested.backdrop_mode,
-        on_changed=lambda value: _save_backdrop_mode(context, value),
-    )
-
-
-def _save_backdrop_mode(context: AppearanceSettingsContext, value: object) -> object:
-    """Persist one backdrop mode through the restart-required appearance owner."""
-
-    snapshot = context.appearance_restart_coordinator.set_backdrop_mode(
-        value
-        if isinstance(value, AppearanceBackdropMode)
-        else AppearanceBackdropMode.MICA_ALT
-    )
-    _show_restart_requirements_if_pending(context, snapshot.count)
-    return snapshot
 
 
 def _show_restart_requirements_if_pending(

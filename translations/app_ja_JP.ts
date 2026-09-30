@@ -200,7 +200,7 @@ Prompt preview:
       <translation>%1 は現在のキューブライブラリにありません。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1313"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1304"></location>
       <source>%1 metadata entries, %2 image previews, %3</source>
       <translation>メタデータ %1 件、画像プレビュー %2 件、%3</translation>
     </message>
@@ -514,9 +514,14 @@ This is taking much longer than expected</source>
       <translation>このアプリについて</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1545"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1536"></location>
       <source>Accent color</source>
       <translation>アクセントカラー</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="99"></location>
+      <source>Acrylic</source>
+      <translation>アクリル</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/settings/cube_library_page.py" line="479"></location>
@@ -579,7 +584,7 @@ This is taking much longer than expected</source>
       <translation>キューブを追加</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="940"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="931"></location>
       <source>Add custom tags and hide unwanted tag suggestions.</source>
       <translation>カスタムタグを追加し、不要なタグ候補を非表示にします。</translation>
     </message>
@@ -669,7 +674,7 @@ This is taking much longer than expected</source>
       <translation>Soft まで許可</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1265"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1256"></location>
       <source>Allowed image ratings</source>
       <translation>許可する画像レーティング</translation>
     </message>
@@ -704,7 +709,7 @@ This is taking much longer than expected</source>
       <translation>保存された ComfyUI アドレスは別のプロセスによって使用されています</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="589"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="591"></location>
       <source>Appearance</source>
       <translation>外観</translation>
     </message>
@@ -984,14 +989,9 @@ This is taking much longer than expected</source>
       <translation>キャンバス解像度を変更</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1385"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1376"></location>
       <source>Change the colors that appear in Substitute.</source>
       <translation>Substitute に表示される色を変更します。</translation>
-    </message>
-    <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1846"></location>
-      <source>Change the main window backdrop material.</source>
-      <translation>メインウィンドウの背景素材を変更します。</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/onboarding/onboarding_connection_settings.py" line="174"></location>
@@ -1004,7 +1004,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI が単独で起動する場合も含め、この ComfyUI 環境のモデルフォルダーを変更します。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="793"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="784"></location>
       <source>Check CivitAI for compatible updates only after a model is used for Generate.</source>
       <translation>モデルを生成に使用した後にのみ、CivitAI で互換性のある更新を確認します。</translation>
     </message>
@@ -1134,7 +1134,7 @@ This is taking much longer than expected</source>
       <translation>チェックポイント</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1475"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1466"></location>
       <source>Choose</source>
       <translation>選択</translation>
     </message>
@@ -1354,7 +1354,7 @@ This is taking much longer than expected</source>
       <translation>実際の環境で使用している Python を選択</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1546"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1537"></location>
       <source>Choose the color used for highlights and selected controls.</source>
       <translation>ハイライトや選択中のコントロールに使用する色を選択します。</translation>
     </message>
@@ -1464,7 +1464,7 @@ This is taking much longer than expected</source>
       <translation>既存の ComfyUI フォルダーを選択</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1384"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1375"></location>
       <source>Choose your mode</source>
       <translation>モードを選択</translation>
     </message>
@@ -1494,12 +1494,12 @@ This is taking much longer than expected</source>
       <translation>CivitAI API キーは有効です。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1222"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1213"></location>
       <source>CivitAI cache maintenance</source>
       <translation>CivitAI キャッシュのメンテナンス</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1191"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1182"></location>
       <source>CivitAI cache usage</source>
       <translation>CivitAI キャッシュ使用量</translation>
     </message>
@@ -1569,17 +1569,17 @@ This is taking much longer than expected</source>
       <translation>クリア</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1344"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1335"></location>
       <source>Clear all</source>
       <translation>すべてクリア</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1358"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1349"></location>
       <source>Clear cached Danbooru entries if you want a fresh local state.</source>
       <translation>ローカルの状態を最初から作り直すには、キャッシュ済みの Danbooru 項目を消去してください。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1343"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1334"></location>
       <source>Clear image cache</source>
       <translation>画像キャッシュをクリア</translation>
     </message>
@@ -1604,7 +1604,7 @@ This is taking much longer than expected</source>
       <translation>予定されている変更をクリアできませんでした</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1342"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1333"></location>
       <source>Clear text cache</source>
       <translation>テキストキャッシュをクリア</translation>
     </message>
@@ -1759,7 +1759,7 @@ This is taking much longer than expected</source>
       <translation>Comfy 起動ログ</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="653"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="644"></location>
       <source>ComfyUI</source>
       <translation>ComfyUI</translation>
     </message>
@@ -1809,7 +1809,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI 接続</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="654"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="645"></location>
       <source>ComfyUI connection, installation, and Python environment.</source>
       <translation>ComfyUI の接続、インストール、Python 環境。</translation>
     </message>
@@ -1949,7 +1949,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI から起動警告が報告されました</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="246"></location>
+      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="262"></location>
       <source>ComfyUI reported errors during startup</source>
       <translation>ComfyUI から起動時のエラーが報告されました</translation>
     </message>
@@ -1969,7 +1969,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI はこの拡張機能のプレスタートアップスクリプトが失敗したと報告しました。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="247"></location>
+      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="263"></location>
       <source>ComfyUI reported warnings during startup</source>
       <translation>ComfyUI から起動時の警告が報告されました</translation>
     </message>
@@ -2204,7 +2204,7 @@ This is taking much longer than expected</source>
       <translation>サムネイルとして使用できる CivitAI 画像を設定します。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1266"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1257"></location>
       <source>Control which Danbooru ratings may render as image previews.</source>
       <translation>画像プレビューに表示できる Danbooru レーティングを設定します。</translation>
     </message>
@@ -2522,12 +2522,12 @@ Install these nodes now?</source>
       <translation>Danbooru URL のインポート</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1357"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1348"></location>
       <source>Danbooru cache maintenance</source>
       <translation>Danbooru キャッシュのメンテナンス</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1322"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1313"></location>
       <source>Danbooru cache usage</source>
       <translation>Danbooru キャッシュ使用量</translation>
     </message>
@@ -2932,7 +2932,7 @@ Install these nodes now?</source>
       <translation>エラー</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1591"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1582"></location>
       <source>Error color</source>
       <translation>エラーカラー</translation>
     </message>
@@ -3022,7 +3022,7 @@ Install these nodes now?</source>
       <translation>拡張機能のバージョン：%1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="477"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="479"></location>
       <source>External providers, credentials, safety, and caches.</source>
       <translation>外部プロバイダー、認証情報、安全性、キャッシュ。</translation>
     </message>
@@ -3270,7 +3270,7 @@ Install these nodes now?</source>
       <translation>生成画像の読み込みに失敗しました</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="225"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="227"></location>
       <source>Generation</source>
       <translation>生成</translation>
     </message>
@@ -3280,7 +3280,7 @@ Install these nodes now?</source>
       <translation>生成キュー :: 保留中のジョブ %1 件</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="226"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="228"></location>
       <source>Generation behavior and generated files.</source>
       <translation>生成方法と生成ファイル。</translation>
     </message>
@@ -3660,7 +3660,7 @@ Install these nodes now?</source>
       <translation>%1 をインストールしました（%2/%3）</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="695"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="686"></location>
       <source>Installed Python packages</source>
       <translation>インストール済みの Python パッケージ</translation>
     </message>
@@ -3705,7 +3705,7 @@ Install these nodes now?</source>
       <translation>ComfyUI の実行中にパッケージをインストールしたりモデルパスを変更したりすると、環境が不整合な状態になる可能性があります。</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="112"></location>
+      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="115"></location>
       <source>Installing required custom nodes</source>
       <translation>必要なカスタムノードをインストールしています</translation>
     </message>
@@ -4140,7 +4140,7 @@ Install these nodes now?</source>
       <translation>現在の Comfy ターゲットで追跡しているキューブパックを管理します。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="939"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="930"></location>
       <source>Manage autocomplete lists</source>
       <translation>自動補完リストを管理</translation>
     </message>
@@ -4220,6 +4220,11 @@ Install these nodes now?</source>
       <translation>メタデータの取得元：%1</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="97"></location>
+      <source>Mica</source>
+      <translation>マイカ</translation>
+    </message>
+    <message>
       <location filename="../substitute/application/cubes/cube_picker_models.py" line="52"></location>
       <source>Middle cubes</source>
       <translation>中間のキューブ</translation>
@@ -4280,7 +4285,7 @@ Install these nodes now?</source>
       <translation>ワイルドカードがありません：%1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="476"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="478"></location>
       <source>Model Sources</source>
       <translation>モデルソース</translation>
     </message>
@@ -4762,7 +4767,7 @@ I’ll bring my own</source>
       <translation>変形するものがありません！</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="792"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="783"></location>
       <source>Notify me about updates to models I use</source>
       <translation>使用中モデルの更新を通知する</translation>
     </message>
@@ -5112,6 +5117,16 @@ I’ll bring my own</source>
       <translation>ピクセル</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="94"></location>
+      <source>Plain</source>
+      <translation>単色</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="107"></location>
+      <source>Plain is used when window effects are unavailable.</source>
+      <translation>ウィンドウ効果を利用できない場合は単色を使用します。</translation>
+    </message>
+    <message>
       <location filename="../substitute/presentation/settings/comfy_environment_page.py" line="676"></location>
       <source>Plan uninstall</source>
       <translation>アンインストールを予定</translation>
@@ -5272,7 +5287,7 @@ I’ll bring my own</source>
       <translation>既存の ComfyUI 環境を準備しています。</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="141"></location>
+      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="151"></location>
       <source>Preparing your saved workspace.</source>
       <translation>保存したワークスペースを準備しています。</translation>
     </message>
@@ -5352,7 +5367,7 @@ I’ll bring my own</source>
       <translation>プロンプト</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="322"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="324"></location>
       <source>Prompt Editing</source>
       <translation>プロンプト編集</translation>
     </message>
@@ -5362,7 +5377,7 @@ I’ll bring my own</source>
       <translation>プロンプト ID：%1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="323"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="325"></location>
       <source>Prompt editor behavior and authoring support.</source>
       <translation>プロンプトエディターの動作と入力支援。</translation>
     </message>
@@ -5607,7 +5622,7 @@ I’ll bring my own</source>
       <translation>CivitAI メタデータを更新</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1296"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1287"></location>
       <source>Refresh cached content in background</source>
       <translation>キャッシュ内容をバックグラウンドで更新</translation>
     </message>
@@ -5617,7 +5632,7 @@ I’ll bring my own</source>
       <translation>カタログを更新</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1297"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1288"></location>
       <source>Refresh stale cached wiki pages and preview images lazily while browsing.</source>
       <translation>閲覧中に、古くなった Wiki ページとプレビュー画像のキャッシュをバックグラウンドで順次更新します。</translation>
     </message>
@@ -5737,7 +5752,7 @@ I’ll bring my own</source>
       <translation>名前を変更</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1247"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1238"></location>
       <source>Render cached Danbooru preview images inside the native wiki viewer.</source>
       <translation>キャッシュ済みの Danbooru プレビュー画像をネイティブ Wiki ビューアー内に表示します。</translation>
     </message>
@@ -6636,7 +6651,7 @@ No known extension claimant.</source>
       <translation>生成コントロールを表示</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1246"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1237"></location>
       <source>Show images in wiki viewer</source>
       <translation>Wiki ビューアーに画像を表示</translation>
     </message>
@@ -7517,7 +7532,7 @@ GNU 一般公衆利用許諾書バージョン3は、目的を問わず本プロ
       <translation>キャッシュ済みの CivitAI プロバイダーメタデータとサムネイルをまとめて表示します。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1323"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1314"></location>
       <source>Summarizes locally cached Danbooru metadata and preview assets.</source>
       <translation>ローカルにキャッシュされた Danbooru メタデータとプレビュー素材を要約します。</translation>
     </message>
@@ -8037,7 +8052,7 @@ Diagnostic evidence:
       <translation>ワークフローの寸法を更新できなかったため、キャンバスの変更を元に戻しました。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="235"></location>
+      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="240"></location>
       <source>The workspace is still loading and cannot be saved yet.</source>
       <translation>ワークスペースはまだ読み込み中のため、保存できません。</translation>
     </message>
@@ -8567,7 +8582,7 @@ Diagnostic evidence:
       <translation>安全な自動ハードウェアデコードを使用するか、常にソフトウェアでデコードします。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="697"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="688"></location>
       <source>Use the ComfyUI page package filter to inspect installed packages and maintenance actions.</source>
       <translation>ComfyUI ページのパッケージフィルターを使って、インストール済みパッケージとメンテナンス操作を確認します。</translation>
     </message>
@@ -8597,12 +8612,12 @@ Diagnostic evidence:
       <translation>認証が必要な CivitAI の検索とダウンロードに使用します。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1579"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1570"></location>
       <source>Used for caution states and warning highlights.</source>
       <translation>注意状態と警告の強調表示に使用します。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1592"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1583"></location>
       <source>Used for validation failures and error highlights.</source>
       <translation>検証エラーとエラーの強調表示に使用します。</translation>
     </message>
@@ -8717,7 +8732,7 @@ Diagnostic evidence:
       <translation>CivitAI で表示</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="590"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="592"></location>
       <source>Visual customization.</source>
       <translation>外観のカスタマイズ。</translation>
     </message>
@@ -8757,7 +8772,7 @@ Diagnostic evidence:
       <translation>警告</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1578"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1569"></location>
       <source>Warning color</source>
       <translation>警告色</translation>
     </message>
@@ -8827,7 +8842,12 @@ Diagnostic evidence:
       <translation>ワイルドカード</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1845"></location>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="63"></location>
+      <source>Window</source>
+      <translation>ウィンドウ</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="106"></location>
       <source>Window material</source>
       <translation>ウィンドウ素材</translation>
     </message>
@@ -8947,7 +8967,7 @@ Diagnostic evidence:
       <translation>モデルカートは空です。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="247"></location>
+      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="252"></location>
       <source>Your recovery save could not be completed, so generation was not started.</source>
       <translation>復元用の保存を完了できなかったため、生成は開始されませんでした。</translation>
     </message>

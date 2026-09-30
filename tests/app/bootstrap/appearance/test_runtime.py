@@ -18,11 +18,22 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 import substitute.app.bootstrap.appearance_runtime as appearance_runtime_module
+from substitute.application.appearance import (
+    ActiveAppearanceBaseline,
+    AppearancePreferenceService,
+    AppearanceResolver,
+    AppearanceRestartCoordinator,
+    WindowMaterialCapabilities,
+)
+from substitute.application.restart_requirements import RestartRequirementService
 from substitute.domain.appearance import (
     AppearanceAccentSource,
+    AppearanceBackdropMode,
     AppearanceErrorColorMode,
     AppearanceThemeMode,
     AppearanceWarningColorMode,
@@ -30,6 +41,7 @@ from substitute.domain.appearance import (
     SystemAppearanceSnapshot,
     SystemColorScheme,
 )
+from substitute.infrastructure.persistence import FileAppearancePreferenceRepository
 from tests.application.appearance.support import (
     FixedSystemAppearanceProvider,
     appearance_preferences,
@@ -160,6 +172,47 @@ def test_theme_mode_save_does_not_publish_live_appearance(
     assert appearance_publications.themes == []
     assert appearance_publications.accents == []
     assert appearance_publications.semantic_colors == []
+
+
+def test_plain_persists_through_restart_and_resolves_without_material(
+    tmp_path: Path,
+    appearance_publications: AppearancePublicationRecorder,
+) -> None:
+    """Apply saved Plain on a new runtime while keeping the running shell intact."""
+
+    resolver = AppearanceResolver(
+        WindowMaterialCapabilities(mica_alt_available=True, acrylic_available=True)
+    )
+    controller = appearance_runtime_module.AppearanceRuntimeController(
+        preference_service=AppearancePreferenceService(
+            FileAppearancePreferenceRepository(tmp_path)
+        ),
+        system_appearance_provider=FixedSystemAppearanceProvider(),
+        resolver=resolver,
+    )
+    active = controller.apply_persisted_preferences()
+    assert active.effective_backdrop_mode is AppearanceBackdropMode.MICA_ALT
+    coordinator = AppearanceRestartCoordinator(
+        appearance_runtime=controller,
+        active_baseline=ActiveAppearanceBaseline(active.requested),
+        restart_requirements=RestartRequirementService(),
+    )
+
+    assert coordinator.set_backdrop_mode(AppearanceBackdropMode("plain")).count == 1
+    assert controller.last_resolved() is active
+    assert len(appearance_publications.themes) == 1
+
+    restarted = appearance_runtime_module.AppearanceRuntimeController(
+        preference_service=AppearancePreferenceService(
+            FileAppearancePreferenceRepository(tmp_path)
+        ),
+        system_appearance_provider=FixedSystemAppearanceProvider(),
+        resolver=resolver,
+    )
+    resolved = restarted.apply_persisted_preferences()
+    assert resolved.requested.backdrop_mode.value == "plain"
+    assert resolved.effective_backdrop_mode is None
+    assert len(appearance_publications.themes) == 2
 
 
 def test_accent_save_does_not_publish_pending_theme_mode(

@@ -26,6 +26,7 @@ from qfluentwidgets import (  # type: ignore[import-untyped]
 )
 from substitute.application.appearance import (
     AppearanceRestartCoordinator,
+    WindowMaterialCapabilities,
 )
 from substitute.domain.appearance import (
     AppearanceAccentSource,
@@ -67,7 +68,12 @@ def test_appearance_catalog_routes_restart_required_settings_to_coordinator() ->
     """Appearance rows should route restart and live color settings correctly."""
 
     application()
-    runtime = AppearanceRuntime()
+    runtime = AppearanceRuntime(
+        material_capabilities=WindowMaterialCapabilities(
+            mica_alt_available=True,
+            acrylic_available=True,
+        )
+    )
     coordinator = RecordingAppearanceRestartCoordinator()
     restart_dialog_calls: list[str] = []
     page = build_appearance_settings_page(
@@ -95,7 +101,9 @@ def test_appearance_catalog_routes_restart_required_settings_to_coordinator() ->
     material_row = settings_control(page, "appearance.window.material").factory(parent)
     material_combo = material_row.findChild(ComboBox)
     assert material_combo is not None
-    material_combo.setCurrentIndex(1)
+    material_combo.setCurrentIndex(
+        material_combo.findData(AppearanceBackdropMode.ACRYLIC)
+    )
 
     colors_row = settings_control(
         page,

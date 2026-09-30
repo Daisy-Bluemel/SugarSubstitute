@@ -96,6 +96,20 @@ def test_record_applied_preferences_updates_baseline_and_clears_items() -> None:
     assert coordinator.set_backdrop_mode(AppearanceBackdropMode.ACRYLIC).count == 0
 
 
+def test_plain_mode_is_restart_required_and_reverting_clears_the_requirement() -> None:
+    """Treat explicit Plain as a persisted material choice pending GUI reload."""
+
+    coordinator, restart_requirements = _coordinator()
+    snapshot = coordinator.set_backdrop_mode(AppearanceBackdropMode("plain"))
+
+    assert snapshot.count == 1
+    assert snapshot.items[0].active_value == "mica_alt"
+    assert snapshot.items[0].saved_value == "plain"
+    assert snapshot.items[0].scope is RestartScope.WINDOW
+    coordinator.set_backdrop_mode(AppearanceBackdropMode.MICA_ALT)
+    assert restart_requirements.snapshot().count == 0
+
+
 def _coordinator() -> tuple[AppearanceRestartCoordinator, RestartRequirementService]:
     """Create a coordinator with dark/Mica active appearance for tests."""
 

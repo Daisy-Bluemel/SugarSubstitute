@@ -43,8 +43,9 @@ class AppearanceAccentSource(Enum):
 
 
 class AppearanceBackdropMode(Enum):
-    """Identify the preferred native window material for supported shells."""
+    """Identify the preferred window material, including an explicit plain shell."""
 
+    PLAIN = "plain"
     MICA_ALT = "mica_alt"
     ACRYLIC = "acrylic"
 

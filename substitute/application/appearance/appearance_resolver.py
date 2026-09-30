@@ -147,8 +147,10 @@ def _resolve_backdrop(
     requested: AppearanceBackdropMode,
     capabilities: WindowMaterialCapabilities,
 ) -> AppearanceBackdropMode | None:
-    """Resolve native Windows materials without coupling them to color detection."""
+    """Resolve supported materials while keeping Plain independent of capability."""
 
+    if requested is AppearanceBackdropMode.PLAIN:
+        return None
     if requested is AppearanceBackdropMode.MICA_ALT:
         if capabilities.mica_alt_available:
             return requested

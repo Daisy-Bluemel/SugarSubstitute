@@ -459,14 +459,14 @@ next_extraction = "Separate preview preferences from output organization and pat
 id = "SS-ARCH-076"
 owner = "settings catalog presentation"
 paths = ["substitute/presentation/settings/settings_catalog_builders.py"]
-fingerprint = "sha256:ac7e01d90ae365dcf95c908b83f7cfb744688ee7980aba9918d3ee221c8c3c6f"
+fingerprint = "sha256:0c966248ae8ca471d0285c156929f69231baeec30740ab4a03be4b5722679b52"
 issue = "chore:SS-ARCH-076"
 review_by = 2026-12-15
 responsibilities = [
   "generation settings catalog",
   "prompt feature settings catalog",
   "CivitAI and Danbooru settings rows",
-  "appearance settings and color-preview controls",
+  "appearance theme settings and color-preview controls",
   "ComfyUI settings catalog",
   "shared control-row composition",
 ]

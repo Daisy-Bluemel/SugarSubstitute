@@ -26,7 +26,11 @@ from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QLabel, QWidget
 from qfluentwidgets import ComboBox, PushButton  # type: ignore[import-untyped]
 
-from substitute.application.appearance import AppearanceResolver, ResolvedAppearance
+from substitute.application.appearance import (
+    AppearanceResolver,
+    ResolvedAppearance,
+    WindowMaterialCapabilities,
+)
 from substitute.domain.appearance import (
     DEFAULT_CUSTOM_ACCENT_COLOR,
     AppearanceAccentSource,
@@ -51,9 +55,14 @@ from tests.support.qt.lifecycle import activate_widget_layouts
 class AppearanceRuntime:
     """Store appearance preferences while exposing production resolution."""
 
-    def __init__(self) -> None:
-        """Initialize dark custom-accent appearance preferences."""
+    def __init__(
+        self,
+        *,
+        material_capabilities: WindowMaterialCapabilities | None = None,
+    ) -> None:
+        """Initialize preferences with explicit, host-independent capabilities."""
 
+        self._resolver = AppearanceResolver(material_capabilities)
         self._preferences = AppearancePreferences(
             schema_version="1",
             theme_mode=AppearanceThemeMode.DARK,
@@ -70,7 +79,7 @@ class AppearanceRuntime:
     def resolve_preferences(self) -> ResolvedAppearance:
         """Resolve current preferences against a stable system snapshot."""
 
-        return AppearanceResolver().resolve(
+        return self._resolver.resolve(
             self._preferences,
             system_appearance=SystemAppearanceSnapshot(),
         )

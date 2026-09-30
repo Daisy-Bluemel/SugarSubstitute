@@ -374,6 +374,10 @@ Thïs ïs tàkïng müch löngër thàn ëxpëctëd ···⟧</translation>
       <translation>⟦Åccënt cölör ···⟧</translation>
     </message>
     <message>
+      <source>Acrylic</source>
+      <translation>⟦Åcrylïc ···⟧</translation>
+    </message>
+    <message>
       <source>Actions</source>
       <translation>⟦Åctïöns ···⟧</translation>
     </message>
@@ -748,10 +752,6 @@ Thïs ïs tàkïng müch löngër thàn ëxpëctëd ···⟧</translation>
     <message>
       <source>Change the colors that appear in Substitute.</source>
       <translation>⟦Chàngë thë cölörs thàt àppëàr ïn Sübstïtütë. ···⟧</translation>
-    </message>
-    <message>
-      <source>Change the main window backdrop material.</source>
-      <translation>⟦Chàngë thë màïn wïndöw bàckdröp màtërïàl. ···⟧</translation>
     </message>
     <message>
       <source>Change these only when you need a different runtime strategy.</source>
@@ -3334,6 +3334,10 @@ Install these nodes now?</source>
       <translation>⟦Mëtàdàtà söürcë: %1 ···⟧</translation>
     </message>
     <message>
+      <source>Mica</source>
+      <translation>⟦Mïcà ···⟧</translation>
+    </message>
+    <message>
       <source>Middle cubes</source>
       <translation>⟦Mïddlë cübës ···⟧</translation>
     </message>
@@ -4046,6 +4050,14 @@ I’ll bring my own</source>
     <message>
       <source>Pixels</source>
       <translation>⟦Pïxëls ···⟧</translation>
+    </message>
+    <message>
+      <source>Plain</source>
+      <translation>⟦Plàïn ···⟧</translation>
+    </message>
+    <message>
+      <source>Plain is used when window effects are unavailable.</source>
+      <translation>⟦Plàïn ïs üsëd whën wïndöw ëffëcts àrë ünàvàïlàblë. ···⟧</translation>
     </message>
     <message>
       <source>Plan uninstall</source>
@@ -7030,6 +7042,10 @@ Dïàgnöstïc ëvïdëncë:
     <message>
       <source>Wildcards</source>
       <translation>⟦Wïldcàrds ···⟧</translation>
+    </message>
+    <message>
+      <source>Window</source>
+      <translation>⟦Wïndöw ···⟧</translation>
     </message>
     <message>
       <source>Window material</source>

@@ -406,10 +406,10 @@ owner = "settings catalog presentation"
 rule = "STRUCT003"
 path = "substitute/presentation/settings/settings_catalog_builders.py"
 kind = "remediation"
-justification = "The assessed file mixes generation settings catalog, prompt feature settings catalog, CivitAI and Danbooru settings rows, appearance settings and color-preview controls, ComfyUI settings catalog, shared control-row composition. Give each settings domain a focused catalog builder and keep shared row composition narrow."
+justification = "The assessed file mixes generation settings catalog, prompt feature settings catalog, CivitAI and Danbooru settings rows, appearance theme settings and color-preview controls, ComfyUI settings catalog, shared control-row composition. Give each settings domain a focused catalog builder and keep shared row composition narrow."
 issue = "chore:SS-ARCH-076"
 review_by = 2026-12-15
-max_lines = 1684
+max_lines = 1648
 next_limit = 1326
 debt = "SS-ARCH-076"
 

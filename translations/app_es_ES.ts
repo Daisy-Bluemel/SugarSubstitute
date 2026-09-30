@@ -200,7 +200,7 @@ Vista previa del prompt:
       <translation>%1 no está disponible en la biblioteca de cubos activa.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1313"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1304"></location>
       <source>%1 metadata entries, %2 image previews, %3</source>
       <translation>%1 entradas de metadatos, %2 vistas previas de imágenes, %3</translation>
     </message>
@@ -514,9 +514,14 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Acerca de</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1545"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1536"></location>
       <source>Accent color</source>
       <translation>Color de énfasis</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="99"></location>
+      <source>Acrylic</source>
+      <translation>Acrílico</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/settings/cube_library_page.py" line="479"></location>
@@ -579,7 +584,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Añadir cubos</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="940"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="931"></location>
       <source>Add custom tags and hide unwanted tag suggestions.</source>
       <translation>Añade etiquetas personalizadas y oculta las sugerencias de etiquetas que no quieras ver.</translation>
     </message>
@@ -669,7 +674,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Permitir contenido sugerente</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1265"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1256"></location>
       <source>Allowed image ratings</source>
       <translation>Clasificaciones de imagen permitidas</translation>
     </message>
@@ -704,7 +709,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Otro proceso ya está usando la dirección guardada de ComfyUI</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="589"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="591"></location>
       <source>Appearance</source>
       <translation>Apariencia</translation>
     </message>
@@ -984,14 +989,9 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Cambiar la resolución del lienzo</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1385"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1376"></location>
       <source>Change the colors that appear in Substitute.</source>
       <translation>Cambia los colores que aparecen en Substitute.</translation>
-    </message>
-    <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1846"></location>
-      <source>Change the main window backdrop material.</source>
-      <translation>Cambia el material de fondo de la ventana principal.</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/onboarding/onboarding_connection_settings.py" line="174"></location>
@@ -1004,7 +1004,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Cambia la carpeta de modelos de esta instalación de ComfyUI, incluso cuando ComfyUI se inicia por separado.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="793"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="784"></location>
       <source>Check CivitAI for compatible updates only after a model is used for Generate.</source>
       <translation>Buscar actualizaciones compatibles en CivitAI solo después de usar un modelo para generar.</translation>
     </message>
@@ -1134,7 +1134,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Punto de control</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1475"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1466"></location>
       <source>Choose</source>
       <translation>Elegir</translation>
     </message>
@@ -1354,7 +1354,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Elige la instalación de Python que utiliza realmente tu configuración</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1546"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1537"></location>
       <source>Choose the color used for highlights and selected controls.</source>
       <translation>Elige el color que se usa para resaltar elementos y controles seleccionados.</translation>
     </message>
@@ -1464,7 +1464,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Elige tu carpeta de ComfyUI existente</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1384"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1375"></location>
       <source>Choose your mode</source>
       <translation>Elige el modo</translation>
     </message>
@@ -1494,12 +1494,12 @@ Está tardando mucho más de lo esperado</translation>
       <translation>La clave de API de CivitAI funciona.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1222"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1213"></location>
       <source>CivitAI cache maintenance</source>
       <translation>Mantenimiento de la caché de CivitAI</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1191"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1182"></location>
       <source>CivitAI cache usage</source>
       <translation>Uso de la caché de CivitAI</translation>
     </message>
@@ -1569,17 +1569,17 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Borrar</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1344"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1335"></location>
       <source>Clear all</source>
       <translation>Borrar todo</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1358"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1349"></location>
       <source>Clear cached Danbooru entries if you want a fresh local state.</source>
       <translation>Borra las entradas de Danbooru almacenadas en caché si quieres empezar con un estado local nuevo.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1343"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1334"></location>
       <source>Clear image cache</source>
       <translation>Borrar la caché de imágenes</translation>
     </message>
@@ -1604,7 +1604,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>No se pudieron borrar los cambios previstos</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1342"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1333"></location>
       <source>Clear text cache</source>
       <translation>Borrar la caché de texto</translation>
     </message>
@@ -1759,7 +1759,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Registros de inicio de Comfy</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="653"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="644"></location>
       <source>ComfyUI</source>
       <translation>ComfyUI</translation>
     </message>
@@ -1809,7 +1809,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Conexión con ComfyUI</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="654"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="645"></location>
       <source>ComfyUI connection, installation, and Python environment.</source>
       <translation>Conexión con ComfyUI, instalación y entorno de Python.</translation>
     </message>
@@ -1949,7 +1949,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>ComfyUI notificó una advertencia de inicio</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="246"></location>
+      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="262"></location>
       <source>ComfyUI reported errors during startup</source>
       <translation>ComfyUI notificó errores durante el inicio</translation>
     </message>
@@ -1969,7 +1969,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>ComfyUI notificó que falló el script de preinicio de esta extensión.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="247"></location>
+      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="263"></location>
       <source>ComfyUI reported warnings during startup</source>
       <translation>ComfyUI notificó advertencias durante el inicio</translation>
     </message>
@@ -2204,7 +2204,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Controla qué imágenes de CivitAI se pueden usar como miniaturas.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1266"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1257"></location>
       <source>Control which Danbooru ratings may render as image previews.</source>
       <translation>Controla qué clasificaciones de Danbooru pueden mostrarse como vistas previas de imágenes.</translation>
     </message>
@@ -2522,12 +2522,12 @@ Install these nodes now?</source>
       <translation>Importación mediante URL de Danbooru</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1357"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1348"></location>
       <source>Danbooru cache maintenance</source>
       <translation>Mantenimiento de la caché de Danbooru</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1322"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1313"></location>
       <source>Danbooru cache usage</source>
       <translation>Uso de la caché de Danbooru</translation>
     </message>
@@ -2932,7 +2932,7 @@ Install these nodes now?</source>
       <translation>Se produjo un error</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1591"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1582"></location>
       <source>Error color</source>
       <translation>Color de error</translation>
     </message>
@@ -3022,7 +3022,7 @@ Install these nodes now?</source>
       <translation>Versión de la extensión: %1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="477"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="479"></location>
       <source>External providers, credentials, safety, and caches.</source>
       <translation>Proveedores externos, credenciales, seguridad y cachés.</translation>
     </message>
@@ -3270,7 +3270,7 @@ Install these nodes now?</source>
       <translation>No se pudo cargar la imagen generada</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="225"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="227"></location>
       <source>Generation</source>
       <translation>Generación</translation>
     </message>
@@ -3280,7 +3280,7 @@ Install these nodes now?</source>
       <translation>Cola de generación :: %1 tareas pendientes</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="226"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="228"></location>
       <source>Generation behavior and generated files.</source>
       <translation>Comportamiento de la generación y archivos generados.</translation>
     </message>
@@ -3660,7 +3660,7 @@ Install these nodes now?</source>
       <translation>%1 instalado (%2/%3)</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="695"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="686"></location>
       <source>Installed Python packages</source>
       <translation>Paquetes de Python instalados</translation>
     </message>
@@ -3705,7 +3705,7 @@ Install these nodes now?</source>
       <translation>Instalar paquetes o cambiar las rutas de modelos mientras ComfyUI está en ejecución puede dejar su entorno en un estado incoherente.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="112"></location>
+      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="115"></location>
       <source>Installing required custom nodes</source>
       <translation>Instalando los nodos personalizados requeridos</translation>
     </message>
@@ -4140,7 +4140,7 @@ Install these nodes now?</source>
       <translation>Administra los paquetes de cubos registrados en el destino de Comfy activo.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="939"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="930"></location>
       <source>Manage autocomplete lists</source>
       <translation>Administrar las listas de autocompletado</translation>
     </message>
@@ -4220,6 +4220,11 @@ Install these nodes now?</source>
       <translation>Fuente de los metadatos: %1</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="97"></location>
+      <source>Mica</source>
+      <translation>Efecto mica</translation>
+    </message>
+    <message>
       <location filename="../substitute/application/cubes/cube_picker_models.py" line="52"></location>
       <source>Middle cubes</source>
       <translation>Cubos intermedios</translation>
@@ -4280,7 +4285,7 @@ Install these nodes now?</source>
       <translation>Falta el comodín: %1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="476"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="478"></location>
       <source>Model Sources</source>
       <translation>Fuentes de modelos</translation>
     </message>
@@ -4762,7 +4767,7 @@ Usaré el mío.</translation>
       <translation>¡No hay nada que transformar!</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="792"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="783"></location>
       <source>Notify me about updates to models I use</source>
       <translation>Avisarme de actualizaciones de los modelos que uso</translation>
     </message>
@@ -5112,6 +5117,16 @@ Usaré el mío.</translation>
       <translation>Píxeles</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="94"></location>
+      <source>Plain</source>
+      <translation>Sin efectos</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="107"></location>
+      <source>Plain is used when window effects are unavailable.</source>
+      <translation>Se usa el estilo sin efectos cuando los efectos de ventana no están disponibles.</translation>
+    </message>
+    <message>
       <location filename="../substitute/presentation/settings/comfy_environment_page.py" line="676"></location>
       <source>Plan uninstall</source>
       <translation>Planificar la desinstalación</translation>
@@ -5272,7 +5287,7 @@ Usaré el mío.</translation>
       <translation>Preparando tu configuración existente de ComfyUI.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="141"></location>
+      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="151"></location>
       <source>Preparing your saved workspace.</source>
       <translation>Preparando tu espacio de trabajo guardado.</translation>
     </message>
@@ -5352,7 +5367,7 @@ Usaré el mío.</translation>
       <translation>ID del prompt</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="322"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="324"></location>
       <source>Prompt Editing</source>
       <translation>Edición de prompts</translation>
     </message>
@@ -5362,7 +5377,7 @@ Usaré el mío.</translation>
       <translation>ID del prompt: %1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="323"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="325"></location>
       <source>Prompt editor behavior and authoring support.</source>
       <translation>Comportamiento del editor de prompts y ayuda para la redacción.</translation>
     </message>
@@ -5607,7 +5622,7 @@ Usaré el mío.</translation>
       <translation>Actualizar los metadatos de CivitAI</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1296"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1287"></location>
       <source>Refresh cached content in background</source>
       <translation>Actualizar en segundo plano el contenido almacenado en caché</translation>
     </message>
@@ -5617,7 +5632,7 @@ Usaré el mío.</translation>
       <translation>Actualizar catálogo</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1297"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1288"></location>
       <source>Refresh stale cached wiki pages and preview images lazily while browsing.</source>
       <translation>Actualiza cuando sea necesario las páginas de la wiki y las imágenes de vista previa obsoletas que estén almacenadas en caché.</translation>
     </message>
@@ -5737,7 +5752,7 @@ Usaré el mío.</translation>
       <translation>Cambiar nombre</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1247"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1238"></location>
       <source>Render cached Danbooru preview images inside the native wiki viewer.</source>
       <translation>Muestra las imágenes de vista previa de Danbooru almacenadas en caché dentro del visor nativo de la wiki.</translation>
     </message>
@@ -6636,7 +6651,7 @@ No se conoce ninguna extensión solicitante.</translation>
       <translation>Mostrar los controles de generación</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1246"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1237"></location>
       <source>Show images in wiki viewer</source>
       <translation>Mostrar imágenes en el visor de la wiki</translation>
     </message>
@@ -7517,7 +7532,7 @@ En resumen: puedes aprender de SugarSubstitute, adaptarlo, ampliarlo y compartir
       <translation>Resume los metadatos y las miniaturas del proveedor CivitAI almacenados en caché.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1323"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1314"></location>
       <source>Summarizes locally cached Danbooru metadata and preview assets.</source>
       <translation>Resume los metadatos y los recursos de vista previa de Danbooru almacenados en la caché local.</translation>
     </message>
@@ -8037,7 +8052,7 @@ Evidencia de diagnóstico:
       <translation>No se pudieron actualizar las dimensiones del flujo de trabajo, por lo que se deshizo el cambio del lienzo.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="235"></location>
+      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="240"></location>
       <source>The workspace is still loading and cannot be saved yet.</source>
       <translation>El espacio de trabajo aún se está cargando y todavía no se puede guardar.</translation>
     </message>
@@ -8567,7 +8582,7 @@ Evidencia de diagnóstico:
       <translation>Usa la decodificación automática segura por hardware o decodifica siempre por software.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="697"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="688"></location>
       <source>Use the ComfyUI page package filter to inspect installed packages and maintenance actions.</source>
       <translation>Usa el filtro de paquetes de la página de ComfyUI para consultar los paquetes instalados y las acciones de mantenimiento.</translation>
     </message>
@@ -8597,12 +8612,12 @@ Evidencia de diagnóstico:
       <translation>Se usa para realizar búsquedas y descargas autenticadas en CivitAI.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1579"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1570"></location>
       <source>Used for caution states and warning highlights.</source>
       <translation>Se usa para los estados de precaución y los elementos resaltados de advertencia.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1592"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1583"></location>
       <source>Used for validation failures and error highlights.</source>
       <translation>Se usa para los errores de validación y los elementos resaltados de error.</translation>
     </message>
@@ -8717,7 +8732,7 @@ Evidencia de diagnóstico:
       <translation>Ver en CivitAI</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="590"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="592"></location>
       <source>Visual customization.</source>
       <translation>Personalización visual.</translation>
     </message>
@@ -8757,7 +8772,7 @@ Evidencia de diagnóstico:
       <translation>Advertencia</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1578"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1569"></location>
       <source>Warning color</source>
       <translation>Color de advertencia</translation>
     </message>
@@ -8827,7 +8842,12 @@ Evidencia de diagnóstico:
       <translation>Comodines</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1845"></location>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="63"></location>
+      <source>Window</source>
+      <translation>Ventana</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="106"></location>
       <source>Window material</source>
       <translation>Material de la ventana</translation>
     </message>
@@ -8947,7 +8967,7 @@ Evidencia de diagnóstico:
       <translation>Tu carrito de modelos está vacío.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="247"></location>
+      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="252"></location>
       <source>Your recovery save could not be completed, so generation was not started.</source>
       <translation>No se pudo completar el guardado de recuperación, por lo que no se inició la generación.</translation>
     </message>

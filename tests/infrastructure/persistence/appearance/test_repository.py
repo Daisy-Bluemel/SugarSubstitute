@@ -21,6 +21,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from substitute.application.appearance import AppearancePreferenceService
 from substitute.domain.appearance import (
     APPEARANCE_PREFERENCES_SCHEMA_VERSION,
@@ -31,6 +33,29 @@ from substitute.domain.appearance import (
     AppearanceWarningColorMode,
 )
 from substitute.infrastructure.persistence import FileAppearancePreferenceRepository
+
+
+@pytest.mark.parametrize("value", ("plain", "mica_alt", "acrylic"))
+def test_repository_preserves_all_material_values_in_schema_three(
+    tmp_path: Path,
+    value: str,
+) -> None:
+    """Keep the additive Plain value and historical materials in schema three."""
+
+    path = tmp_path / "appearance.json"
+    path.write_text(
+        json.dumps({"schema_version": "3", "backdrop_mode": value}),
+        encoding="utf-8",
+    )
+    service = AppearancePreferenceService(FileAppearancePreferenceRepository(tmp_path))
+    loaded = service.load_preferences()
+
+    assert loaded.backdrop_mode.value == value
+    service.set_backdrop_mode(loaded.backdrop_mode)
+    assert json.loads(path.read_text(encoding="utf-8"))["schema_version"] == "3"
+    assert (
+        FileAppearancePreferenceRepository(tmp_path).load().backdrop_mode.value == value
+    )
 
 
 def test_repository_round_trips_normalized_json(tmp_path: Path) -> None:

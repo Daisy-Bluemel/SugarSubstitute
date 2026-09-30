@@ -145,7 +145,7 @@ Prompt preview:
       <translation>활성 큐브 라이브러리에서 %1을(를) 사용할 수 없습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1313"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1304"></location>
       <source>%1 metadata entries, %2 image previews, %3</source>
       <translation>메타데이터 항목 %1개, 이미지 미리 보기 %2개, %3</translation>
     </message>
@@ -459,9 +459,14 @@ This is taking much longer than expected</source>
       <translation>정보</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1545"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1536"></location>
       <source>Accent color</source>
       <translation>강조색</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="99"></location>
+      <source>Acrylic</source>
+      <translation>아크릴</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/settings/cube_library_page.py" line="479"></location>
@@ -524,7 +529,7 @@ This is taking much longer than expected</source>
       <translation>큐브 추가</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="940"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="931"></location>
       <source>Add custom tags and hide unwanted tag suggestions.</source>
       <translation>사용자 지정 태그를 추가하고 원하지 않는 태그 제안을 숨깁니다.</translation>
     </message>
@@ -614,7 +619,7 @@ This is taking much longer than expected</source>
       <translation>Soft까지 허용</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1265"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1256"></location>
       <source>Allowed image ratings</source>
       <translation>허용된 이미지 등급</translation>
     </message>
@@ -649,7 +654,7 @@ This is taking much longer than expected</source>
       <translation>다른 프로세스가 이미 저장된 ComfyUI 주소를 사용하고 있습니다</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="589"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="591"></location>
       <source>Appearance</source>
       <translation>모양</translation>
     </message>
@@ -929,14 +934,9 @@ This is taking much longer than expected</source>
       <translation>캔버스 해상도 변경</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1385"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1376"></location>
       <source>Change the colors that appear in Substitute.</source>
       <translation>Substitute에 표시되는 색상을 변경합니다.</translation>
-    </message>
-    <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1846"></location>
-      <source>Change the main window backdrop material.</source>
-      <translation>기본 창의 배경 재질을 변경합니다.</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/onboarding/onboarding_connection_settings.py" line="174"></location>
@@ -949,7 +949,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI가 자체적으로 시작될 때를 포함하여 이 ComfyUI 설치의 모델 폴더를 변경합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="793"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="784"></location>
       <source>Check CivitAI for compatible updates only after a model is used for Generate.</source>
       <translation>모델을 생성에 사용한 뒤에만 CivitAI에서 호환 업데이트를 확인합니다.</translation>
     </message>
@@ -1079,7 +1079,7 @@ This is taking much longer than expected</source>
       <translation>체크포인트</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1475"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1466"></location>
       <source>Choose</source>
       <translation>선택</translation>
     </message>
@@ -1299,7 +1299,7 @@ This is taking much longer than expected</source>
       <translation>설정에서 실제로 사용하는 Python 선택</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1546"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1537"></location>
       <source>Choose the color used for highlights and selected controls.</source>
       <translation>강조 표시와 선택된 컨트롤에 사용할 색상을 선택하세요.</translation>
     </message>
@@ -1409,7 +1409,7 @@ This is taking much longer than expected</source>
       <translation>기존 ComfyUI 폴더 선택</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1384"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1375"></location>
       <source>Choose your mode</source>
       <translation>모드 선택</translation>
     </message>
@@ -1439,12 +1439,12 @@ This is taking much longer than expected</source>
       <translation>CivitAI API 키가 정상적으로 작동합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1222"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1213"></location>
       <source>CivitAI cache maintenance</source>
       <translation>CivitAI 캐시 유지 관리</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1191"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1182"></location>
       <source>CivitAI cache usage</source>
       <translation>CivitAI 캐시 사용량</translation>
     </message>
@@ -1514,17 +1514,17 @@ This is taking much longer than expected</source>
       <translation>지우기</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1344"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1335"></location>
       <source>Clear all</source>
       <translation>모두 지우기</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1358"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1349"></location>
       <source>Clear cached Danbooru entries if you want a fresh local state.</source>
       <translation>새 로컬 상태가 필요하면 캐시된 Danbooru 항목을 지우세요.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1343"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1334"></location>
       <source>Clear image cache</source>
       <translation>이미지 캐시 지우기</translation>
     </message>
@@ -1549,7 +1549,7 @@ This is taking much longer than expected</source>
       <translation>예정된 변경 사항 지우기 실패</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1342"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1333"></location>
       <source>Clear text cache</source>
       <translation>텍스트 캐시 지우기</translation>
     </message>
@@ -1704,7 +1704,7 @@ This is taking much longer than expected</source>
       <translation>Comfy 시작 로그</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="653"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="644"></location>
       <source>ComfyUI</source>
       <translation>ComfyUI</translation>
     </message>
@@ -1754,7 +1754,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI 연결</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="654"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="645"></location>
       <source>ComfyUI connection, installation, and Python environment.</source>
       <translation>ComfyUI 연결, 설치 및 Python 환경입니다.</translation>
     </message>
@@ -1894,7 +1894,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI에서 시작 경고를 보고했습니다</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="246"></location>
+      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="262"></location>
       <source>ComfyUI reported errors during startup</source>
       <translation>ComfyUI에서 시작 중 오류를 보고했습니다</translation>
     </message>
@@ -1914,7 +1914,7 @@ This is taking much longer than expected</source>
       <translation>ComfyUI에서 이 확장 프로그램의 사전 시작 스크립트가 실패했다고 보고했습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="247"></location>
+      <location filename="../substitute/presentation/shell/startup_diagnostics_callout.py" line="263"></location>
       <source>ComfyUI reported warnings during startup</source>
       <translation>ComfyUI에서 시작 중 경고를 보고했습니다</translation>
     </message>
@@ -2149,7 +2149,7 @@ This is taking much longer than expected</source>
       <translation>썸네일로 사용할 수 있는 CivitAI 이미지를 제어합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1266"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1257"></location>
       <source>Control which Danbooru ratings may render as image previews.</source>
       <translation>이미지 미리 보기로 표시할 수 있는 Danbooru 등급을 제어합니다.</translation>
     </message>
@@ -2467,12 +2467,12 @@ Install these nodes now?</source>
       <translation>Danbooru URL 가져오기</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1357"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1348"></location>
       <source>Danbooru cache maintenance</source>
       <translation>Danbooru 캐시 유지 관리</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1322"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1313"></location>
       <source>Danbooru cache usage</source>
       <translation>Danbooru 캐시 사용량</translation>
     </message>
@@ -2877,7 +2877,7 @@ Install these nodes now?</source>
       <translation>오류</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1591"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1582"></location>
       <source>Error color</source>
       <translation>오류 색상</translation>
     </message>
@@ -2967,7 +2967,7 @@ Install these nodes now?</source>
       <translation>확장 프로그램 버전: %1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="477"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="479"></location>
       <source>External providers, credentials, safety, and caches.</source>
       <translation>외부 제공자, 자격 증명, 안전 및 캐시입니다.</translation>
     </message>
@@ -3215,7 +3215,7 @@ Install these nodes now?</source>
       <translation>생성된 이미지 불러오기 실패</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="225"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="227"></location>
       <source>Generation</source>
       <translation>생성</translation>
     </message>
@@ -3225,7 +3225,7 @@ Install these nodes now?</source>
       <translation>생성 대기열 :: 대기 중인 작업 %1개</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="226"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="228"></location>
       <source>Generation behavior and generated files.</source>
       <translation>생성 동작 및 생성된 파일입니다.</translation>
     </message>
@@ -3605,7 +3605,7 @@ Install these nodes now?</source>
       <translation>%1 설치 완료 (%2/%3)</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="695"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="686"></location>
       <source>Installed Python packages</source>
       <translation>설치된 Python 패키지</translation>
     </message>
@@ -3650,7 +3650,7 @@ Install these nodes now?</source>
       <translation>ComfyUI가 실행 중일 때 패키지를 설치하거나 모델 경로를 변경하면 환경이 일관되지 않은 상태가 될 수 있습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="112"></location>
+      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="115"></location>
       <source>Installing required custom nodes</source>
       <translation>필요한 커스텀 노드 설치 중</translation>
     </message>
@@ -4085,7 +4085,7 @@ Install these nodes now?</source>
       <translation>활성 Comfy 대상에서 추적하는 큐브 팩을 관리합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="939"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="930"></location>
       <source>Manage autocomplete lists</source>
       <translation>자동 완성 목록 관리</translation>
     </message>
@@ -4165,6 +4165,11 @@ Install these nodes now?</source>
       <translation>메타데이터 소스: %1</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="97"></location>
+      <source>Mica</source>
+      <translation>마이카</translation>
+    </message>
+    <message>
       <location filename="../substitute/application/cubes/cube_picker_models.py" line="52"></location>
       <source>Middle cubes</source>
       <translation>중간 큐브</translation>
@@ -4225,7 +4230,7 @@ Install these nodes now?</source>
       <translation>누락된 와일드카드: %1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="476"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="478"></location>
       <source>Model Sources</source>
       <translation>모델 소스</translation>
     </message>
@@ -4707,7 +4712,7 @@ I’ll bring my own</source>
       <translation>변형할 항목이 없습니다!</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="792"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="783"></location>
       <source>Notify me about updates to models I use</source>
       <translation>사용하는 모델의 업데이트 알림 받기</translation>
     </message>
@@ -5057,6 +5062,16 @@ I’ll bring my own</source>
       <translation>픽셀</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="94"></location>
+      <source>Plain</source>
+      <translation>단색</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="107"></location>
+      <source>Plain is used when window effects are unavailable.</source>
+      <translation>창 효과를 사용할 수 없으면 단색을 사용합니다.</translation>
+    </message>
+    <message>
       <location filename="../substitute/presentation/settings/comfy_environment_page.py" line="676"></location>
       <source>Plan uninstall</source>
       <translation>제거 계획</translation>
@@ -5217,7 +5232,7 @@ I’ll bring my own</source>
       <translation>기존 ComfyUI 설정을 준비하는 중입니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="141"></location>
+      <location filename="../substitute/app/bootstrap/nodepack_recovery_handoff.py" line="151"></location>
       <source>Preparing your saved workspace.</source>
       <translation>저장된 작업 공간을 준비하는 중입니다.</translation>
     </message>
@@ -5297,7 +5312,7 @@ I’ll bring my own</source>
       <translation>프롬프트</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="322"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="324"></location>
       <source>Prompt Editing</source>
       <translation>프롬프트 편집</translation>
     </message>
@@ -5307,7 +5322,7 @@ I’ll bring my own</source>
       <translation>프롬프트 ID: %1</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="323"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="325"></location>
       <source>Prompt editor behavior and authoring support.</source>
       <translation>프롬프트 편집기 동작 및 작성 지원입니다.</translation>
     </message>
@@ -5552,7 +5567,7 @@ I’ll bring my own</source>
       <translation>CivitAI 메타데이터 새로 고침</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1296"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1287"></location>
       <source>Refresh cached content in background</source>
       <translation>백그라운드에서 캐시 콘텐츠 새로 고침</translation>
     </message>
@@ -5562,7 +5577,7 @@ I’ll bring my own</source>
       <translation>카탈로그 새로 고침</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1297"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1288"></location>
       <source>Refresh stale cached wiki pages and preview images lazily while browsing.</source>
       <translation>탐색하는 동안 오래된 캐시 위키 페이지와 미리 보기 이미지를 필요할 때 새로 고칩니다.</translation>
     </message>
@@ -5682,7 +5697,7 @@ I’ll bring my own</source>
       <translation>이름 바꾸기</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1247"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1238"></location>
       <source>Render cached Danbooru preview images inside the native wiki viewer.</source>
       <translation>네이티브 위키 뷰어 안에 캐시된 Danbooru 미리 보기 이미지를 표시합니다.</translation>
     </message>
@@ -6581,7 +6596,7 @@ No known extension claimant.</source>
       <translation>생성 컨트롤 표시</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1246"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1237"></location>
       <source>Show images in wiki viewer</source>
       <translation>위키 뷰어에 이미지 표시</translation>
     </message>
@@ -7462,7 +7477,7 @@ GNU 일반 공중 사용 허가서 버전 3은 어떤 목적으로든 프로그�
       <translation>캐시된 CivitAI 제공자 메타데이터와 썸네일을 요약합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1323"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1314"></location>
       <source>Summarizes locally cached Danbooru metadata and preview assets.</source>
       <translation>로컬에 캐시된 Danbooru 메타데이터와 미리 보기 자산을 요약합니다.</translation>
     </message>
@@ -7982,7 +7997,7 @@ Diagnostic evidence:
       <translation>워크플로 크기를 업데이트할 수 없어 캔버스 변경을 되돌렸습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="235"></location>
+      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="240"></location>
       <source>The workspace is still loading and cannot be saved yet.</source>
       <translation>작업 공간을 아직 불러오는 중이어서 저장할 수 없습니다.</translation>
     </message>
@@ -8512,7 +8527,7 @@ Diagnostic evidence:
       <translation>안전한 자동 하드웨어 디코딩을 사용하거나 항상 소프트웨어로 디코딩합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="697"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="688"></location>
       <source>Use the ComfyUI page package filter to inspect installed packages and maintenance actions.</source>
       <translation>ComfyUI 페이지의 패키지 필터를 사용하여 설치된 패키지와 유지 관리 작업을 살펴봅니다.</translation>
     </message>
@@ -8542,12 +8557,12 @@ Diagnostic evidence:
       <translation>인증이 필요한 CivitAI 검색과 다운로드에 사용됩니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1579"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1570"></location>
       <source>Used for caution states and warning highlights.</source>
       <translation>주의 상태와 경고 강조 표시에 사용됩니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1592"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1583"></location>
       <source>Used for validation failures and error highlights.</source>
       <translation>검증 실패와 오류 강조 표시에 사용됩니다.</translation>
     </message>
@@ -8662,7 +8677,7 @@ Diagnostic evidence:
       <translation>CivitAI에서 보기</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="590"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="592"></location>
       <source>Visual customization.</source>
       <translation>시각적 사용자 지정입니다.</translation>
     </message>
@@ -8702,7 +8717,7 @@ Diagnostic evidence:
       <translation>경고</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1578"></location>
+      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1569"></location>
       <source>Warning color</source>
       <translation>경고 색상</translation>
     </message>
@@ -8772,7 +8787,12 @@ Diagnostic evidence:
       <translation>와일드카드</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/settings/settings_catalog_builders.py" line="1845"></location>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="63"></location>
+      <source>Window</source>
+      <translation>창</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/settings/appearance_material_settings.py" line="106"></location>
       <source>Window material</source>
       <translation>창 재질</translation>
     </message>
@@ -8892,7 +8912,7 @@ Diagnostic evidence:
       <translation>모델 카트가 비어 있습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="247"></location>
+      <location filename="../substitute/presentation/shell/session_autosave_controller.py" line="252"></location>
       <source>Your recovery save could not be completed, so generation was not started.</source>
       <translation>복구 저장을 완료할 수 없어 생성을 시작하지 않았습니다.</translation>
     </message>

@@ -1,5 +1,5 @@
 schema_version = 1
-reviewed_sources_sha256 = "5c622803554b5c13dc99569d289b91accfa3ebb783d24ab0794a0beae79d13d0"
+reviewed_sources_sha256 = "b90abcca6af2f796be62a2efb93c10b206c567e86704d3a94b74d7a622cf002d"
 
 # Preservation and compatibility defaults are owned by classification in the
 # checker. Overrides below document formats with intentional historical readers.
@@ -32,6 +32,7 @@ current_version = "1"
 classification = "authored_document"
 
 [[formats]]
+# Plain is additive in schema 3; existing material values and defaults remain valid.
 id = "application.appearance-preferences"
 owner = "substitute/domain/appearance/models.py"
 constant = "APPEARANCE_PREFERENCES_SCHEMA_VERSION"

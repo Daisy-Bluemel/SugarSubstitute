@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from substitute.application.appearance import (
     AppearanceResolver,
     WindowMaterialCapabilities,
@@ -32,6 +34,29 @@ from substitute.domain.appearance import (
     SystemColorScheme,
 )
 from tests.application.appearance.support import appearance_preferences
+
+
+@pytest.mark.parametrize("mica_available", (False, True))
+@pytest.mark.parametrize("acrylic_available", (False, True))
+def test_plain_disables_material_with_every_capability_combination(
+    mica_available: bool,
+    acrylic_available: bool,
+) -> None:
+    """Respect explicit Plain even when native materials are available."""
+
+    plain = AppearanceBackdropMode("plain")
+    resolved = AppearanceResolver(
+        WindowMaterialCapabilities(
+            mica_alt_available=mica_available,
+            acrylic_available=acrylic_available,
+        )
+    ).resolve(
+        appearance_preferences(backdrop_mode=plain),
+        system_appearance=SystemAppearanceSnapshot(),
+    )
+
+    assert resolved.requested.backdrop_mode is plain
+    assert resolved.effective_backdrop_mode is None
 
 
 def test_resolver_uses_detected_colors_without_enabling_native_materials() -> None:
