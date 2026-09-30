@@ -69,7 +69,7 @@ def main(argv: list[str] | None = None) -> int:
     environment = _build_environment(depot_tools)
     _run_tool(
         depot_tools / _tool_name("gclient"),
-        ["sync", "--nohooks", "--revision", f"crashpad@{CRASHPAD_REVISION}"],
+        _dependency_sync_arguments(),
         cwd=checkout_root,
         environment=environment,
     )
@@ -94,6 +94,8 @@ def main(argv: list[str] | None = None) -> int:
             str(_ninja_executable(crashpad, depot_tools)),
             "-C",
             str(output_directory),
+            "-j",
+            str(arguments.jobs),
             *targets,
         ],
         cwd=crashpad,
@@ -121,11 +123,26 @@ def _parse_arguments(argv: list[str] | None) -> argparse.Namespace:
     )
     parser.add_argument("--with-probe", action="store_true")
     parser.add_argument(
+        "--jobs",
+        type=_positive_job_count,
+        default=2,
+        help="Maximum concurrent native compile jobs (default: 2)",
+    )
+    parser.add_argument(
         "--clang-path",
         type=Path,
         help="Linux Clang toolchain root containing bin/clang, bin/clang++, and bin/llvm-ar",
     )
     return parser.parse_args(argv)
+
+
+def _positive_job_count(value: str) -> int:
+    """Reject invalid parallelism before fetching or compiling native inputs."""
+
+    count = int(value)
+    if count < 1:
+        raise argparse.ArgumentTypeError("Native build jobs must be positive.")
+    return count
 
 
 def _clone_if_missing(url: str, destination: Path) -> None:
@@ -149,6 +166,22 @@ def _write_gclient(checkout_root: Path) -> None:
         "}]\n",
         encoding="utf-8",
     )
+
+
+def _dependency_sync_arguments() -> list[str]:
+    """Sync native inputs without the pinned Linux developer-only GCS artifact.
+
+    At CRASHPAD_REVISION the only Linux GCS dependency is buildtools clang-format.
+    The build uses Git sources and CIPD GN/Ninja, retaining their upstream pins.
+    gclient's supported dep-type filter avoids invoking gsutil for that unused
+    formatter; custom_deps exclusions do not suppress GCS downloads. Other hosts
+    retain all dependency types, including the Windows compiler archive.
+    """
+
+    arguments = ["sync", "--nohooks", "--revision", f"crashpad@{CRASHPAD_REVISION}"]
+    if sys.platform.startswith("linux"):
+        arguments.append("--ignore-dep-type=gcs")
+    return arguments
 
 
 def _remove_owned_overlay(crashpad: Path) -> None:

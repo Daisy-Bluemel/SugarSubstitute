@@ -180,3 +180,48 @@ def test_direct_script_entrypoint_exposes_compiler_selection(tmp_path: Path) -> 
 
     assert result.returncode == 0, result.stderr
     assert "--clang-path" in result.stdout
+
+
+@pytest.mark.parametrize("platform_name", ("linux", "win32", "darwin"))
+def test_sync_filters_only_developer_gcs_on_linux(
+    monkeypatch: pytest.MonkeyPatch, platform_name: str
+) -> None:
+    """Keep native source pins and non-Linux archives in the sync contract."""
+
+    monkeypatch.setattr(sys, "platform", platform_name)
+
+    arguments = build_crashpad_runtime._dependency_sync_arguments()
+
+    assert arguments[:4] == [
+        "sync",
+        "--nohooks",
+        "--revision",
+        f"crashpad@{build_crashpad_runtime.CRASHPAD_REVISION}",
+    ]
+    assert arguments[4:] == (
+        ["--ignore-dep-type=gcs"] if platform_name == "linux" else []
+    )
+
+
+@pytest.mark.parametrize("value", ("0", "-1", "not-a-number"))
+def test_native_build_rejects_invalid_job_limits(value: str) -> None:
+    """Do not let malformed bounds turn into unlimited Ninja parallelism."""
+
+    with pytest.raises(SystemExit) as error:
+        build_crashpad_runtime._parse_arguments(
+            ["--workspace", "build", "--jobs", value]
+        )
+
+    assert error.value.code == 2
+
+
+def test_native_build_job_limit_is_conservative_and_overridable() -> None:
+    """Bound shared-machine compilation while allowing explicit host capacity."""
+
+    assert build_crashpad_runtime._parse_arguments(["--workspace", "build"]).jobs == 2
+    assert (
+        build_crashpad_runtime._parse_arguments(
+            ["--workspace", "build", "--jobs", "4"]
+        ).jobs
+        == 4
+    )
