@@ -28,6 +28,11 @@ import shutil
 import subprocess
 import sys
 
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from tools.crashpad_toolchain import resolve_clang_toolchain
+
 
 CRASHPAD_REVISION = "60dd943f48d77dc8d05dabc04badbd8561d0b8c4"
 CRASHPAD_SOURCE_URL = "https://chromium.googlesource.com/crashpad/crashpad.git"
@@ -50,6 +55,7 @@ def main(argv: list[str] | None = None) -> int:
 
     arguments = _parse_arguments(argv)
     target = _platform_target()
+    clang_path = resolve_clang_toolchain(arguments.clang_path)
     repo_root = Path(__file__).resolve().parents[1]
     workspace = arguments.workspace.expanduser().resolve()
     depot_tools = workspace / "depot_tools"
@@ -71,7 +77,9 @@ def main(argv: list[str] | None = None) -> int:
     _verify_revision(crashpad)
     _install_overlay(repo_root=repo_root, crashpad=crashpad)
     output_directory = crashpad / "out" / "SugarSubstitute"
-    _write_gn_arguments(output_directory, target_cpu=target.target_cpu)
+    _write_gn_arguments(
+        output_directory, target_cpu=target.target_cpu, clang_path=clang_path
+    )
     _run_tool(
         depot_tools / _tool_name("gn"),
         ["gen", str(output_directory)],
@@ -112,6 +120,11 @@ def _parse_arguments(argv: list[str] | None) -> argparse.Namespace:
         default=Path("third_party") / "bin" / "crashpad",
     )
     parser.add_argument("--with-probe", action="store_true")
+    parser.add_argument(
+        "--clang-path",
+        type=Path,
+        help="Linux Clang toolchain root containing bin/clang, bin/clang++, and bin/llvm-ar",
+    )
     return parser.parse_args(argv)
 
 
@@ -227,14 +240,20 @@ def _install_overlay(*, repo_root: Path, crashpad: Path) -> None:
     )
 
 
-def _write_gn_arguments(output_directory: Path, *, target_cpu: str) -> None:
+def _write_gn_arguments(
+    output_directory: Path, *, target_cpu: str, clang_path: Path | None = None
+) -> None:
     """Configure a release build for the current official architecture."""
 
     output_directory.mkdir(parents=True, exist_ok=True)
-    (output_directory / "args.gn").write_text(
-        f'is_debug = false\ntarget_cpu = "{target_cpu}"\n',
-        encoding="utf-8",
-    )
+    arguments = f'is_debug = false\ntarget_cpu = "{target_cpu}"\n'
+    if clang_path is not None:
+        path = clang_path.as_posix()
+        if any(character in path for character in "\r\n"):
+            raise ValueError("The Clang toolchain path must not contain line breaks.")
+        escaped = path.replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$")
+        arguments += f'clang_path = "{escaped}"\n'
+    (output_directory / "args.gn").write_text(arguments, encoding="utf-8")
 
 
 def _verify_revision(crashpad: Path) -> None:

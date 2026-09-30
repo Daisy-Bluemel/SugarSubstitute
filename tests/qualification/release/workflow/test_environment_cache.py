@@ -408,6 +408,7 @@ def test_crashpad_cache_is_exact_qualified_and_trusted_write_only() -> None:
         "${{ runner.arch }}",
         "$env:CRASHPAD_TARGET",
         "tools/build_crashpad_runtime.py",
+        "tools/crashpad_toolchain.py",
         "native/crashpad",
         "Microsoft.VCToolsVersion.default.txt",
         "windows-sdk=",

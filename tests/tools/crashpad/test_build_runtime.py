@@ -19,9 +19,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+import platform
+import subprocess
+import sys
 
 import pytest
 
+from tools import build_crashpad_runtime
 from tools.build_crashpad_runtime import (
     CrashpadRuntimeTarget,
     _platform_target,
@@ -119,3 +123,60 @@ def test_gn_arguments_use_the_validated_target_cpu(tmp_path: Path) -> None:
     assert (output_directory / "args.gn").read_text(encoding="utf-8") == (
         'is_debug = false\ntarget_cpu = "arm64"\n'
     )
+
+
+def test_gn_arguments_select_the_explicit_clang_root(tmp_path: Path) -> None:
+    """Pass a root to GN, which appends its own bin directory."""
+
+    output_directory = tmp_path / "out"
+    clang_path = tmp_path / "LLVM-toolchain"
+
+    _write_gn_arguments(output_directory, target_cpu="x64", clang_path=clang_path)
+
+    assert (output_directory / "args.gn").read_text(encoding="utf-8") == (
+        'is_debug = false\ntarget_cpu = "x64"\n'
+        f'clang_path = "{clang_path.as_posix()}"\n'
+    )
+
+
+def test_invalid_clang_root_fails_before_source_download(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Reject an unusable explicit toolchain before fetching native sources."""
+
+    monkeypatch.setattr(sys, "platform", "linux")
+    monkeypatch.setattr(platform, "machine", lambda: "x86_64")
+
+    def reject_download(_url: str, _destination: Path) -> None:
+        """Detect prerequisite validation that happens after network work."""
+
+        raise AssertionError("The invalid toolchain must prevent source download.")
+
+    monkeypatch.setattr(build_crashpad_runtime, "_clone_if_missing", reject_download)
+
+    with pytest.raises(RuntimeError, match="Clang toolchain"):
+        build_crashpad_runtime.main(
+            [
+                "--workspace",
+                str(tmp_path / "build"),
+                "--clang-path",
+                str(tmp_path / "missing-clang"),
+            ]
+        )
+
+
+def test_direct_script_entrypoint_exposes_compiler_selection(tmp_path: Path) -> None:
+    """Preserve the direct-file invocation used by the native packaging action."""
+
+    script = Path(build_crashpad_runtime.__file__).resolve()
+    result = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert "--clang-path" in result.stdout

@@ -50,6 +50,7 @@ runs:
         $repositoryRoot = (Resolve-Path -LiteralPath ".").Path
         $inputPaths = @(
           (Resolve-Path -LiteralPath "tools/build_crashpad_runtime.py").Path
+          (Resolve-Path -LiteralPath "tools/crashpad_toolchain.py").Path
         ) + @(
           Get-ChildItem -LiteralPath "native/crashpad" -File -Recurse |
             Sort-Object FullName |
