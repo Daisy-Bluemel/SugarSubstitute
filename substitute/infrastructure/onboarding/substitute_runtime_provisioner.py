@@ -20,12 +20,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import platform
 import subprocess
 import sys
 
 from substitute.application.ports.runtime_provisioner import RuntimeProvisioner
 from substitute.domain.onboarding import RuntimeBootstrapStatus, RuntimeConfiguration
 from substitute.domain.onboarding.runtime_layout import runtime_layout_for_root
+from substitute.infrastructure.onboarding.runtime_torch_dependencies import (
+    install_runtime_torch,
+)
+from sugarsubstitute_shared.app_runtime_torch import app_runtime_torch_policy
 from sugarsubstitute_shared.windows_long_paths import subprocess_path
 
 
@@ -60,6 +65,12 @@ class SubstituteRuntimeProvisioner(RuntimeProvisioner):
             ],
             failure_message="Failed to upgrade runtime packaging tools.",
         )
+        policy = app_runtime_torch_policy(platform.system())
+        torch_requirements = (
+            install_runtime_torch(python_executable, policy)
+            if policy is not None
+            else ()
+        )
         self._run_checked(
             [
                 subprocess_path(python_executable),
@@ -68,6 +79,7 @@ class SubstituteRuntimeProvisioner(RuntimeProvisioner):
                 "install",
                 "-r",
                 subprocess_path(self.requirements_path),
+                *torch_requirements,
             ],
             failure_message="Failed to install Substitute runtime requirements.",
         )

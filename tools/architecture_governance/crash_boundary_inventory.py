@@ -71,6 +71,8 @@ REVIEWED_CRASH_BOUNDARY_ROWS: tuple[CrashBoundaryInventoryRow, ...] = (
     ("process", "substitute/infrastructure/comfy/standalone_environment/tar_extraction_process.py", "NativeTarExtractionProcess.extract", "subprocess.run", 1, "external_extraction_tool"),
     ("process", "substitute/infrastructure/comfy/workspace_python_discovery.py", "probe_comfy_python", "subprocess.run", 1, "external_python_probe"),
     ("process", "substitute/infrastructure/onboarding/launcher_managed_runtime_provisioner.py", "LauncherManagedRuntimeProvisioner._run_checked", "subprocess.run", 1, "external_runtime_provisioning"),
+    ("process", "substitute/infrastructure/onboarding/runtime_torch_dependencies.py", "_installed_versions", "subprocess.run", 1, "external_python_probe"),
+    ("process", "substitute/infrastructure/onboarding/runtime_torch_dependencies.py", "install_runtime_torch", "subprocess.run", 1, "external_runtime_provisioning"),
     ("process", "substitute/infrastructure/onboarding/substitute_runtime_provisioner.py", "SubstituteRuntimeProvisioner._run_checked", "subprocess.run", 1, "external_runtime_provisioning"),
     ("process", "substitute/infrastructure/onboarding/substitute_runtime_provisioner.py", "SubstituteRuntimeProvisioner._runtime_has_pip", "subprocess.run", 1, "external_python_probe"),
     ("process", "substitute/infrastructure/process/hidden_process_runner.py", "run_command", "subprocess.run", 1, "external_tool_process"),
