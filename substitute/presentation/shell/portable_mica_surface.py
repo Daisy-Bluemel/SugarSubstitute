@@ -75,6 +75,7 @@ class PortableMicaSurface(QObject):
         self._dark = dark
         self._ready = False
         self._last_error: str | None = None
+        self._last_logged_error: str | None = None
         self._failed_generation = False
         self._disposed = False
         self._dirty = True
@@ -257,6 +258,7 @@ class PortableMicaSurface(QObject):
         self._presenter.show()
         self._presenter.lower()
         self._present(immediate=False)
+        self._last_logged_error = None
         self._set_ready(True)
 
     @Slot(object)
@@ -308,12 +310,14 @@ class PortableMicaSurface(QObject):
         if self._presenter is not None:
             self._presenter.hide()
         self._set_ready(False)
-        log_warning(
-            _LOGGER,
-            "Portable Mica unavailable; using Plain",
-            provider=self._provider_name,
-            error=reason,
-        )
+        if reason != self._last_logged_error:
+            self._last_logged_error = reason
+            log_warning(
+                _LOGGER,
+                "Portable Mica unavailable; using Plain",
+                provider=self._provider_name,
+                error=reason,
+            )
 
     def _set_ready(self, ready: bool) -> None:
         """Publish effective material state only when it changes."""

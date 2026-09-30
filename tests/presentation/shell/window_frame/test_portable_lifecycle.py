@@ -20,11 +20,13 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from pathlib import Path
+import logging
 from typing import cast
 
 from PySide6.QtCore import QObject, QRect, Signal
 from PySide6.QtGui import QColor, QGuiApplication, QImage, QPixmap, QScreen
 from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtTest import QSignalSpy
 import pytest
 from cutemica.geometry import Rect, ScreenBinding  # type: ignore[import-untyped]
 from cutemica.wallpaper import WallpaperSnapshot, wallpaper_from_path  # type: ignore[import-untyped]
@@ -33,6 +35,7 @@ from substitute.infrastructure.appearance.mica_wallpaper_provider import (
     WatchedWallpaperProvider,
 )
 from substitute.presentation.shell.window_backdrop import WindowBackdrop
+from substitute.presentation.shell.mica_wallpaper_observer import MicaWallpaperObserver
 from substitute.presentation.shell.portable_mica_surface import (
     MicaTheme,
     PortableMicaSurface,
@@ -249,5 +252,64 @@ def test_rejected_new_source_cannot_republish_previous_wallpaper(
         assert window.grab().toImage().pixelColor(50, 50).name() == "#202020"
     finally:
         owner.apply(None, dark=True)
+        window.close()
+        destroy_qt_object(window)
+
+
+def test_repeated_discovery_error_is_logged_once_until_recovery(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Keep retry diagnostics useful without flooding the log for one missing wallpaper."""
+
+    source = tmp_path / "red.png"
+    _source(source)
+    failing = True
+
+    class RecoveringProvider(WatchedWallpaperProvider):
+        """Expose a controllable external metadata failure."""
+
+        def discover(self, bindings: tuple[ScreenBinding, ...]) -> WallpaperSnapshot:
+            """Fail repeatedly until the desktop source becomes available again."""
+
+            if failing:
+                raise RuntimeError("test desktop did not publish wallpaper")
+            return wallpaper_from_path(source)
+
+    provider = RecoveringProvider(source)
+    monkeypatch.setattr(
+        surface_module, "create_mica_wallpaper_provider", lambda: provider
+    )
+    caplog.set_level(logging.WARNING)
+    window = QWidget()
+    window.resize(100, 100)
+    surface = PortableMicaSurface(window, dark=True)
+    try:
+        window.show()
+        wait_for_qt_condition(lambda: surface.last_error is not None)
+        observer = surface.findChild(MicaWallpaperObserver)
+        assert observer is not None
+        failures = QSignalSpy(observer.failed)
+        observer.poll()
+        wait_for_qt_condition(lambda: failures.count() >= 1)
+        records = [
+            record
+            for record in caplog.records
+            if "Portable Mica unavailable" in record.getMessage()
+        ]
+        assert len(records) == 1
+        failing = False
+        observer.poll()
+        wait_for_qt_condition(lambda: surface.ready, timeout_ms=5000)
+        failing = True
+        observer.poll()
+        wait_for_qt_condition(lambda: failures.count() >= 2)
+        records = [
+            record
+            for record in caplog.records
+            if "Portable Mica unavailable" in record.getMessage()
+        ]
+        assert len(records) == 2
+    finally:
+        surface.dispose()
         window.close()
         destroy_qt_object(window)
