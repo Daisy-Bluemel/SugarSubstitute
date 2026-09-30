@@ -1,0 +1,964 @@
+{
+  "captured_utc_date": "2026-09-30",
+  "environment": "Linux X11/xcb, Qt6.11.2, DUMMY0 1364x1024, DPR1",
+  "wallpaper_sha256": {
+    "violet": "0ce2de4a930be172d99c08dd0dc74e217e079e8f90accd795f6fc228a9407955",
+    "orange": "2f310836761ee7087c2481d605851586c45d1d59da1aea8272ac585f58c3ea7f"
+  },
+  "wallpaper_and_explicit_source_identical": true,
+  "captures": [
+    {
+      "utc": "2026-09-30T23:16:13.341349+00:00",
+      "monotonic_ns": 18472298252719,
+      "window_class": "CustomWindow",
+      "window_id": 52428807,
+      "provider": "cutemica",
+      "requested_material": "mica_alt",
+      "dark": false,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        102,
+        142
+      ],
+      "size": [
+        1159,
+        651
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "ready": true,
+      "source_provider": "explicit",
+      "last_error": null,
+      "texture_identity": [
+        [
+          "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+          558345748480
+        ]
+      ],
+      "generation_count": 1,
+      "registration": "global",
+      "geometry": {
+        "native_rect_px": {
+          "x": 102.0,
+          "y": 142.0,
+          "width": 1159.0,
+          "height": 651.0
+        },
+        "local_width_dip": 1159,
+        "local_height_dip": 651
+      },
+      "paint_average_ms": 0.6098932497999547,
+      "paint_maximum_ms": 2.489423997758422,
+      "image": "mica-violet-light.png",
+      "image_sha256": "2c4832a77be76ad91bce02e7c4c4257f603fa801d3aa0f28e5d550f0a2470f24"
+    },
+    {
+      "utc": "2026-09-30T23:16:31.999266+00:00",
+      "monotonic_ns": 18490956168386,
+      "window_class": "CustomWindow",
+      "window_id": 52428807,
+      "provider": "cutemica",
+      "requested_material": "mica_alt",
+      "dark": false,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        102,
+        142
+      ],
+      "size": [
+        1159,
+        651
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "ready": true,
+      "source_provider": "explicit",
+      "last_error": null,
+      "texture_identity": [
+        [
+          "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+          932007903232
+        ]
+      ],
+      "generation_count": 2,
+      "registration": "global",
+      "geometry": {
+        "native_rect_px": {
+          "x": 102.0,
+          "y": 142.0,
+          "width": 1159.0,
+          "height": 651.0
+        },
+        "local_width_dip": 1159,
+        "local_height_dip": 651
+      },
+      "paint_average_ms": 0.6205432331626071,
+      "paint_maximum_ms": 2.489423997758422,
+      "image": "mica-orange-light.png",
+      "image_sha256": "2449ac6553a20f06f8b7d62b30338e2efd4f4a280b4f7b950ac76bc20e8d6917"
+    },
+    {
+      "utc": "2026-09-30T23:40:16.481122+00:00",
+      "monotonic_ns": 19915438025431,
+      "window_class": "CustomWindow",
+      "window_id": 52428807,
+      "provider": "plain",
+      "requested_material": null,
+      "dark": false,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        102,
+        142
+      ],
+      "size": [
+        1159,
+        651
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "image": "plain-light.png",
+      "image_sha256": "9631e820dd387b71848a8c36a3bf1d50ebba8cb5903c6831d1dab9f00fc6a0f5"
+    },
+    {
+      "utc": "2026-09-30T23:21:51.433989+00:00",
+      "monotonic_ns": 18810390891908,
+      "window_class": "CustomWindow",
+      "window_id": 52428925,
+      "provider": "cutemica",
+      "requested_material": "mica_alt",
+      "dark": true,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        102,
+        142
+      ],
+      "size": [
+        1159,
+        651
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "ready": true,
+      "source_provider": "explicit",
+      "last_error": null,
+      "texture_identity": [
+        [
+          "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+          2061584302080
+        ]
+      ],
+      "generation_count": 1,
+      "registration": "global",
+      "geometry": {
+        "native_rect_px": {
+          "x": 102.0,
+          "y": 142.0,
+          "width": 1159.0,
+          "height": 651.0
+        },
+        "local_width_dip": 1159,
+        "local_height_dip": 651
+      },
+      "paint_average_ms": 0.9138554543658922,
+      "paint_maximum_ms": 1.3486889984051231,
+      "image": "mica-orange-dark.png",
+      "image_sha256": "1eb02e7614aa430c3fca731a9ad52abbc2adbf6aee40007ffade986e4c1f9607"
+    },
+    {
+      "utc": "2026-09-30T23:23:22.162226+00:00",
+      "monotonic_ns": 18901119127128,
+      "window_class": "CustomWindow",
+      "window_id": 52428945,
+      "provider": "plain",
+      "requested_material": null,
+      "dark": true,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        102,
+        142
+      ],
+      "size": [
+        1159,
+        651
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "image": "plain-dark.png",
+      "image_sha256": "faeaca08e850f9321eed90f5092727fd5064706b6b5e5c60136a0d17c0aa00e8"
+    },
+    {
+      "utc": "2026-09-30T23:34:26.463939+00:00",
+      "monotonic_ns": 19565420846190,
+      "window_class": "SplashWindow",
+      "window_id": 46137351,
+      "provider": "cutemica",
+      "requested_material": "mica",
+      "dark": false,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        403,
+        189
+      ],
+      "size": [
+        558,
+        558
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "ready": true,
+      "source_provider": "explicit",
+      "last_error": null,
+      "texture_identity": [
+        [
+          "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+          493921239040
+        ]
+      ],
+      "generation_count": 1,
+      "registration": "global",
+      "geometry": {
+        "native_rect_px": {
+          "x": 403.0,
+          "y": 189.0,
+          "width": 558.0,
+          "height": 558.0
+        },
+        "local_width_dip": 558,
+        "local_height_dip": 558
+      },
+      "paint_average_ms": 0.6331365678661159,
+      "paint_maximum_ms": 3.563274000043748,
+      "image": "splash-mica-light.png",
+      "image_sha256": "622d87fb242a9367e3ebd918e50efa0e256f71c3e6d7c2b9736e63ae84a3c049"
+    },
+    {
+      "utc": "2026-09-30T23:25:04.040193+00:00",
+      "monotonic_ns": 19002997099062,
+      "window_class": "SplashWindow",
+      "window_id": 46137351,
+      "provider": "cutemica",
+      "requested_material": "mica",
+      "dark": true,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        403,
+        189
+      ],
+      "size": [
+        558,
+        558
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "ready": true,
+      "source_provider": "explicit",
+      "last_error": null,
+      "texture_identity": [
+        [
+          "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+          493921239040
+        ]
+      ],
+      "generation_count": 1,
+      "registration": "global",
+      "geometry": {
+        "native_rect_px": {
+          "x": 403.0,
+          "y": 189.0,
+          "width": 558.0,
+          "height": 558.0
+        },
+        "local_width_dip": 558,
+        "local_height_dip": 558
+      },
+      "paint_average_ms": 0.3881126666076145,
+      "paint_maximum_ms": 3.376208998815855,
+      "image": "splash-mica-dark.png",
+      "image_sha256": "b5ece5db1b7604d24e6ec0e33ee719b51c53b390a4cdcbc3a6eff76b7b9c730c"
+    },
+    {
+      "utc": "2026-09-30T23:38:55.044392+00:00",
+      "monotonic_ns": 19834001295278,
+      "window_class": "SplashWindow",
+      "window_id": 46137351,
+      "provider": "plain",
+      "requested_material": null,
+      "dark": false,
+      "active": true,
+      "visible": true,
+      "global_origin": [
+        403,
+        189
+      ],
+      "size": [
+        558,
+        558
+      ],
+      "qt_platform": "xcb",
+      "qt_version": "6.11.2",
+      "device_pixel_ratio": 1.0,
+      "mask_empty": false,
+      "mask_contains_corner": false,
+      "maximized": false,
+      "fullscreen": false,
+      "image": "splash-plain-light.png",
+      "image_sha256": "fd777a7173226b73f428c9d68552929dfebafabd9c42b0e24742b13e19157685"
+    },
+    {
+      "image": "clean-source-mica-light.png",
+      "image_sha256": "bb7fcb3ae30d17acf47c9ca762eca1e710fd687e50b7e58eb5aff3087cf0a132",
+      "capture": "ImageMagick import of actual native window after full clean-source relaunch",
+      "utc": "2026-09-30T23:47:48.473051+00:00",
+      "source_hooks_present": false,
+      "theme": "Light",
+      "material_setting": "Mica"
+    }
+  ],
+  "held_drag": {
+    "capture_interval_ms": 100,
+    "total_samples": 200,
+    "move_events": 29,
+    "paint_events": 31,
+    "samples_with_position_change": [
+      {
+        "utc": "2026-09-30T23:18:16.937690+00:00",
+        "monotonic_ns": 18595894582594,
+        "provider": "cutemica",
+        "ready": true,
+        "active": true,
+        "global_origin": [
+          102,
+          142
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:17.358391+00:00",
+        "monotonic_ns": 18596315283820,
+        "provider": "cutemica",
+        "ready": true,
+        "active": true,
+        "global_origin": [
+          109,
+          159
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:17.453400+00:00",
+        "monotonic_ns": 18596410297511,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          123,
+          202
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:17.554832+00:00",
+        "monotonic_ns": 18596511726121,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          142,
+          269
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:17.667782+00:00",
+        "monotonic_ns": 18596624675543,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          154,
+          312
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:17.753362+00:00",
+        "monotonic_ns": 18596710254671,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          141,
+          348
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:17.852874+00:00",
+        "monotonic_ns": 18596809768986,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          107,
+          326
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:17.953969+00:00",
+        "monotonic_ns": 18596910861937,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          80,
+          284
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:18.050979+00:00",
+        "monotonic_ns": 18597007871670,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          55,
+          247
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:18.152997+00:00",
+        "monotonic_ns": 18597109890413,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          29,
+          208
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:18.268259+00:00",
+        "monotonic_ns": 18597225153029,
+        "provider": "cutemica",
+        "ready": true,
+        "active": false,
+        "global_origin": [
+          0,
+          158
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      },
+      {
+        "utc": "2026-09-30T23:18:18.346782+00:00",
+        "monotonic_ns": 18597303675315,
+        "provider": "cutemica",
+        "ready": true,
+        "active": true,
+        "global_origin": [
+          -18,
+          142
+        ],
+        "size": [
+          1159,
+          651
+        ],
+        "generation_count": 2,
+        "texture_identity": [
+          [
+            "qt-screen-0:DUMMY0:0,0,1364,1024:1.000",
+            932007903232
+          ]
+        ]
+      }
+    ],
+    "events": [
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596256507512
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596258694132
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596259086772
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596288354540
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596292139294
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596345970002
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596351969597
+      },
+      {
+        "type": "ActivationChange",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596381207140
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596385637554
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596386374353
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596438244301
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596440153083
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596468498443
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596468941560
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596491452974
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596491808579
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596538213106
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596539320902
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596571391907
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596572128255
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596602285811
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596602731181
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596658071916
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596659268637
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596686276014
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596687012152
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596736236615
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596736753203
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596761193118
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596761570686
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596787672802
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596788276410
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596840277020
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596840899696
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596868841224
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596869359183
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596890674789
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596891322994
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596936272001
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596936837422
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596960278254
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596960643614
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18596985549029
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18596986130394
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597036182828
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597036747318
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597058415724
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597058784729
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597085840674
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597086349119
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597136213371
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597136843749
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597158034837
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597158641990
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597178316487
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597178849469
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597202325674
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597203021000
+      },
+      {
+        "type": "Move",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597252706838
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597253303095
+      },
+      {
+        "type": "ActivationChange",
+        "object": "CustomWindow",
+        "monotonic_ns": 18597280634480
+      },
+      {
+        "type": "Paint",
+        "object": "MicaBackdropPresenter",
+        "monotonic_ns": 18597285230564
+      }
+    ],
+    "all_samples_ready": true,
+    "all_samples_cutemica": true,
+    "texture_generations": [
+      2
+    ]
+  },
+  "workflow": {
+    "output": "002_01_untitled_workflow_load_image.png",
+    "size": [
+      320,
+      240
+    ],
+    "pixel_identical_to_input": true,
+    "queue": "idle"
+  },
+  "limitations": [
+    "Default XFCE wallpaper discovery unavailable on custom Orbit desktop; successful renderer checks use explicit matching image source",
+    "Fast moving-window screenshots had compositor offset and dock overlap; none are published as clean visual proof",
+    "Windows/macOS native runtime not tested",
+    "Aggregate repository suites and package build pending at capture time"
+  ],
+  "source_checkpoint": "94ccf72968112cf01cf9aa337716a4b222dffe54"
+}
