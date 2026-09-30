@@ -40,6 +40,7 @@ from sugarsubstitute_shared.launch_splash.session import (
 from sugarsubstitute_shared.localization import app_text, format_locale_argument
 from sugarsubstitute_shared.application_launch_context import (
     ApplicationLaunchIntent,
+    application_launch_install_root,
     application_launch_intent,
 )
 
@@ -64,7 +65,11 @@ from substitute.app.bootstrap.standalone_long_lived_execution import (
     StandaloneLongLivedExecutionOwner,
 )
 from substitute.shared.logging.logger import get_logger, log_warning
-from sugarsubstitute_shared.windows_long_paths import subprocess_working_directory
+from sugarsubstitute_shared.windows_long_paths import (
+    operational_path,
+    subprocess_path,
+    subprocess_working_directory,
+)
 
 
 _LOGGER = get_logger("app.bootstrap.early_launch_splash")
@@ -88,6 +93,14 @@ def start_early_launch_splash(
         return None, None
 
     cancel_relay = LaunchSplashCancelRelay()
+    install_root = operational_path(
+        application_launch_install_root(
+            argv,
+            app_root=operational_path(
+                os.environ.get("SUGARSUBSTITUTE_INSTALL_ROOT") or app_root
+            ),
+        )
+    ).resolve()
     adopted_spec: SplashSessionSpec | None = None
     splash, adopted_spec = _adopt_existing_launch_splash(argv)
     adopted_existing_splash = splash is not None
@@ -96,6 +109,7 @@ def start_early_launch_splash(
             app_root,
             cancel_relay,
             language_identifier,
+            install_root,
         )
     if isinstance(splash, NullLaunchSplashClient):
         return None, None
@@ -123,6 +137,7 @@ def start_early_launch_splash(
                 app_root,
                 cancel_relay,
                 language_identifier,
+                install_root,
             )
             if isinstance(splash, NullLaunchSplashClient):
                 return None, None
@@ -167,6 +182,7 @@ def _start_new_launch_splash(
     app_root: Path,
     cancel_relay: LaunchSplashCancelRelay,
     language_identifier: str,
+    install_root: Path,
 ) -> tuple[LaunchSplashClient, SplashSessionSpec | None]:
     """Start an app-owned shared launch-splash session."""
 
@@ -174,6 +190,7 @@ def _start_new_launch_splash(
         app_root=app_root,
         on_cancel_requested=cancel_relay.request_cancel,
         language_identifier=language_identifier,
+        install_root=install_root,
         process_pump_task_factory=_create_early_process_pump_task,
     )
 
@@ -183,6 +200,7 @@ def start_shared_launch_splash(
     app_root: Path,
     on_cancel_requested: Callable[[], None],
     language_identifier: str,
+    install_root: Path,
     process_pump_task_factory: Callable[
         [TaskIdentity, ExecutionContext, ProcessPumpWork, str],
         ProcessPumpTaskHandle,
@@ -196,6 +214,7 @@ def start_shared_launch_splash(
                 sys.executable,
                 "-m",
                 _SHARED_SPLASH_HOST_MODULE,
+                f"--install-root={subprocess_path(install_root)}",
                 format_locale_argument(language_identifier),
             ],
             cwd=subprocess_working_directory(app_root),

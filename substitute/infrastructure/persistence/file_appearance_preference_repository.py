@@ -56,7 +56,7 @@ class FileAppearancePreferenceRepository(AppearancePreferenceRepository):
             return default_appearance_preferences()
         try:
             payload = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as error:
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
             log_warning(
                 _LOGGER,
                 "Failed to load appearance preferences; using defaults.",

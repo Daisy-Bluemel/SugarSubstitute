@@ -175,6 +175,7 @@ def _start_splash_host_process(
         subprocess_path(layout.runtime_python),
         "-m",
         _HOST_MODULE,
+        f"--install-root={subprocess_path(layout.root)}",
     ]
     if locale_override is not None:
         command.append(f"--locale={locale_override}")

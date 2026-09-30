@@ -79,6 +79,7 @@ def test_launcher_splash_session_starts_host_and_returns_app_args(
         subprocess_path(layout.runtime_python),
         "-m",
         "substitute.app.bootstrap.shared_splash_host",
+        f"--install-root={subprocess_path(layout.root)}",
         "--locale=ja",
     ]
     assert calls[0]["cwd"] == layout.root

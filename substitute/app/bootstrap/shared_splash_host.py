@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass, field
 import os
+from pathlib import Path
 import sys
 from threading import Event
 import time
@@ -95,13 +96,34 @@ def main(argv: list[str] | None = None) -> int:
     application_ready_monotonic_ns = time.monotonic_ns()
     icon_ready_monotonic_ns = time.monotonic_ns()
     from substitute.presentation.shell.splash_window import SplashWindow
+    from substitute.app.bootstrap.early_splash_appearance import (
+        resolve_early_splash_appearance,
+    )
+    from substitute.infrastructure.appearance.qt_system_appearance import (
+        QtSystemAppearanceProvider,
+    )
 
     splash_module_ready_monotonic_ns = time.monotonic_ns()
+    appearance = resolve_early_splash_appearance(
+        args.install_root,
+        system_appearance=QtSystemAppearanceProvider().probe().snapshot,
+    )
+    theme_mode = args.theme_mode or appearance.effective_theme_mode.value
+    accent_color = args.accent_color or appearance.effective_accent_color
+    backdrop_mode = (
+        _backdrop_mode_value(args.backdrop_mode)
+        if args.backdrop_mode is not None
+        else (
+            _backdrop_mode_value(appearance.effective_backdrop_mode.value)
+            if appearance.effective_backdrop_mode is not None
+            else None
+        )
+    )
 
     splash = SplashWindow(
-        backdrop_mode=_backdrop_mode_value(args.backdrop_mode),
-        theme_mode=args.theme_mode or "dark",
-        accent_color=args.accent_color or "#E91E63",
+        backdrop_mode=backdrop_mode,
+        theme_mode=theme_mode,
+        accent_color=accent_color,
         defer_animation_until_first_paint=True,
     )
     splash_constructed_monotonic_ns = time.monotonic_ns()
@@ -110,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
 
     splash.firstFramePainted.connect(
         lambda: schedule_splash_theme(
-            owner=splash, theme_mode=args.theme_mode, accent_color=args.accent_color
+            owner=splash, theme_mode=theme_mode, accent_color=accent_color
         )
     )
 
@@ -428,6 +450,11 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--backdrop-mode", type=str, required=False)
     parser.add_argument("--maximum-lifetime-seconds", type=float, default=0.0)
     parser.add_argument("--locale", type=str, default=None)
+    parser.add_argument(
+        "--install-root",
+        type=Path,
+        default=Path(os.environ.get("SUGARSUBSTITUTE_INSTALL_ROOT") or Path.cwd()),
+    )
     return parser.parse_args(argv)
 
 

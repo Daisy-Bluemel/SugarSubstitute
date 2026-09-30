@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QApplication
@@ -26,18 +28,57 @@ from qfluentwidgets import Theme, qconfig  # type: ignore[import-untyped]
 from substitute.app.bootstrap import shared_splash_host
 from substitute.presentation.shell.splash_progress_panel import SplashProgressPanel
 from substitute.presentation.shell.splash_window import SplashWindow
+from substitute.domain.appearance import (
+    AppearanceAccentSource,
+    AppearanceBackdropMode,
+    AppearanceThemeMode,
+    default_appearance_preferences,
+)
+from substitute.infrastructure.persistence.file_appearance_preference_repository import (
+    FileAppearancePreferenceRepository,
+)
 from tests.presentation.theme.support import fluent_theme
 from tests.support.qt.lifecycle import destroy_qt_object, ensure_qt_application
 from tests.support.qt.semantic_wait import wait_for_qt_condition
 
 
 @pytest.mark.parametrize("requested_theme", ["dark", "light"])
+@pytest.mark.parametrize("explicit_arguments", [False, True])
 def test_shared_host_applies_requested_fluent_appearance(
-    monkeypatch: pytest.MonkeyPatch, requested_theme: str
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    requested_theme: str,
+    explicit_arguments: bool,
 ) -> None:
-    """Render requested controls even when QFluent begins in the opposite theme."""
+    """Honor saved appearance and explicit overrides before constructing the real splash."""
     app = ensure_qt_application()
     windows: list[SplashWindow] = []
+    saved_theme = (
+        ("light" if requested_theme == "dark" else "dark")
+        if explicit_arguments
+        else requested_theme
+    )
+    preferences = (
+        default_appearance_preferences()
+        .with_theme_mode(AppearanceThemeMode(saved_theme))
+        .with_backdrop_mode(
+            AppearanceBackdropMode.MICA_ALT
+            if explicit_arguments
+            else AppearanceBackdropMode.PLAIN
+        )
+        .with_accent_source(AppearanceAccentSource.CUSTOM)
+        .with_custom_accent_color("#123456")
+    )
+    FileAppearancePreferenceRepository(tmp_path / "user" / "settings").save(preferences)
+    arguments = [f"--install-root={tmp_path}"]
+    if explicit_arguments:
+        arguments.extend(
+            [
+                "--theme-mode=" + requested_theme,
+                "--accent-color=#e91e63",
+                "--backdrop-mode=none",
+            ]
+        )
 
     def observe_event_loop() -> int:
         """Drive real queued enrichment without taking over the test event loop."""
@@ -48,6 +89,8 @@ def test_shared_host_applies_requested_fluent_appearance(
         )
         assert len(windows) == 1
         splash = windows[0]
+        assert splash._dark_theme_enabled == (requested_theme == "dark")
+        assert splash._backdrop_mode is None
         wait_for_qt_condition(
             lambda: bool(splash.findChildren(SplashProgressPanel)),
             description="standalone splash Fluent progress controls",
@@ -56,7 +99,9 @@ def test_shared_host_applies_requested_fluent_appearance(
         assert qconfig.theme == (
             Theme.DARK if requested_theme == "dark" else Theme.LIGHT
         )
-        assert qconfig.themeColor.value == QColor("#e91e63")
+        assert qconfig.themeColor.value == QColor(
+            "#e91e63" if explicit_arguments else "#123456"
+        )
         expected_text = QColor("white" if requested_theme == "dark" else "black")
         panel.status.ensurePolished()
         assert (
@@ -70,16 +115,7 @@ def test_shared_host_applies_requested_fluent_appearance(
         accent_color=QColor("#009faa"),
     ):
         try:
-            assert (
-                shared_splash_host.main(
-                    [
-                        "--theme-mode=" + requested_theme,
-                        "--accent-color=#e91e63",
-                        "--backdrop-mode=none",
-                    ]
-                )
-                == 0
-            )
+            assert shared_splash_host.main(arguments) == 0
         finally:
             for window in windows:
                 destroy_qt_object(window)
