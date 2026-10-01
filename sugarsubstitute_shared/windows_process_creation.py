@@ -24,12 +24,23 @@ from ctypes import wintypes
 import os
 from pathlib import Path
 import subprocess
+from typing import Protocol, cast
+
+from sugarsubstitute_shared.windows_ctypes import windows_error, windows_last_error
 
 from sugarsubstitute_shared.windows_process_job_api import (
     ProcessInformation,
     StartupInfoEx,
     load_kernel,
 )
+
+
+class _WindowsCrt(Protocol):
+    """Describe the imported Windows CRT without requiring host-specific stubs."""
+
+    def get_osfhandle(self, fd: int, /) -> int:
+        """Borrow the native handle owned by an existing CRT file descriptor."""
+        ...
 
 
 def create_windows_process(
@@ -66,13 +77,13 @@ def create_windows_process(
         None, attribute_count, 0, ctypes.byref(size)
     )
     if not size.value:
-        raise ctypes.WinError(ctypes.get_last_error())
+        raise windows_error(windows_last_error())
     attributes = ctypes.create_string_buffer(size.value)
     try:
         if not kernel.InitializeProcThreadAttributeList(
             attributes, attribute_count, 0, ctypes.byref(size)
         ):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
         attributes_initialized = True
         with open(os.devnull, "rb") as null_input:
             for fd in (
@@ -84,14 +95,14 @@ def create_windows_process(
                 current = kernel.GetCurrentProcess()
                 if not kernel.DuplicateHandle(
                     current,
-                    msvcrt.get_osfhandle(fd),
+                    cast(_WindowsCrt, msvcrt).get_osfhandle(fd),
                     current,
                     ctypes.byref(duplicate),
                     0,
                     True,
                     2,
                 ):
-                    raise ctypes.WinError(ctypes.get_last_error())
+                    raise windows_error(windows_last_error())
                 assert duplicate.value is not None
                 handles.append(duplicate.value)
             inherited = (wintypes.HANDLE * len(handles))(*handles)
@@ -104,7 +115,7 @@ def create_windows_process(
                 None,
                 None,
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             if job is not None:
                 jobs = (wintypes.HANDLE * 1)(job)
                 if not kernel.UpdateProcThreadAttribute(
@@ -116,7 +127,7 @@ def create_windows_process(
                     None,
                     None,
                 ):
-                    raise ctypes.WinError(ctypes.get_last_error())
+                    raise windows_error(windows_last_error())
             startup = StartupInfoEx()
             startup.startup.size = ctypes.sizeof(startup)
             startup.startup.flags = 0x00000100
@@ -146,7 +157,7 @@ def create_windows_process(
                 ctypes.byref(startup),
                 ctypes.byref(process),
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
         return process
     finally:
         if attributes_initialized:
