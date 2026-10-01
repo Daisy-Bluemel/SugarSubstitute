@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Protocol, cast
 from uuid import UUID
 
 from PySide6.QtCore import QObject, QSize, Signal
@@ -91,6 +92,13 @@ _EDITOR_POLICY = EditorPolicy(
     ),
     noneditable_paint=NonEditablePaintPolicy.REJECT,
 )
+
+
+class _CanvasBlankingPort(Protocol):
+    """Describe public nondestructive blanking omitted by CuteCanvas's stub."""
+
+    def blank(self) -> None:
+        """Cancel pointer interaction and hide pixels while retaining caches."""
 
 
 class InputCanvasDocument(QObject):
@@ -321,7 +329,11 @@ class InputCanvasDocument(QObject):
         """Open one registered composition or clear active presentation state."""
 
         if image_id is None:
+            # Cancel pointer work while its original composition is still active.
+            cast(_CanvasBlankingPort, self._canvas).blank()
             self._session.clear_activation()
+            self._tool_context.refresh()
+            self._tool_options.publish_composition_changed()
             return True
         record = self._catalog.record_for(image_id)
         if record is None:
