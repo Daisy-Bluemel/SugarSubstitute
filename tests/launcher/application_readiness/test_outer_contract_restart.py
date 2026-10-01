@@ -43,6 +43,11 @@ from sugarsubstitute_shared.application_readiness import (
     READINESS_SCHEMA_ENV,
     READINESS_SCHEMA_VERSION,
     READINESS_TOKEN_ENV,
+    without_application_readiness_environment,
+)
+from tests.launcher.application_readiness.real_process_fixture import (
+    ReadinessProcessFixture,
+    readiness_process_fixture,
 )
 
 
@@ -360,137 +365,113 @@ def test_supervisor_replaces_outer_receipt_across_real_processes(
 
     layout = InstallLayout.from_root(tmp_path / "install")
     receipt_path = tmp_path / "qualification" / "candidate.json"
-    supervisor = ApplicationReadinessSupervisor(
-        accepted_surfaces=(
-            ApplicationReadinessSurface.MAIN_SHELL,
-            ApplicationReadinessSurface.ONBOARDING,
-        ),
-        timeout_seconds=10,
-    )
-    script = (
-        "import os, time; "
-        "from pathlib import Path; "
-        "from sugarsubstitute_shared.application_readiness import "
-        "ApplicationReadinessReceipt, ApplicationReadinessSurface, "
-        "READINESS_PATH_ENV, READINESS_TOKEN_ENV, "
-        "publish_application_readiness_receipt; "
-        "Path(os.environ['TEST_PID_PATH']).write_text("
-        "str(os.getpid()), encoding='utf-8'); "
-        "publish_application_readiness_receipt("
-        "receipt_path=Path(os.environ[READINESS_PATH_ENV]), "
-        "receipt=ApplicationReadinessReceipt("
-        "pid=os.getpid(), parent_pid=os.getppid(), "
-        "token=os.environ[READINESS_TOKEN_ENV], "
-        "surface=ApplicationReadinessSurface(os.environ['TEST_SURFACE']))); "
-        "time.sleep(1)"
-    )
     outer_environment = {
+        **without_application_readiness_environment(os.environ),
         READINESS_ACCEPTED_SCHEMA_VERSIONS_ENV: "5",
         READINESS_PATH_ENV: str(receipt_path),
         READINESS_TOKEN_ENV: "outer-token",
         READINESS_SCHEMA_ENV: str(READINESS_SCHEMA_VERSION),
     }
-    onboarding_pid_path = tmp_path / "onboarding.pid"
-    main_shell_pid_path = tmp_path / "main-shell.pid"
+    with readiness_process_fixture(tmp_path) as fixture:
+        supervisor = ApplicationReadinessSupervisor(
+            accepted_surfaces=(
+                ApplicationReadinessSurface.MAIN_SHELL,
+                ApplicationReadinessSurface.ONBOARDING,
+            ),
+            timeout_seconds=10,
+            process_starter=fixture.start,
+        )
+        onboarding_pid_path = tmp_path / "onboarding.pid"
+        onboarding_process = supervisor.launch_until_ready(
+            layout=layout,
+            command=fixture.command(),
+            environment={
+                **outer_environment,
+                **fixture.environment,
+                "TEST_SURFACE": ApplicationReadinessSurface.ONBOARDING.value,
+                "TEST_PID_PATH": str(onboarding_pid_path),
+            },
+        )
+        onboarding_receipt = ApplicationReadinessReceipt.from_json(
+            json.loads(receipt_path.read_text(encoding="utf-8"))
+        )
+        assert onboarding_receipt.pid == int(
+            onboarding_pid_path.read_text(encoding="utf-8")
+        )
+        assert onboarding_process.pid in {
+            onboarding_receipt.pid,
+            onboarding_receipt.parent_pid,
+            *onboarding_receipt.attester_pids,
+        }
+        assert os.getpid() in onboarding_receipt.attester_pids
+        assert onboarding_receipt.token == "outer-token"
+        assert onboarding_receipt.surface is ApplicationReadinessSurface.ONBOARDING
+        fixture.release(onboarding_process)
 
-    onboarding_process = supervisor.launch_until_ready(
-        layout=layout,
-        command=[sys.executable, "-c", script],
-        environment={
-            **outer_environment,
-            "TEST_SURFACE": ApplicationReadinessSurface.ONBOARDING.value,
-            "TEST_PID_PATH": str(onboarding_pid_path),
-        },
-    )
-    onboarding_receipt = ApplicationReadinessReceipt.from_json(
-        json.loads(receipt_path.read_text(encoding="utf-8"))
-    )
-    assert onboarding_receipt.pid == int(
-        onboarding_pid_path.read_text(encoding="utf-8")
-    )
-    assert onboarding_process.pid in {
-        onboarding_receipt.parent_pid,
-        *onboarding_receipt.attester_pids,
-    }
-    assert os.getpid() in onboarding_receipt.attester_pids
-    assert onboarding_process.wait(timeout=5) == 0
-    main_shell_process = supervisor.launch_until_ready(
-        layout=layout,
-        command=[sys.executable, "-c", script],
-        environment={
-            **outer_environment,
-            "TEST_SURFACE": ApplicationReadinessSurface.MAIN_SHELL.value,
-            "TEST_PID_PATH": str(main_shell_pid_path),
-        },
-    )
-    try:
+        main_shell_pid_path = tmp_path / "main-shell.pid"
+        main_shell_process = supervisor.launch_until_ready(
+            layout=layout,
+            command=fixture.command(),
+            environment={
+                **outer_environment,
+                **fixture.environment,
+                "TEST_SURFACE": ApplicationReadinessSurface.MAIN_SHELL.value,
+                "TEST_PID_PATH": str(main_shell_pid_path),
+            },
+        )
         final_receipt = ApplicationReadinessReceipt.from_json(
             json.loads(receipt_path.read_text(encoding="utf-8"))
         )
         assert final_receipt.pid == int(main_shell_pid_path.read_text(encoding="utf-8"))
         assert main_shell_process.pid in {
+            final_receipt.pid,
             final_receipt.parent_pid,
             *final_receipt.attester_pids,
         }
         assert os.getpid() in final_receipt.attester_pids
         assert main_shell_process.pid != onboarding_process.pid
+        assert final_receipt.pid != onboarding_receipt.pid
         assert final_receipt.token == "outer-token"
         assert final_receipt.surface is ApplicationReadinessSurface.MAIN_SHELL
-    finally:
-        assert main_shell_process.wait(timeout=5) == 0
+        fixture.release(main_shell_process)
 
 
 def test_real_nested_launcher_relay_is_accepted_by_schema_three_outer(
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """A 0.22-era outer must accept readiness relayed by the current launcher."""
 
     layout = InstallLayout.from_root(tmp_path / "install")
     receipt_path = tmp_path / "qualification" / "candidate.json"
-    app_script = (
-        "import os, threading; "
-        "from pathlib import Path; "
-        "from sugarsubstitute_shared.application_readiness import "
-        "ApplicationReadinessReceipt, ApplicationReadinessSurface, "
-        "READINESS_PATH_ENV, READINESS_TOKEN_ENV, "
-        "publish_application_readiness_receipt; "
-        "publish_application_readiness_receipt("
-        "receipt_path=Path(os.environ[READINESS_PATH_ENV]), "
-        "receipt=ApplicationReadinessReceipt("
-        "pid=os.getpid(), parent_pid=os.getppid(), "
-        "token=os.environ[READINESS_TOKEN_ENV], "
-        "surface=ApplicationReadinessSurface.MAIN_SHELL)); "
-        "threading.Event().wait()"
-    )
-    nested_launcher_script = (
-        "import os, sys; "
-        "from pathlib import Path; "
-        "from launcher.sugarsubstitute_launcher.application_readiness_supervisor "
-        "import ApplicationReadinessSupervisor; "
-        "from launcher.sugarsubstitute_launcher.install_layout import InstallLayout; "
-        "process=ApplicationReadinessSupervisor(timeout_seconds=10).launch_until_ready("
-        "layout=InstallLayout.from_root(Path(os.environ['TEST_INSTALL_ROOT'])), "
-        f"command=[sys.executable, '-c', {app_script!r}], environment=os.environ); "
-        "process.terminate(); process.wait(timeout=5)"
-    )
+    monkeypatch.setenv(READINESS_SCHEMA_ENV, "5")
+    monkeypatch.setenv(READINESS_ACCEPTED_SCHEMA_VERSIONS_ENV, "5")
+    monkeypatch.setenv(READINESS_DELEGATION_PATH_ENV, str(tmp_path / "unrelated.json"))
+    monkeypatch.setenv(READINESS_DELEGATION_TOKEN_ENV, "unrelated-token")
+    monkeypatch.setenv(READINESS_DELEGATION_SCHEMA_ENV, "5")
     environment = {
-        **os.environ,
+        **without_application_readiness_environment(os.environ),
         READINESS_PATH_ENV: str(receipt_path),
         READINESS_TOKEN_ENV: "legacy-outer-token",
         "TEST_INSTALL_ROOT": str(layout.root),
     }
-
-    base_python = Path(sys.base_prefix) / "python.exe"
-    with subprocess.Popen(
-        [str(base_python), "-c", nested_launcher_script],
-        env=environment,
-    ) as process:
-        try:
-            assert process.wait(timeout=15) == 0
-        finally:
-            if process.poll() is None:
-                process.kill()
-                process.wait(timeout=5)
+    # The Windows venv redirector would insert an extra parent hop into schema 3.
+    base_python = (
+        Path(sys.base_prefix) / "python.exe"
+        if sys.platform == "win32"
+        else Path(sys.executable)
+    )
+    with readiness_process_fixture(tmp_path) as fixture:
+        process, _log_path = fixture.start(
+            [
+                str(base_python),
+                "-c",
+                "from tests.launcher.application_readiness.real_process_fixture "
+                "import run_legacy_launcher; run_legacy_launcher()",
+            ],
+            environment,
+        )
+        assert process.wait(timeout=15) == 0
 
     payload = json.loads(receipt_path.read_text(encoding="utf-8"))
     assert payload == {
@@ -503,6 +484,32 @@ def test_real_nested_launcher_relay_is_accepted_by_schema_three_outer(
     assert isinstance(payload["pid"], int)
     assert payload["pid"] > 0
     assert process.pid in {payload["pid"], payload["parent_pid"]}
+    assert not (tmp_path / "unrelated.json").exists()
+
+
+def test_real_readiness_fixture_stops_held_child_after_assertion(
+    tmp_path: Path,
+) -> None:
+    """A failing proof must still reap its live candidate without a fixed sleep."""
+
+    with pytest.raises(AssertionError, match="simulated proof failure"):
+        with readiness_process_fixture(tmp_path) as fixture:
+            process = ApplicationReadinessSupervisor(
+                timeout_seconds=10,
+                process_starter=fixture.start,
+            ).launch_until_ready(
+                layout=InstallLayout.from_root(tmp_path / "install"),
+                command=ReadinessProcessFixture.command(),
+                environment={
+                    **without_application_readiness_environment(os.environ),
+                    **fixture.environment,
+                    "TEST_SURFACE": ApplicationReadinessSurface.MAIN_SHELL.value,
+                    "TEST_PID_PATH": str(tmp_path / "candidate.pid"),
+                },
+            )
+            assert process.poll() is None
+            raise AssertionError("simulated proof failure")
+    assert process.poll() is not None
 
 
 def _increasing_clock(*, step: float = 0.1) -> Callable[[], float]:
