@@ -1,0 +1,5 @@
+status=active
+worker=gw0
+pid=34
+nodeid=tests/presentation/settings/prompt_editor/test_wildcards.py::test_prompt_editor_page_invokes_wildcard_management_opener
+timeout_seconds=300

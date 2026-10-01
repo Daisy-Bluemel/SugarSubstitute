@@ -1,0 +1,169 @@
+{
+  "note": "All failure/error identifiers and original messages retained; unrelated absolute execution roots normalized. Full repeated traceback bodies omitted.",
+  "records": [
+    {
+      "junit_case_identifier": "tests.presentation.editor.prompt_editor.layout.contracts.test_canonical_wrapping::test_wrapped_wildcard_line_keeps_its_start_caret_stop_first",
+      "kind": "failure",
+      "message": "assert 1 == 2\n +  where 1 = len((PromptProjectionLineSnapshot(top=4.0, height=14.3125, source_start=0, source_end=32, source_content_start=0, source_c...ineCaretStopSnapshot(projection_position=32, rect=PySide6.QtCore.QRectF(165.203125, 4.000000, 1.000000, 14.312500)))),))",
+      "source_locations": [
+        "tests/presentation/editor/prompt_editor/layout/contracts/test_canonical_wrapping.py:182"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.presentation.editor.prompt_editor.layout.contracts.test_canonical_wrapping::test_projection_layout_preserves_long_raw_unicode_geometry",
+      "kind": "failure",
+      "message": "AssertionError: assert 96 > 100\n +  where 96 = len(('masterpiece, A👩\\u200d🚀é日, detailed ', 'face, cinematic background, ', 'masterpiece, A👩\\u200d🚀é日, detailed ', 'face, cinematic background, ', 'masterpiece, A👩\\u200d🚀é日, detailed ', 'face, cinematic background, ', ...))",
+      "source_locations": [
+        "tests/presentation/editor/prompt_editor/layout/contracts/test_canonical_wrapping.py:469"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.presentation.editor.prompt_editor.layout.contracts.test_incremental_reuse::test_canonical_reflow_rebinds_optimistic_prefix_without_rebuilding_it",
+      "kind": "failure",
+      "message": "assert 1 == 3\n +  where 1 = PromptLayoutDamage(content_height_changed=False, content_height_delta=0.0, first_reflowed_line_index=5, reflowed_line_count=1, upstream_line_count=5).reflowed_line_count",
+      "source_locations": [
+        "tests/presentation/editor/prompt_editor/layout/contracts/test_incremental_reuse.py:235"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.prompt_editor.real_shell.selection_rendering.test_selection_interactions::test_real_shell_wrapped_multiline_selection_geometry_clears_on_collapse",
+      "kind": "failure",
+      "message": "Failed: prompt editor invariant failed; artifacts: [isolated-temp]/tests__qualification__prompt_editor__real_shell__selection_rendering__test_selection_interactions/test_real_shell_wrapped_multil0/wrapped-selection-geometry-left-bad-state",
+      "source_locations": [
+        "tests/qualification/prompt_editor/real_shell/selection_rendering/test_selection_interactions.py:164"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_secondary_invocation_reaches_the_registered_application",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:50",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_child_restart_request_is_owned_by_the_existing_supervisor",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:98",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_startup_invocation_is_queued_until_the_child_registers",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:121",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_secondary_remains_pending_until_the_application_presents_a_surface",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:201",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_startup_surface_acknowledges_launch_without_losing_queued_invocation",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:259",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_startup_surface_remains_authoritative_after_child_registration",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:322",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_presentation_deadline_releases_launcher_without_discarding_work",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:399",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_child_observes_authoritative_supervisor_loss",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:482",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker::test_native_endpoint_is_immediately_recoverable_after_owner_exit",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker.py:507",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.tools.test_render_openmodeldb_upscaler_picker::test_headless_upscaler_picker_renders_real_model_identity",
+      "kind": "failure",
+      "message": "RuntimeError: WINDIR is required for headless Fluent rendering.",
+      "source_locations": [
+        "tests/tools/test_render_openmodeldb_upscaler_picker.py:91",
+        "tools/render_openmodeldb_upscaler_picker.py:139",
+        "tools/render_openmodeldb_upscaler_picker.py:443"
+      ],
+      "permission_error_in_trace": false
+    }
+  ]
+}

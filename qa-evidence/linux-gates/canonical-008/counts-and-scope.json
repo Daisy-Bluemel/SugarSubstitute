@@ -1,0 +1,134 @@
+{
+  "repository": "Daisy-Bluemel/SugarSubstitute",
+  "source_commit": "94ccf72968112cf01cf9aa337716a4b222dffe54",
+  "source_tree": "24cdf6c4af3fc856fb8ff27fdd581193924434e3",
+  "source_url": "https://github.com/Daisy-Bluemel/SugarSubstitute/commit/94ccf72968112cf01cf9aa337716a4b222dffe54",
+  "started_utc": "2026-09-30T23:52:36.348781+00:00",
+  "host": "Linux x86_64, Python 3.12.14, PySide6 6.11.2",
+  "configuration": {
+    "ordinary_workers": 2,
+    "isolated_workers": 2,
+    "serial_workers": 1,
+    "qt_platform": "offscreen",
+    "qt_opengl": "software",
+    "concurrency_reason": "Bound resource usage on the cloud Linux host; no cases or policy assertions removed.",
+    "process_test_timeout_seconds": 300
+  },
+  "static_checks": {
+    "format": {
+      "exit_code": 0,
+      "seconds": 0.053,
+      "command": [
+        "[repository]/.venv/bin/python",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "."
+      ]
+    },
+    "lint": {
+      "exit_code": 0,
+      "seconds": 0.051,
+      "command": [
+        "[repository]/.venv/bin/python",
+        "-m",
+        "ruff",
+        "check",
+        "."
+      ]
+    },
+    "mypy": {
+      "exit_code": 1,
+      "seconds": 71.647,
+      "command": [
+        "[repository]/.venv/bin/python",
+        "-m",
+        "mypy",
+        "--strict",
+        "substitute",
+        "tests"
+      ]
+    }
+  },
+  "test_lanes": {
+    "ordinary": {
+      "command": [
+        "[repository]/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-n",
+        "2",
+        "-q",
+        "-m",
+        "not serial and not isolated",
+        "--junitxml=[workspace]/linux-full-gates-008/ordinary.xml"
+      ],
+      "exit_code": 1,
+      "seconds": 580.116,
+      "peak_sampled_summed_rss_bytes": 5974016000,
+      "minimum_sampled_disk_free_bytes": 5944119296
+    },
+    "isolated": {
+      "command": [
+        "[repository]/.venv/bin/python",
+        "-c",
+        "import logging,sys; from pathlib import Path; from tools.ci.run_isolated_test_modules import run_isolated_test_modules; logging.basicConfig(level=logging.INFO, format=\"%(levelname)s %(message)s\"); failures=run_isolated_test_modules(project_root=Path.cwd(),junit_directory=Path('[workspace]/linux-full-gates-008/isolated'),available_workers=2); sys.exit(bool(failures))"
+      ],
+      "exit_code": 1,
+      "seconds": 399.752,
+      "peak_sampled_summed_rss_bytes": 2567335936,
+      "minimum_sampled_disk_free_bytes": 5926715392
+    },
+    "serial": {
+      "command": [
+        "[repository]/.venv/bin/python",
+        "-m",
+        "tools.ci.run_serial_test_modules",
+        "--junit-dir=[workspace]/linux-full-gates-008/serial"
+      ],
+      "exit_code": 0,
+      "seconds": 9.184,
+      "peak_sampled_summed_rss_bytes": 219959296,
+      "minimum_sampled_disk_free_bytes": 5926621184
+    }
+  },
+  "counts": {
+    "ordinary": {
+      "tests": 13129,
+      "failures": 78,
+      "errors": 1,
+      "skipped": 142,
+      "passed": 12908,
+      "junit_files": 1,
+      "failed_junit_files": 1
+    },
+    "isolated": {
+      "tests": 655,
+      "failures": 14,
+      "errors": 0,
+      "skipped": 21,
+      "passed": 620,
+      "junit_files": 108,
+      "failed_junit_files": 5
+    },
+    "serial": {
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 10,
+      "junit_files": 3,
+      "failed_junit_files": 0
+    }
+  },
+  "status": "FAILED: this is a baseline qualification record, not a passing check or release approval.",
+  "limitations": [
+    "68 failure/error diagnostics contain Operation not permitted; these remain failed/blocked, not passed or skipped.",
+    "One ordinary pytest worker exited unexpectedly during wildcard Settings testing. The cause is unproven; neither OOM nor SIGKILL is established. The surviving active-test marker contains no timeout stack.",
+    "Summed RSS can count shared pages more than once and is not a cgroup/OOM measurement.",
+    "The ordinary lane changed only the tracked 7za executable bit. Original bytes were verified and the recorded mode restored before the remaining lanes.",
+    "Full source was frozen across all lanes. The later header-only checkpoint is not represented as a full rerun.",
+    "Windows and macOS native execution were not performed."
+  ]
+}

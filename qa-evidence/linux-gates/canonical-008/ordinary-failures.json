@@ -1,0 +1,983 @@
+{
+  "note": "All failure/error identifiers and original messages retained; unrelated absolute execution roots normalized. Full repeated traceback bodies omitted.",
+  "records": [
+    {
+      "junit_case_identifier": "tests.launcher.application_launch.test_splash_transfer::test_borrowed_splash_reuses_session_and_closes_through_original_owner",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/application_launch/test_splash_transfer.py:48",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.application_readiness.test_outer_contract_restart::test_supervisor_replaces_outer_receipt_across_real_processes",
+      "kind": "failure",
+      "message": "AssertionError: assert 4436 in {25, 34}\n +  where 4436 = <Popen: returncode: None args: ['[repository]/...>.pid",
+      "source_locations": [
+        "tests/launcher/application_readiness/test_outer_contract_restart.py:411"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.launcher.application_readiness.test_outer_contract_restart::test_real_nested_launcher_relay_is_accepted_by_schema_three_outer",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: '[python-runtime]/python.exe'",
+      "source_locations": [
+        "tests/launcher/application_readiness/test_outer_contract_restart.py:484"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.launcher.installation_workflow.test_selected_folder_admission::test_existing_app_retires_installer_without_writes_or_active_workers[False]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/installation_workflow/test_selected_folder_admission.py:52",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.installation_workflow.test_selected_folder_admission::test_existing_app_retires_installer_without_writes_or_active_workers[True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/installation_workflow/test_selected_folder_admission.py:52",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.installation_workflow.test_window_surface::test_launcher_initial_screen_matches_onboarding_step_one_shell",
+      "kind": "failure",
+      "message": "assert 18 == 17\n +  where 18 = <built-in method height of BodyLabel object at 0x7fb5e8c3c900>()\n +    where <built-in method height of BodyLabel object at 0x7fb5e8c3c900> = <qfluentwidgets.components.widgets.label.BodyLabel(0xc1b9530, name=\"OnboardingPageDescription\") at 0x7fb5e8c3c900>.height\n +      where <qfluentwidgets.components.widgets.label.BodyLabel(0xc1b9530, name=\"OnboardingPageDescription\") at 0x7fb5e8c3c900> = <launcher.sugarsubstitute_launcher.ui.installer_view.InstallerView(0xbda6830, name=\"OnboardingRoot\") at 0x7fb5e94847c0>.language_description_label\n +        where <launcher.sugarsubstitute_launcher.ui.installer_view.InstallerView(0xbda6830, name=\"OnboardingRoot\") at 0x7fb5e94847c0> = <launcher.sugarsubstitute_launcher.ui.main_window.LauncherMainWindow(0xe16d140, name=\"LauncherWindow\") at 0x7fb5e9487b00>.view\n +  and   17 = <built-in method height of PySide6.QtCore.QSize object at 0x7fb5dac96440>()\n +    where <built-in method height of PySide6.QtCore.QSize object at 0x7fb5dac96440> = PySide6.QtCore.QSize(420, 17).height\n +      where PySide6.QtCore.QSize(420, 17) = <built-in method sizeHint of BodyLabel object at 0x7fb5e8c3c900>()\n +        where <built-in method sizeHint of BodyLabel object at 0x7fb5e8c3c900> = <qfluentwidgets.components.widgets.label.BodyLabel(0xc1b9530, name=\"OnboardingPageDescription\") at 0x7fb5e8c3c900>.sizeHint\n +          where <qfluentwidgets.components.widgets.label.BodyLabel(0xc1b9530, name=\"OnboardingPageDescription\") at 0x7fb5e8c3c900> = <launcher.sugarsubstitute_launcher.ui.installer_view.InstallerView(0xbda6830, name=\"OnboardingRoot\") at 0x7fb5e94847c0>.language_description_label\n +            where <launcher.sugarsubstitute_launcher.ui.installer_view.InstallerView(0xbda6830, name=\"OnboardingRoot\") at 0x7fb5e94847c0> = <launcher.sugarsubstitute_launcher.ui.main_window.LauncherMainWindow(0xe16d140, name=\"LauncherWindow\") at 0x7fb5e9487b00>.view",
+      "source_locations": [
+        "tests/launcher/installation_workflow/test_window_surface.py:126"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_controller::test_close_waits_for_active_worker_completion",
+      "kind": "failure",
+      "message": "assert not True\n +  where True = <built-in method close of RepairWindow object at 0x7fb5c0d45c40>()\n +    where <built-in method close of RepairWindow object at 0x7fb5c0d45c40> = <launcher.sugarsubstitute_launcher.ui.repair_window.RepairWindow(0xe11cfb0, name=\"LauncherWindow\") at 0x7fb5c0d45c40>.close",
+      "source_locations": [
+        "tests/launcher/repair/test_controller.py:204"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_session_ownership::test_repair_session_owns_instance_until_presentation_finishes[0-True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/repair/test_session_ownership.py:128",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:149",
+        "launcher/sugarsubstitute_launcher/application_election_recovery.py:71",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:136",
+        "launcher/sugarsubstitute_launcher/application_launch.py:44",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_session_ownership::test_repair_session_owns_instance_until_presentation_finishes[0-False]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/repair/test_session_ownership.py:128",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:149",
+        "launcher/sugarsubstitute_launcher/application_election_recovery.py:71",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:136",
+        "launcher/sugarsubstitute_launcher/application_launch.py:44",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_session_ownership::test_repair_session_owns_instance_until_presentation_finishes[2-True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/repair/test_session_ownership.py:128",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:149",
+        "launcher/sugarsubstitute_launcher/application_election_recovery.py:71",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:136",
+        "launcher/sugarsubstitute_launcher/application_launch.py:44",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_session_ownership::test_repair_session_owns_instance_until_presentation_finishes[-1-True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/repair/test_session_ownership.py:126",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:149",
+        "launcher/sugarsubstitute_launcher/application_election_recovery.py:71",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:136",
+        "launcher/sugarsubstitute_launcher/application_launch.py:44",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_session_ownership::test_secondary_repair_reaches_existing_owner_without_execution",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/repair/test_session_ownership.py:161",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_session_ownership::test_repair_handoff_retires_unavailable_owner_before_mutation[True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/repair/test_session_ownership.py:326",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:149",
+        "launcher/sugarsubstitute_launcher/application_election_recovery.py:71",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:136",
+        "launcher/sugarsubstitute_launcher/application_launch.py:44",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.repair.test_session_ownership::test_repair_handoff_retires_unavailable_owner_before_mutation[False]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/repair/test_session_ownership.py:326",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:149",
+        "launcher/sugarsubstitute_launcher/application_election_recovery.py:71",
+        "launcher/sugarsubstitute_launcher/repair_session_supervisor.py:136",
+        "launcher/sugarsubstitute_launcher/application_launch.py:44",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_baseline_refresh::test_normal_update_refreshes_retained_root_before_application_launch",
+      "kind": "failure",
+      "message": "AssertionError: assert False\n +  where False = start_if_required(layout=InstallLayout(root=PosixPath('[test-temp]/installation'),...con_asset_name='app_icon_256.png', repair_executable_relative_path=None), launcher_bundle_root=None, release_root=None), running_executable=PosixPath('[test-temp]/installation/launcher/bundles/ee0523402d5347cc903348cc43146f84/payload/SugarSubstitute.exe'))\n +    where start_if_required = <launcher.sugarsubstitute_launcher.launcher_baseline_refresh.LauncherBaselineRefresh object at 0x7fb5e8c62de0>.start_if_required\n +      where <launcher.sugarsubstitute_launcher.launcher_baseline_refresh.LauncherBaselineRefresh object at 0x7fb5e8c62de0> = LauncherBaselineRefresh()\n +    and   InstallLayout(root=PosixPath('[test-temp]/installation'),...con_asset_name='app_icon_256.png', repair_executable_relative_path=None), launcher_bundle_root=None, release_root=None) = from_root(PosixPath('[test-temp]/installation'))\n +      where from_root = InstallLayout.from_root",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_baseline_refresh.py:121"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_baseline_refresh::test_baseline_refresh_rejects_modified_staging_without_replacing_root",
+      "kind": "failure",
+      "message": "IndexError: list index out of range",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_baseline_refresh.py:173"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_dispatch_retains_baseline_authority_and_routes_failure[closed]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:70",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_dispatch_retains_baseline_authority_and_routes_failure[restart]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:70",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_dispatch_retains_baseline_authority_and_routes_failure[restart-zero]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:70",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_dispatch_retains_baseline_authority_and_routes_failure[failed-closed]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:70",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_dispatch_retains_baseline_authority_and_routes_failure[spawn-error]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:70",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[True-None]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[True-{}]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[True-{bad]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[True-{\"schema_version\": 1, \"delegation_protocol\": 999}]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[False-None]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[False-{}]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[False-{bad]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_dispatch::test_incompatible_generation_keeps_working_baseline[False-{\"schema_version\": 1, \"delegation_protocol\": 999}]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_dispatch.py:159",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_startup_presentation::test_registered_starting_app_does_not_hide_delegated_splash",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_startup_presentation.py:113",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.launcher.update_activation.transaction.test_generation_startup_presentation::test_late_splash_release_preserves_fallback_presentation",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/launcher/update_activation/transaction/test_generation_startup_presentation.py:194",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.crosscutting.ci.license_headers.test_policy::test_repository_headers_are_current",
+      "kind": "failure",
+      "message": "AssertionError: assert (HeaderUpdate...header'), ...) == ()\n  \n  Left contains 7 more items, first extra item: HeaderUpdate(path=PosixPath('[repository]/substitute/presentation/shell/rounded_window_corners.py'), reason='missing header')\n  Use -v to get more diff",
+      "source_locations": [
+        "tests/crosscutting/ci/license_headers/test_policy.py:185"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.presentation.editor.prompt_editor.caret_navigation.test_pointer_affinity::test_projection_surface_click_wrapped_trailing_edge_keeps_visual_row",
+      "kind": "failure",
+      "message": "AssertionError: Timed out after 3000 ms waiting for prompt caret geometry; state={'position': 22, 'caret': (159, 4, 2, 17), 'expected_position': 23, 'expected_document_xy': (162.96875, 4.0), 'expected_viewport_y': 4.0, 'text': 'alpha beta gamma delta epsilon zeta eta theta iota kappa lambda', 'pending_projection': False, 'stale_geometry': False, 'scroll_offset': 0, 'lines': ({'source': (0, 23), 'content': (0, 23), 'geometry': (4.0, 16.671875), 'stops': ((0, 4.0, 4.0), (1, 11.703125, 4.0), (2, 15.0625, 4.0), (3, 23.453125, 4.0), (4, 31.53125, 4.0), (5, 39.234375, 4.0), (6, 42.640625, 4.0), (7, 51.03125, 4.0), (8, 58.515625, 4.0), (9, 63.859375, 4.0), (10, 71.5625, 4.0), (11, 74.96875, 4.0), (12, 83.265625, 4.0), (13, 90.96875, 4.0), (14, 103.53125, 4.0), (15, 116.09375, 4.0), (16, 123.796875, 4.0), (17, 127.203125, 4.0), (18, 135.578125, 4.0), (19, 143.15625, 4.0), (20, 146.515625, 4.0), (21, 151.859375, 4.0), (22, 159.5625, 4.0), (23, 162.96875, 4.0))}, {'source': (23, 46), 'content': (23, 46), 'geometry': (20.671875, 16.671875), 'stops': ((23, 4.0, 20.671875), (24, 11.578125, 20.671875), (25, 19.96875, 20.671875), (26, 26.71875, 20.671875), (27, 30.078125, 20.671875), (28, 33.4375, 20.671875), (29, 41.421875, 20.671875), (30, 49.5, 20.671875), (31, 52.90625, 20.671875), (32, 59.484375, 20.671875), (33, 66.96875, 20.671875), (34, 72.3125, 20.671875), (35, 80.015625, 20.671875), (36, 83.421875, 20.671875), (37, 90.90625, 20.671875), (38, 96.25, 20.671875), (39, 103.953125, 20.671875), (40, 107.125, 20.671875), (41, 112.46875, 20.671875), (42, 120.546875, 20.671875), (43, 128.03125, 20.671875), (44, 133.375, 20.671875), (45, 141.078125, 20.671875), (46, 144.484375, 20.671875))}, {'source': (46, 63), 'content': (46, 63), 'geometry': (37.34375, 16.671875), 'stops': ((46, 4.0, 37.34375), (47, 7.359375, 37.34375), (48, 15.203125, 37.34375), (49, 20.546875, 37.34375), (50, 28.25, 37.34375), (51, 31.65625, 37.34375), (52, 38.859375, 37.34375), (53, 46.5625, 37.34375), (54, 54.953125, 37.34375), (55, 63.34375, 37.34375), (56, 71.046875, 37.34375), (57, 74.453125, 37.34375), (58, 77.8125, 37.34375), (59, 85.515625, 37.34375), (60, 98.078125, 37.34375), (61, 106.46875, 37.34375), (62, 114.84375, 37.34375), (63, 122.546875, 37.34375))}), 'caret_stops': ((0, 0, 'text:0:0'), (1, 1, 'text:0:0'), (2, 2, 'text:0:0'), (3, 3, 'text:0:0'), (4, 4, 'text:0:0'), (5, 5, 'text:0:0'), (6, 6, 'text:0:0'), (7, 7, 'text:0:0'), (8, 8, 'text:0:0'), (9, 9, 'text:0:0'), (10, 10, 'text:0:0'), (11, 11, 'text:0:0'), (12, 12, 'text:0:0'), (13, 13, 'text:0:0'), (14, 14, 'text:0:0'), (15, 15, 'text:0:0'), (16, 16, 'text:0:0'), (17, 17, 'text:0:0'), (18, 18, 'text:0:0'), (19, 19, 'text:0:0'), (20, 20, 'text:0:0'), (21, 21, 'text:0:0'), (22, 22, 'text:0:0'), (23, 23, 'text:0:0'), (24, 24, 'text:0:0'), (25, 25, 'text:0:0'), (26, 26, 'text:0:0'), (27, 27, 'text:0:0'), (28, 28, 'text:0:0'), (29, 29, 'text:0:0'), (30, 30, 'text:0:0'), (31, 31, 'text:0:0'), (32, 32, 'text:0:0'), (33, 33, 'text:0:0'), (34, 34, 'text:0:0'), (35, 35, 'text:0:0'), (36, 36, 'text:0:0'), (37, 37, 'text:0:0'), (38, 38, 'text:0:0'), (39, 39, 'text:0:0'), (40, 40, 'text:0:0'), (41, 41, 'text:0:0'), (42, 42, 'text:0:0'), (43, 43, 'text:0:0'), (44, 44, 'text:0:0'), (45, 45, 'text:0:0'), (46, 46, 'text:0:0'), (47, 47, 'text:0:0'), (48, 48, 'text:0:0'), (49, 49, 'text:0:0'), (50, 50, 'text:0:0'), (51, 51, 'text:0:0'), (52, 52, 'text:0:0'), (53, 53, 'text:0:0'), (54, 54, 'text:0:0'), (55, 55, 'text:0:0'), (56, 56, 'text:0:0'), (57, 57, 'text:0:0'), (58, 58, 'text:0:0'), (59, 59, 'text:0:0'), (60, 60, 'text:0:0'), (61, 61, 'text:0:0'), (62, 62, 'text:0:0'), (63, 63, 'text:0:0')), 'runs': (('text:0:0', 0, 63),)}",
+      "source_locations": [
+        "tests/presentation/editor/prompt_editor/caret_navigation/test_pointer_affinity.py:101",
+        "tests/support/prompt_editor/projection_engine_support.py:122",
+        "tests/support/qt/semantic_wait.py:78"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.presentation.settings.about.test_about_version_layout::test_about_version_group_bounds_subtitles_under_column_pressure",
+      "kind": "failure",
+      "message": "AssertionError: assert 'ComfyUI' in set()",
+      "source_locations": [
+        "tests/presentation/settings/about/test_about_version_layout.py:117"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.presentation.settings.prompt_editor.test_wildcards::test_prompt_editor_page_invokes_wildcard_management_opener",
+      "kind": "error",
+      "message": "failed on setup with \"worker 'gw0' crashed while running 'tests/presentation/settings/prompt_editor/test_wildcards.py::test_prompt_editor_page_invokes_wildcard_management_opener'\"",
+      "source_locations": [],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.prompt_editor.real_shell.keyboard_input.test_weight_selection::test_exact_weight_input_starts_at_displayed_weight_origin[nested-emphasis]",
+      "kind": "failure",
+      "message": "AssertionError: (PySide6.QtCore.QRectF(104.906250, 3.000000, 20.859375, 11.921875), PySide6.QtCore.QRect(102, 2, 26, 14), PySide6.QtCore.QRect(-3, 1, 10, 13), '2.80', 'Segoe UI,-1,10,5,600,0,0,0,0,0,0,0,0,0,0,1,,0,0')\nassert 104.0 == 104.90625 ± 0.75\n  \n  comparison failed\n  Obtained: 104.0\n  Expected: 104.90625 ± 0.75",
+      "source_locations": [
+        "tests/qualification/prompt_editor/real_shell/keyboard_input/test_weight_selection.py:95"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.installer.test_readiness_evidence::test_installed_candidate_launch_is_observed_without_capture_bound_wait",
+      "kind": "failure",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: '[test-temp]/installed/SugarSubstitute'",
+      "source_locations": [
+        "tests/qualification/installer/test_readiness_evidence.py:249",
+        "tools/ci/installer_ui_qualification.py:211"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.prompt_editor.real_shell.projection_paths.test_weight_raster_alignment::test_weight_raster_alignment[1.0-emphasis]",
+      "kind": "failure",
+      "message": "AssertionError: (PySide6.QtCore.QRect(71, 6, 23, 11), PySide6.QtCore.QRect(74, 6, 20, 11))\nassert 3 <= 1\n +  where 3 = abs((74 - 71))\n +    where 74 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcd086e00>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcd086e00> = PySide6.QtCore.QRect(74, 6, 20, 11).left\n +    and   71 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccf9eec0>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccf9eec0> = PySide6.QtCore.QRect(71, 6, 23, 11).left",
+      "source_locations": [
+        "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py:148"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.prompt_editor.real_shell.projection_paths.test_weight_raster_alignment::test_weight_raster_alignment[1.0-nested-emphasis]",
+      "kind": "failure",
+      "message": "AssertionError: (PySide6.QtCore.QRect(102, 6, 24, 11), PySide6.QtCore.QRect(105, 6, 20, 7))\nassert 3 <= 1\n +  where 3 = abs((105 - 102))\n +    where 105 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccff63c0>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccff63c0> = PySide6.QtCore.QRect(105, 6, 20, 7).left\n +    and   102 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcce870c0>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcce870c0> = PySide6.QtCore.QRect(102, 6, 24, 11).left",
+      "source_locations": [
+        "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py:148"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.prompt_editor.real_shell.projection_paths.test_weight_raster_alignment::test_weight_raster_alignment[1.5-nested-emphasis]",
+      "kind": "failure",
+      "message": "AssertionError: (PySide6.QtCore.QRect(155, 9, 34, 14), PySide6.QtCore.QRect(158, 8, 29, 12))\nassert 3 <= 2\n +  where 3 = abs((158 - 155))\n +    where 158 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccc06900>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccc06900> = PySide6.QtCore.QRect(158, 8, 29, 12).left\n +    and   155 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccb33540>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccb33540> = PySide6.QtCore.QRect(155, 9, 34, 14).left",
+      "source_locations": [
+        "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py:148"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.prompt_editor.real_shell.projection_paths.test_weight_raster_alignment::test_weight_raster_alignment[2.0-emphasis]",
+      "kind": "failure",
+      "message": "AssertionError: (PySide6.QtCore.QRect(145, 12, 41, 20), PySide6.QtCore.QRect(148, 10, 38, 22))\nassert 3 <= 2\n +  where 3 = abs((148 - 145))\n +    where 148 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccac7a80>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccac7a80> = PySide6.QtCore.QRect(148, 10, 38, 22).left\n +    and   145 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccaf71c0>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bccaf71c0> = PySide6.QtCore.QRect(145, 12, 41, 20).left",
+      "source_locations": [
+        "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py:148"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.qualification.prompt_editor.real_shell.projection_paths.test_weight_raster_alignment::test_weight_raster_alignment[2.0-nested-emphasis]",
+      "kind": "failure",
+      "message": "AssertionError: (PySide6.QtCore.QRect(207, 12, 45, 18), PySide6.QtCore.QRect(210, 10, 39, 16))\nassert 3 <= 2\n +  where 3 = abs((210 - 207))\n +    where 210 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcc953740>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcc953740> = PySide6.QtCore.QRect(210, 10, 39, 16).left\n +    and   207 = <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcc9e45c0>()\n +      where <built-in method left of PySide6.QtCore.QRect object at 0x7f2bcc9e45c0> = PySide6.QtCore.QRect(207, 12, 45, 18).left",
+      "source_locations": [
+        "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py:148"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_child_crash_before_receipt_reaches_replacement_without_relaunch",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:52",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_failed_presentation_is_retained_for_a_replacement_child[False]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:110",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_failed_presentation_is_retained_for_a_replacement_child[True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:110",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_startup_acknowledgements_cannot_bypass_total_work_bound",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:172",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_supervisor_shutdown_releases_waiter_and_endpoint_immediately",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:201",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_application_handler_failure_does_not_kill_the_control_channel",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:263",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_stalled_handshake_cannot_block_later_launches",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:316",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_broker_abuse::test_forged_child_receipt_requeues_work_for_a_real_child",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_broker_abuse.py:360",
+        "tests/shared/application_instance_broker/test_broker_abuse.py:413",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_child_registration::test_failed_child_handshake_retains_queued_launch",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_child_registration.py:51",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_child_registration::test_superseded_registration_cannot_deliver_its_snapshot_twice",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_child_registration.py:139",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_child_replacement::test_retired_child_receipt_cannot_discard_replacement_presentation",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_child_replacement.py:74",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_child_replacement::test_retired_child_send_failure_cannot_discard_replacement_presentation",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_child_replacement.py:188",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_delegated_cleanup::test_delegated_cleanup_is_exactly_once_and_cannot_close_replacement",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_delegated_cleanup.py:38",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_delegated_cleanup::test_failed_cleanup_can_be_retried_without_replacing_live_resource",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_delegated_cleanup.py:78",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_delegated_cleanup::test_owner_shutdown_releases_resource_without_a_delegate_request",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_delegated_cleanup.py:111",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_delegated_session::test_delegated_session_routes_startup_and_retains_owner_on_close",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_delegated_session.py:46",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_delegated_session::test_delegated_session_consumes_root_restart_exactly_once",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_delegated_session.py:87",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_delegated_session::test_delegation_rejects_invalid_credentials_without_releasing_owner",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_delegated_session.py:121",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_delegated_session::test_application_replaces_delegated_startup_without_losing_native_owner",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_delegated_session.py:142",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_selected_folder_routes_to_the_existing_setup_owner",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:37",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_existing_selected_folder_owner_receives_install_request",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:80",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_claiming_the_initial_folder_is_idempotent",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:111",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_concurrent_setup_claims_admit_exactly_one_owner[2]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:155",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_concurrent_setup_claims_admit_exactly_one_owner[4]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:155",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_admission_activity_does_not_replace_the_terminal_result[False]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:215",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_admission_activity_does_not_replace_the_terminal_result[True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:215",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_unauthenticated_target_claim_cannot_reserve_a_folder",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:248",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_listener_start_failure_releases_only_the_selected_claim",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:293",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.tls.test_system_trust_context::test_system_trust_tls_context_preserves_peer_and_hostname_verification",
+      "kind": "failure",
+      "message": "AssertionError: assert False\n +  where False = isinstance(<ssl.SSLContext object at 0x7f2bdecb80d0>, <class 'truststore._api.SSLContext'>)\n +    where <class 'truststore._api.SSLContext'> = truststore.SSLContext",
+      "source_locations": [
+        "tests/shared/tls/test_system_trust_context.py:35"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_stale_setup_client_cannot_claim_after_supervisor_exit[False]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:342",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_installation_admission::test_stale_setup_client_cannot_claim_after_supervisor_exit[True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_installation_admission.py:342",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_released_endpoint::test_released_endpoint_and_current_launch_share_one_instance[True]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_released_endpoint.py:72",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_released_endpoint::test_released_endpoint_and_current_launch_share_one_instance[False]",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_released_endpoint.py:78",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_reservation_cleanup::test_failed_compatibility_bind_releases_primary_address",
+      "kind": "failure",
+      "message": "AssertionError: Regex pattern did not match.\n  Expected regex: 'fixture compatibility bind failed'\n  Actual message: '[Errno 1] Operation not permitted'",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_reservation_cleanup.py:61"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.shared.application_instance_broker.test_reservation_cleanup::test_failed_listener_thread_start_releases_every_address",
+      "kind": "failure",
+      "message": "PermissionError: [Errno 1] Operation not permitted",
+      "source_locations": [
+        "tests/shared/application_instance_broker/test_reservation_cleanup.py:93",
+        "sugarsubstitute_shared/application_instance_broker.py:111",
+        "sugarsubstitute_shared/application_instance_election.py:117",
+        "sugarsubstitute_shared/application_instance_transport.py:86",
+        "sugarsubstitute_shared/application_instance_socket.py:152"
+      ],
+      "permission_error_in_trace": true
+    },
+    {
+      "junit_case_identifier": "tests.tools.test_render_image_model_picker::test_sdxl_and_anima_render_in_contained_shell",
+      "kind": "failure",
+      "message": "RuntimeError: WINDIR is required for headless Fluent rendering.",
+      "source_locations": [
+        "tests/tools/test_render_image_model_picker.py:52",
+        "tools/render_image_model_picker.py:145",
+        "tools/render_openmodeldb_upscaler_picker.py:443"
+      ],
+      "permission_error_in_trace": false
+    },
+    {
+      "junit_case_identifier": "tests.tools.test_render_model_acquisition_experience::test_headless_model_acquisition_matrix_uses_production_surfaces",
+      "kind": "failure",
+      "message": "RuntimeError: WINDIR is required for headless Fluent rendering.",
+      "source_locations": [
+        "tests/tools/test_render_model_acquisition_experience.py:34",
+        "tools/render_model_acquisition_experience.py:83",
+        "tools/render_model_acquisition_experience.py:320"
+      ],
+      "permission_error_in_trace": false
+    }
+  ]
+}

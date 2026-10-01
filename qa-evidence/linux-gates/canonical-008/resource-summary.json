@@ -1,0 +1,29 @@
+{
+  "caution": "Observed RSS and free-disk samples only. They do not establish a termination cause; summed RSS includes shared-page duplication.",
+  "lanes": {
+    "ordinary": {
+      "sample_count": 116,
+      "nominal_sample_interval_seconds": 5,
+      "elapsed_seconds": 580.116,
+      "maximum_sampled_sum_rss_bytes": 5974016000,
+      "maximum_sampled_single_process_rss_bytes": 4819050496,
+      "minimum_sampled_disk_free_bytes": 5944119296
+    },
+    "isolated": {
+      "sample_count": 80,
+      "nominal_sample_interval_seconds": 5,
+      "elapsed_seconds": 399.752,
+      "maximum_sampled_sum_rss_bytes": 2567335936,
+      "maximum_sampled_single_process_rss_bytes": 2059534336,
+      "minimum_sampled_disk_free_bytes": 5926715392
+    },
+    "serial": {
+      "sample_count": 2,
+      "nominal_sample_interval_seconds": 5,
+      "elapsed_seconds": 9.184,
+      "maximum_sampled_sum_rss_bytes": 219959296,
+      "maximum_sampled_single_process_rss_bytes": 206725120,
+      "minimum_sampled_disk_free_bytes": 5926621184
+    }
+  }
+}
