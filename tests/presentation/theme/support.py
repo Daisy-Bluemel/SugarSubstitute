@@ -26,6 +26,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QApplication, QWidget
 from qfluentwidgets import (  # type: ignore[import-untyped]
     Theme,
+    qconfig,
     setTheme,
     setThemeColor,
 )
@@ -100,6 +101,19 @@ class ThemeWidgetOwner:
 
 
 @contextmanager
+def fluent_accent(accent_color: QColor) -> Iterator[None]:
+    """Scope the configured accent without changing theme mode or persisting it."""
+
+    ensure_qt_application()
+    previous_accent = QColor(qconfig.get(qconfig.themeColor))
+    setThemeColor(accent_color, save=False)
+    try:
+        yield
+    finally:
+        setThemeColor(previous_accent, save=False)
+
+
+@contextmanager
 def fluent_theme(
     theme: Theme,
     *,
@@ -146,6 +160,7 @@ def _theme_is_active(theme: Theme) -> bool:
 
 __all__ = [
     "ThemeWidgetOwner",
+    "fluent_accent",
     "fluent_theme",
     "is_qfluent_managed",
 ]

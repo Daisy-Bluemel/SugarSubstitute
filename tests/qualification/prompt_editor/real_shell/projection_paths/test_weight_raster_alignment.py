@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from math import ceil
 
 import pytest
@@ -40,6 +41,15 @@ from tests.presentation.editor.prompt_editor.interactions.weight.mounting import
 from tests.support.prompt_editor.real_shell.scenario import (
     PromptEditorRealShellScenario,
 )
+from tests.presentation.theme.support import fluent_accent
+
+
+@pytest.fixture
+def weight_raster_accent() -> Iterator[None]:
+    """Keep unrelated accent edges distinct from the target's magenta marker."""
+
+    with fluent_accent(QColor("#009faa")):
+        yield
 
 
 def _render_viewport(
@@ -197,6 +207,7 @@ def _start_marked_weight(
 )
 @pytest.mark.parametrize("device_pixel_ratio", [1.0, 1.5, 2.0])
 def test_weight_raster_alignment(
+    weight_raster_accent: None,
     real_shell_scenario: PromptEditorRealShellScenario,
     source: str,
     value_text: str,
