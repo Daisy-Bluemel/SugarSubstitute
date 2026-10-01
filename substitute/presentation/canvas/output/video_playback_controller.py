@@ -509,6 +509,7 @@ class VideoPlaybackController(QObject):
             pan_x,
             pan_y,
             self._presentation_sampling(session.zoom),
+            actual_size=session.viewport_mode is VideoViewportMode.ACTUAL_SIZE,
         )
 
     def _presentation_sampling(self, zoom: float) -> VideoPresentationSampling:

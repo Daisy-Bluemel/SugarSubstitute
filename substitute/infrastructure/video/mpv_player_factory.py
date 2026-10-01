@@ -38,6 +38,7 @@ class MpvPlayerProtocol(Protocol):
     mute: object
     volume: object
     video_zoom: object
+    video_unscaled: object
     video_pan_x: object
     video_pan_y: object
     scale: object
@@ -76,6 +77,7 @@ def create_mpv_player(
             "idle": "yes",
             "keep_open": "always",
             "pause": True,
+            "video_unscaled": "no",
             "loop_file": "inf",
             "volume": 100,
             "mute": True,

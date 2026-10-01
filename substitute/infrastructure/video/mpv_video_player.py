@@ -152,9 +152,7 @@ class MpvVideoPlayer:
             self._apply_audio_state()
             self._player.loop_file = "inf"
             self._player.pause = True
-            self._player.video_zoom = 0.0
-            self._player.video_pan_x = 0.0
-            self._player.video_pan_y = 0.0
+            self._viewport.reset()
             event = self._event()
         self._event_callback(event)
         try:
@@ -285,6 +283,8 @@ class MpvVideoPlayer:
         pan_x: float,
         pan_y: float,
         sampling: VideoPresentationSampling,
+        *,
+        actual_size: bool = False,
     ) -> None:
         """Apply bounded viewport geometry and the selected native sampler."""
 
@@ -297,6 +297,7 @@ class MpvVideoPlayer:
                         pan_x=pan_x,
                         pan_y=pan_y,
                         sampling=sampling,
+                        actual_size=actual_size,
                     )
                 )
             except Exception as error:

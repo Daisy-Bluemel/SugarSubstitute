@@ -192,8 +192,10 @@ class VideoPlayerPort(Protocol):
         pan_x: float,
         pan_y: float,
         sampling: VideoPresentationSampling,
+        *,
+        actual_size: bool = False,
     ) -> None:
-        """Apply normalized geometry and source-pixel sampling to the video."""
+        """Apply viewport geometry, optionally using exact native display pixels."""
 
     def set_output_active(self, active: bool) -> None:
         """Pause and effectively mute playback while the output is inactive."""

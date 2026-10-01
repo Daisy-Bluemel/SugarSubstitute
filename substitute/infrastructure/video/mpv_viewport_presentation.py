@@ -32,6 +32,14 @@ class MpvViewportPresentation:
 
         self._player = player
 
+    def reset(self) -> None:
+        """Restore fitted presentation for newly loaded media without sampler churn."""
+
+        self._player.video_unscaled = "no"
+        self._player.video_zoom = 0.0
+        self._player.video_pan_x = 0.0
+        self._player.video_pan_y = 0.0
+
     def apply(
         self,
         *,
@@ -39,11 +47,13 @@ class MpvViewportPresentation:
         pan_x: float,
         pan_y: float,
         sampling: VideoPresentationSampling,
+        actual_size: bool = False,
     ) -> VideoPresentationSampling:
-        """Apply bounded geometry and return the active sampling policy."""
+        """Use native unscaled pixels for Actual Size and bounded zoom otherwise."""
 
         bounded_zoom = min(max(float(zoom), 1.0 / 64.0), 64.0)
-        self._player.video_zoom = log2(bounded_zoom)
+        self._player.video_unscaled = "yes" if actual_size else "no"
+        self._player.video_zoom = 0.0 if actual_size else log2(bounded_zoom)
         self._player.video_pan_x = min(max(float(pan_x), -1.0), 1.0)
         self._player.video_pan_y = min(max(float(pan_y), -1.0), 1.0)
         self._player.scale = sampling.value

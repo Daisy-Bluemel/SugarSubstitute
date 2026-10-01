@@ -46,6 +46,7 @@ class FakeVideoPlayer:
         self.current = playback_snapshot(None)
         self.pending_poll_snapshot: VideoPlaybackSnapshot | None = None
         self.poll_thread_ids: list[int] = []
+        self.actual_size_mode = False
 
     def load(self, media_id: UUID, path: Path) -> None:
         """Record one media replacement."""
@@ -101,10 +102,13 @@ class FakeVideoPlayer:
         pan_x: float,
         pan_y: float,
         sampling: VideoPresentationSampling,
+        *,
+        actual_size: bool = False,
     ) -> None:
         """Record normalized viewport geometry and source sampling."""
 
         self.commands.append(("viewport", zoom, pan_x, pan_y, sampling))
+        self.actual_size_mode = actual_size
 
     def set_output_active(self, active: bool) -> None:
         """Record visibility policy."""

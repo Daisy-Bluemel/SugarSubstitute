@@ -41,6 +41,7 @@ class FakeMpvPlayer:
         self.mute: object = options["mute"]
         self.volume: object = options["volume"]
         self.video_zoom: object = 0.0
+        self.video_unscaled: object = options["video_unscaled"]
         self.video_pan_x: object = 0.0
         self.video_pan_y: object = 0.0
         self.scale: object = options["scale"]

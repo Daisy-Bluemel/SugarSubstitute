@@ -76,6 +76,7 @@ def test_actual_size_tracks_rotated_display_geometry_and_later_changes(
         assert actual.viewport_mode is VideoViewportMode.ACTUAL_SIZE
         assert actual.zoom == pytest.approx(160 / (573 * pixel_ratio))
         assert players[0].commands[-1][-1] is VideoPresentationSampling.BILINEAR
+        assert players[0].actual_size_mode
 
         changed = QSignalSpy(controller.snapshotChanged)
         players[0].emit(replace(playback_snapshot(media_id), width=320, height=180))
@@ -88,6 +89,7 @@ def test_actual_size_tracks_rotated_display_geometry_and_later_changes(
         controller.reset_viewport()
         assert controller.session_for(media_id).zoom == 1.0
         assert controller.session_for(media_id).viewport_mode is VideoViewportMode.FIT
+        assert not players[0].actual_size_mode
     finally:
         controller.close()
 

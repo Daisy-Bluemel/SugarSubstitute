@@ -121,10 +121,13 @@ class _Player:
         pan_x: float,
         pan_y: float,
         sampling: VideoPresentationSampling,
+        *,
+        actual_size: bool = False,
     ) -> None:
         """Record viewport geometry and source sampling."""
 
         self.commands.append(("viewport", zoom, pan_x, pan_y, sampling))
+        self.actual_size_mode = actual_size
 
     def set_output_active(self, active: bool) -> None:
         """Record output visibility."""
