@@ -1,0 +1,825 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "94ccf72968112cf01cf9aa337716a4b222dffe54",
+  "current_commit": "e5dfae4840c6745838ca45d94cf350b516d91f65",
+  "non_permission_records": [
+    {
+      "baseline_id": "canonical008:ordinary:001",
+      "baseline_node": "tests/launcher/application_readiness/test_outer_contract_restart.py::test_supervisor_replaces_outer_receipt_across_real_processes",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "021",
+      "current_results": [
+        {
+          "node": "tests/launcher/application_readiness/test_outer_contract_restart.py::test_supervisor_replaces_outer_receipt_across_real_processes",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:002",
+      "baseline_node": "tests/launcher/application_readiness/test_outer_contract_restart.py::test_real_nested_launcher_relay_is_accepted_by_schema_three_outer",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "021",
+      "current_results": [
+        {
+          "node": "tests/launcher/application_readiness/test_outer_contract_restart.py::test_real_nested_launcher_relay_is_accepted_by_schema_three_outer",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:005",
+      "baseline_node": "tests/launcher/installation_workflow/test_window_surface.py::test_launcher_initial_screen_matches_onboarding_step_one_shell",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": null,
+      "current_results": [
+        {
+          "node": "tests/launcher/installation_workflow/test_window_surface.py::test_launcher_initial_screen_matches_onboarding_step_one_shell",
+          "status": "failed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml",
+          "failure_category": "launcher_description_height",
+          "normalized_message": "AssertionError: description label height 18 differs from sizeHint height 17."
+        }
+      ],
+      "disposition": "still_failing_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:006",
+      "baseline_node": "tests/launcher/repair/test_controller.py::test_close_waits_for_active_worker_completion",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "022",
+      "current_results": [
+        {
+          "node": "tests/launcher/repair/test_controller.py::test_close_waits_for_active_worker_completion",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:014",
+      "baseline_node": "tests/launcher/update_activation/transaction/test_baseline_refresh.py::test_normal_update_refreshes_retained_root_before_application_launch",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "023",
+      "current_results": [
+        {
+          "node": "tests/launcher/update_activation/transaction/test_baseline_refresh.py::test_normal_update_refreshes_retained_root_before_application_launch",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:015",
+      "baseline_node": "tests/launcher/update_activation/transaction/test_baseline_refresh.py::test_baseline_refresh_rejects_modified_staging_without_replacing_root",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "023",
+      "current_results": [
+        {
+          "node": "tests/launcher/update_activation/transaction/test_baseline_refresh.py::test_baseline_refresh_rejects_modified_staging_without_replacing_root",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:031",
+      "baseline_node": "tests/crosscutting/ci/license_headers/test_policy.py::test_repository_headers_are_current",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "010",
+      "current_results": [
+        {
+          "node": "tests/crosscutting/ci/license_headers/test_policy.py::test_repository_headers_are_current",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:032",
+      "baseline_node": "tests/presentation/editor/prompt_editor/caret_navigation/test_pointer_affinity.py::test_projection_surface_click_wrapped_trailing_edge_keeps_visual_row",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "020",
+      "current_results": [
+        {
+          "node": "tests/presentation/editor/prompt_editor/caret_navigation/test_pointer_affinity.py::test_projection_surface_click_wrapped_trailing_edge_keeps_visual_row",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:033",
+      "baseline_node": "tests/presentation/settings/about/test_about_version_layout.py::test_about_version_group_bounds_subtitles_under_column_pressure",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": null,
+      "current_results": [
+        {
+          "node": "tests/presentation/settings/about/test_about_version_layout.py::test_about_version_group_bounds_subtitles_under_column_pressure",
+          "status": "failed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml",
+          "failure_category": "about_subtitle_elision",
+          "normalized_message": "AssertionError: expected ComfyUI in elided_keys; observed an empty set."
+        }
+      ],
+      "disposition": "still_failing_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:034",
+      "baseline_node": "tests/presentation/settings/prompt_editor/test_wildcards.py::test_prompt_editor_page_invokes_wildcard_management_opener",
+      "original_kind": "error",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": null,
+      "current_results": [
+        {
+          "node": "tests/presentation/settings/prompt_editor/test_wildcards.py::test_prompt_editor_page_invokes_wildcard_management_opener",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "current_case_passed_historical_worker_loss_unresolved",
+      "note": "The wildcard Settings case passed in this reused-worker ordinary cohort. Historical worker-loss cause and full-lane order safety remain unresolved; no OOM, SIGKILL or timeout cause is established."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:035",
+      "baseline_node": "tests/qualification/prompt_editor/real_shell/keyboard_input/test_weight_selection.py::test_exact_weight_input_starts_at_displayed_weight_origin[nested-emphasis]",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "017",
+      "current_results": [
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/keyboard_input/test_weight_selection.py::test_exact_weight_input_starts_at_displayed_weight_origin[nested-emphasis]",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:036",
+      "baseline_node": "tests/qualification/installer/test_readiness_evidence.py::test_installed_candidate_launch_is_observed_without_capture_bound_wait",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "moved_in_checkpoint023",
+      "repair_checkpoint": "023",
+      "current_results": [
+        {
+          "node": "tests/qualification/installer/test_candidate_launch.py::test_installed_candidate_launch_is_observed_without_capture_bound_wait",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:037",
+      "baseline_node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.0-emphasis]",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "017",
+      "current_results": [
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.0-emphasis]",
+          "status": "failed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml",
+          "failure_category": "raster_marker_isolation_guard",
+          "normalized_message": "AssertionError: non-target projection ink uses the marker."
+        }
+      ],
+      "disposition": "still_failing_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:038",
+      "baseline_node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.0-nested-emphasis]",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "017",
+      "current_results": [
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.0-nested-emphasis]",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:039",
+      "baseline_node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.5-nested-emphasis]",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "017",
+      "current_results": [
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.5-nested-emphasis]",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:040",
+      "baseline_node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[2.0-emphasis]",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "017",
+      "current_results": [
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[2.0-emphasis]",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:041",
+      "baseline_node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[2.0-nested-emphasis]",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "017",
+      "current_results": [
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[2.0-nested-emphasis]",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:070",
+      "baseline_node": "tests/shared/tls/test_system_trust_context.py::test_system_trust_tls_context_preserves_peer_and_hostname_verification",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "024",
+      "current_results": [
+        {
+          "node": "tests/shared/tls/test_system_trust_context.py::test_system_trust_tls_context_preserves_peer_and_hostname_verification",
+          "status": "passed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:077",
+      "baseline_node": "tests/tools/test_render_image_model_picker.py::test_sdxl_and_anima_render_in_contained_shell",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": null,
+      "current_results": [
+        {
+          "node": "tests/tools/test_render_image_model_picker.py::test_sdxl_and_anima_render_in_contained_shell",
+          "status": "failed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml",
+          "failure_category": "headless_renderer_windows_font_requirement",
+          "normalized_message": "RuntimeError: WINDIR is required for headless Fluent rendering."
+        }
+      ],
+      "disposition": "still_failing_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:ordinary:078",
+      "baseline_node": "tests/tools/test_render_model_acquisition_experience.py::test_headless_model_acquisition_matrix_uses_production_surfaces",
+      "original_kind": "failure",
+      "original_lane": "ordinary",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": null,
+      "current_results": [
+        {
+          "node": "tests/tools/test_render_model_acquisition_experience.py::test_headless_model_acquisition_matrix_uses_production_surfaces",
+          "status": "failed",
+          "lane": "ordinary",
+          "junit": "ordinary.xml",
+          "failure_category": "headless_renderer_windows_font_requirement",
+          "normalized_message": "RuntimeError: WINDIR is required for headless Fluent rendering."
+        }
+      ],
+      "disposition": "still_failing_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:isolated:000",
+      "baseline_node": "tests/presentation/editor/prompt_editor/layout/contracts/test_canonical_wrapping.py::test_wrapped_wildcard_line_keeps_its_start_caret_stop_first",
+      "original_kind": "failure",
+      "original_lane": "isolated",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "020",
+      "current_results": [
+        {
+          "node": "tests/presentation/editor/prompt_editor/layout/contracts/test_canonical_wrapping.py::test_wrapped_wildcard_line_keeps_its_start_caret_stop_first",
+          "status": "passed",
+          "lane": "isolated",
+          "junit": "isolated/tests__presentation__editor__prompt_editor__layout__contracts__test_canonical_wrapping.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:isolated:001",
+      "baseline_node": "tests/presentation/editor/prompt_editor/layout/contracts/test_canonical_wrapping.py::test_projection_layout_preserves_long_raw_unicode_geometry",
+      "original_kind": "failure",
+      "original_lane": "isolated",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "020",
+      "current_results": [
+        {
+          "node": "tests/presentation/editor/prompt_editor/layout/contracts/test_canonical_wrapping.py::test_projection_layout_preserves_long_raw_unicode_geometry",
+          "status": "passed",
+          "lane": "isolated",
+          "junit": "isolated/tests__presentation__editor__prompt_editor__layout__contracts__test_canonical_wrapping.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:isolated:002",
+      "baseline_node": "tests/presentation/editor/prompt_editor/layout/contracts/test_incremental_reuse.py::test_canonical_reflow_rebinds_optimistic_prefix_without_rebuilding_it",
+      "original_kind": "failure",
+      "original_lane": "isolated",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": "020",
+      "current_results": [
+        {
+          "node": "tests/presentation/editor/prompt_editor/layout/contracts/test_incremental_reuse.py::test_canonical_reflow_rebinds_optimistic_prefix_without_rebuilding_it",
+          "status": "passed",
+          "lane": "isolated",
+          "junit": "isolated/tests__presentation__editor__prompt_editor__layout__contracts__test_incremental_reuse.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:isolated:003",
+      "baseline_node": "tests/qualification/prompt_editor/real_shell/selection_rendering/test_selection_interactions.py::test_real_shell_wrapped_multiline_selection_geometry_clears_on_collapse",
+      "original_kind": "failure",
+      "original_lane": "isolated",
+      "mapping": "expanded_in_checkpoint018",
+      "repair_checkpoint": "018",
+      "current_results": [
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/selection_rendering/test_selection_interactions.py::test_real_shell_wrapped_multiline_selection_geometry_clears_on_collapse[near-edge]",
+          "status": "passed",
+          "lane": "isolated",
+          "junit": "isolated/tests__qualification__prompt_editor__real_shell__selection_rendering__test_selection_interactions.xml"
+        },
+        {
+          "node": "tests/qualification/prompt_editor/real_shell/selection_rendering/test_selection_interactions.py::test_real_shell_wrapped_multiline_selection_geometry_clears_on_collapse[soft-wrapped]",
+          "status": "passed",
+          "lane": "isolated",
+          "junit": "isolated/tests__qualification__prompt_editor__real_shell__selection_rendering__test_selection_interactions.xml"
+        }
+      ],
+      "disposition": "all_mapped_cases_passed_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    },
+    {
+      "baseline_id": "canonical008:isolated:013",
+      "baseline_node": "tests/tools/test_render_openmodeldb_upscaler_picker.py::test_headless_upscaler_picker_renders_real_model_identity",
+      "original_kind": "failure",
+      "original_lane": "isolated",
+      "mapping": "unchanged_node",
+      "repair_checkpoint": null,
+      "current_results": [
+        {
+          "node": "tests/tools/test_render_openmodeldb_upscaler_picker.py::test_headless_upscaler_picker_renders_real_model_identity",
+          "status": "failed",
+          "lane": "isolated",
+          "junit": "isolated/tests__tools__test_render_openmodeldb_upscaler_picker.xml",
+          "failure_category": "headless_renderer_windows_font_requirement",
+          "normalized_message": "RuntimeError: WINDIR is required for headless Fluent rendering."
+        }
+      ],
+      "disposition": "still_failing_in_this_cohort",
+      "note": "Current cohort evidence only; this does not clear full-suite or platform qualification."
+    }
+  ],
+  "blocked_ipc": {
+    "status": "blocked_unexecuted_unresolved",
+    "records": [
+      {
+        "baseline_id": "canonical008:ordinary:000",
+        "node": "tests/launcher/application_launch/test_splash_transfer.py::test_borrowed_splash_reuses_session_and_closes_through_original_owner",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:003",
+        "node": "tests/launcher/installation_workflow/test_selected_folder_admission.py::test_existing_app_retires_installer_without_writes_or_active_workers[False]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:004",
+        "node": "tests/launcher/installation_workflow/test_selected_folder_admission.py::test_existing_app_retires_installer_without_writes_or_active_workers[True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:007",
+        "node": "tests/launcher/repair/test_session_ownership.py::test_repair_session_owns_instance_until_presentation_finishes[0-True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:008",
+        "node": "tests/launcher/repair/test_session_ownership.py::test_repair_session_owns_instance_until_presentation_finishes[0-False]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:009",
+        "node": "tests/launcher/repair/test_session_ownership.py::test_repair_session_owns_instance_until_presentation_finishes[2-True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:010",
+        "node": "tests/launcher/repair/test_session_ownership.py::test_repair_session_owns_instance_until_presentation_finishes[-1-True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:011",
+        "node": "tests/launcher/repair/test_session_ownership.py::test_secondary_repair_reaches_existing_owner_without_execution",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:012",
+        "node": "tests/launcher/repair/test_session_ownership.py::test_repair_handoff_retires_unavailable_owner_before_mutation[True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:013",
+        "node": "tests/launcher/repair/test_session_ownership.py::test_repair_handoff_retires_unavailable_owner_before_mutation[False]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:016",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_dispatch_retains_baseline_authority_and_routes_failure[closed]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:017",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_dispatch_retains_baseline_authority_and_routes_failure[restart]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:018",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_dispatch_retains_baseline_authority_and_routes_failure[restart-zero]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:019",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_dispatch_retains_baseline_authority_and_routes_failure[failed-closed]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:020",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_dispatch_retains_baseline_authority_and_routes_failure[spawn-error]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:021",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[True-None]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:022",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[True-{}]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:023",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[True-{bad]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:024",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[True-{\"schema_version\": 1, \"delegation_protocol\": 999}]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:025",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[False-None]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:026",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[False-{}]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:027",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[False-{bad]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:028",
+        "node": "tests/launcher/update_activation/transaction/test_generation_dispatch.py::test_incompatible_generation_keeps_working_baseline[False-{\"schema_version\": 1, \"delegation_protocol\": 999}]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:029",
+        "node": "tests/launcher/update_activation/transaction/test_generation_startup_presentation.py::test_registered_starting_app_does_not_hide_delegated_splash",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:030",
+        "node": "tests/launcher/update_activation/transaction/test_generation_startup_presentation.py::test_late_splash_release_preserves_fallback_presentation",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:042",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_child_crash_before_receipt_reaches_replacement_without_relaunch",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:043",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_failed_presentation_is_retained_for_a_replacement_child[False]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:044",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_failed_presentation_is_retained_for_a_replacement_child[True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:045",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_startup_acknowledgements_cannot_bypass_total_work_bound",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:046",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_supervisor_shutdown_releases_waiter_and_endpoint_immediately",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:047",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_application_handler_failure_does_not_kill_the_control_channel",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:048",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_stalled_handshake_cannot_block_later_launches",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:049",
+        "node": "tests/shared/application_instance_broker/test_broker_abuse.py::test_forged_child_receipt_requeues_work_for_a_real_child",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:050",
+        "node": "tests/shared/application_instance_broker/test_child_registration.py::test_failed_child_handshake_retains_queued_launch",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:051",
+        "node": "tests/shared/application_instance_broker/test_child_registration.py::test_superseded_registration_cannot_deliver_its_snapshot_twice",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:052",
+        "node": "tests/shared/application_instance_broker/test_child_replacement.py::test_retired_child_receipt_cannot_discard_replacement_presentation",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:053",
+        "node": "tests/shared/application_instance_broker/test_child_replacement.py::test_retired_child_send_failure_cannot_discard_replacement_presentation",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:054",
+        "node": "tests/shared/application_instance_broker/test_delegated_cleanup.py::test_delegated_cleanup_is_exactly_once_and_cannot_close_replacement",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:055",
+        "node": "tests/shared/application_instance_broker/test_delegated_cleanup.py::test_failed_cleanup_can_be_retried_without_replacing_live_resource",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:056",
+        "node": "tests/shared/application_instance_broker/test_delegated_cleanup.py::test_owner_shutdown_releases_resource_without_a_delegate_request",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:057",
+        "node": "tests/shared/application_instance_broker/test_delegated_session.py::test_delegated_session_routes_startup_and_retains_owner_on_close",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:058",
+        "node": "tests/shared/application_instance_broker/test_delegated_session.py::test_delegated_session_consumes_root_restart_exactly_once",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:059",
+        "node": "tests/shared/application_instance_broker/test_delegated_session.py::test_delegation_rejects_invalid_credentials_without_releasing_owner",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:060",
+        "node": "tests/shared/application_instance_broker/test_delegated_session.py::test_application_replaces_delegated_startup_without_losing_native_owner",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:061",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_selected_folder_routes_to_the_existing_setup_owner",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:062",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_existing_selected_folder_owner_receives_install_request",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:063",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_claiming_the_initial_folder_is_idempotent",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:064",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_concurrent_setup_claims_admit_exactly_one_owner[2]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:065",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_concurrent_setup_claims_admit_exactly_one_owner[4]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:066",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_admission_activity_does_not_replace_the_terminal_result[False]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:067",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_admission_activity_does_not_replace_the_terminal_result[True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:068",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_unauthenticated_target_claim_cannot_reserve_a_folder",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:069",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_listener_start_failure_releases_only_the_selected_claim",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:071",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_stale_setup_client_cannot_claim_after_supervisor_exit[False]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:072",
+        "node": "tests/shared/application_instance_broker/test_installation_admission.py::test_stale_setup_client_cannot_claim_after_supervisor_exit[True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:073",
+        "node": "tests/shared/application_instance_broker/test_released_endpoint.py::test_released_endpoint_and_current_launch_share_one_instance[True]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:074",
+        "node": "tests/shared/application_instance_broker/test_released_endpoint.py::test_released_endpoint_and_current_launch_share_one_instance[False]",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:075",
+        "node": "tests/shared/application_instance_broker/test_reservation_cleanup.py::test_failed_compatibility_bind_releases_primary_address",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:ordinary:076",
+        "node": "tests/shared/application_instance_broker/test_reservation_cleanup.py::test_failed_listener_thread_start_releases_every_address",
+        "original_lane": "ordinary"
+      },
+      {
+        "baseline_id": "canonical008:isolated:004",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_secondary_invocation_reaches_the_registered_application",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:005",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_child_restart_request_is_owned_by_the_existing_supervisor",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:006",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_startup_invocation_is_queued_until_the_child_registers",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:007",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_secondary_remains_pending_until_the_application_presents_a_surface",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:008",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_startup_surface_acknowledges_launch_without_losing_queued_invocation",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:009",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_startup_surface_remains_authoritative_after_child_registration",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:010",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_presentation_deadline_releases_launcher_without_discarding_work",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:011",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_child_observes_authoritative_supervisor_loss",
+        "original_lane": "isolated"
+      },
+      {
+        "baseline_id": "canonical008:isolated:012",
+        "node": "tests/shared/application_instance_broker/test_broker.py::test_native_endpoint_is_immediately_recoverable_after_owner_exit",
+        "original_lane": "isolated"
+      }
+    ]
+  },
+  "accounting": {
+    "original_failure_error_records": 93,
+    "non_permission_records_reconciled": 25,
+    "blocked_unexecuted_records": 68
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "source_commit": "e5dfae4840c6745838ca45d94cf350b516d91f65",
+  "failures": [
+    {
+      "node": "tests/launcher/installation_workflow/test_window_surface.py::test_launcher_initial_screen_matches_onboarding_step_one_shell",
+      "lane": "ordinary",
+      "junit": "ordinary.xml",
+      "category": "launcher_description_height",
+      "normalized_message": "AssertionError: description label height 18 differs from sizeHint height 17.",
+      "baseline_ids": [
+        "canonical008:ordinary:005"
+      ],
+      "relationship_to_canonical008": "previously failing node; inspect current failure stage",
+      "interpretation": "Original height invariant still fails in the current ordinary cohort."
+    },
+    {
+      "node": "tests/presentation/settings/about/test_about_version_layout.py::test_about_version_group_bounds_subtitles_under_column_pressure",
+      "lane": "ordinary",
+      "junit": "ordinary.xml",
+      "category": "about_subtitle_elision",
+      "normalized_message": "AssertionError: expected ComfyUI in elided_keys; observed an empty set.",
+      "baseline_ids": [
+        "canonical008:ordinary:033"
+      ],
+      "relationship_to_canonical008": "previously failing node; inspect current failure stage",
+      "interpretation": "Original subtitle-elision expectation still fails; no cause is established here."
+    },
+    {
+      "node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.0-emphasis]",
+      "lane": "ordinary",
+      "junit": "ordinary.xml",
+      "category": "raster_marker_isolation_guard",
+      "normalized_message": "AssertionError: non-target projection ink uses the marker.",
+      "baseline_ids": [
+        "canonical008:ordinary:037"
+      ],
+      "relationship_to_canonical008": "previously failing node; inspect current failure stage",
+      "interpretation": "Stopped at the background-marker guard before initial alignment comparison; this does not establish recurrence of the original alignment failure.",
+      "background_marker_pixel_count": 3,
+      "execution_context": "Ordinary two-worker cohort with reused workers; order/state cause not established."
+    },
+    {
+      "node": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.5-emphasis]",
+      "lane": "ordinary",
+      "junit": "ordinary.xml",
+      "category": "raster_marker_isolation_guard",
+      "normalized_message": "AssertionError: non-target projection ink uses the marker.",
+      "baseline_ids": [],
+      "relationship_to_canonical008": "additional failing parameter not present in the canonical008 failure set",
+      "interpretation": "Stopped at the background-marker guard before initial alignment comparison; this does not establish recurrence of the original alignment failure.",
+      "background_marker_pixel_count": 5,
+      "execution_context": "Ordinary two-worker cohort with reused workers; order/state cause not established."
+    },
+    {
+      "node": "tests/tools/test_render_image_model_picker.py::test_sdxl_and_anima_render_in_contained_shell",
+      "lane": "ordinary",
+      "junit": "ordinary.xml",
+      "category": "headless_renderer_windows_font_requirement",
+      "normalized_message": "RuntimeError: WINDIR is required for headless Fluent rendering.",
+      "baseline_ids": [
+        "canonical008:ordinary:077"
+      ],
+      "relationship_to_canonical008": "previously failing node; inspect current failure stage",
+      "interpretation": "The headless rendering font setup did not proceed on this Linux host."
+    },
+    {
+      "node": "tests/tools/test_render_model_acquisition_experience.py::test_headless_model_acquisition_matrix_uses_production_surfaces",
+      "lane": "ordinary",
+      "junit": "ordinary.xml",
+      "category": "headless_renderer_windows_font_requirement",
+      "normalized_message": "RuntimeError: WINDIR is required for headless Fluent rendering.",
+      "baseline_ids": [
+        "canonical008:ordinary:078"
+      ],
+      "relationship_to_canonical008": "previously failing node; inspect current failure stage",
+      "interpretation": "The headless rendering font setup did not proceed on this Linux host."
+    },
+    {
+      "node": "tests/tools/test_render_openmodeldb_upscaler_picker.py::test_headless_upscaler_picker_renders_real_model_identity",
+      "lane": "isolated",
+      "junit": "isolated/tests__tools__test_render_openmodeldb_upscaler_picker.xml",
+      "category": "headless_renderer_windows_font_requirement",
+      "normalized_message": "RuntimeError: WINDIR is required for headless Fluent rendering.",
+      "baseline_ids": [
+        "canonical008:isolated:013"
+      ],
+      "relationship_to_canonical008": "previously failing node; inspect current failure stage",
+      "interpretation": "The headless rendering font setup did not proceed on this Linux host."
+    }
+  ]
+}

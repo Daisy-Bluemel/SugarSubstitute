@@ -1,0 +1,19 @@
+{
+  "source_commit": "e5dfae4840c6745838ca45d94cf350b516d91f65",
+  "normal_entrypoint": "main.py",
+  "runtime_hooks": false,
+  "window_id": 52428807,
+  "restored_prompt": "1.05 nested emphasis and323-character three-hard-line negative prompt restored after cold restart",
+  "theme": "Dark/Mica and compact stack preserved; automatic wallpaper discovery",
+  "backend": "ComfyUI0.28.0, Device:cpu; no GPU inference qualification",
+  "new_output": "user/outputs/2026-10-01/001_01_untitled_workflow_load_image.png",
+  "new_output_sha256": "36384a23418563f240c00d50a69c6a83532f3d4f02a2b4545a985c8bd28c0e36",
+  "rgb_size": [
+    320,
+    240
+  ],
+  "pixel_identical_to_input": true,
+  "previous_outputs_unchanged": 4,
+  "queue": "0 pending; Stop disabled after completion",
+  "known_startup_warnings": "Transient connection refused while backend starts; missing live definitions preserved; SeedVR2 unavailable without GPU"
+}

@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "status": "FAILED_FOCUSED_COHORT_COMPLETE_COVERAGE",
+  "source_commit": "e5dfae4840c6745838ca45d94cf350b516d91f65",
+  "source_tree": "ed7e675aa4c402a6514b902b1ae0887a01c51086",
+  "started_utc": "2026-10-01T05:00:57.051745+00:00",
+  "plan_sha256": "d2948d7396e432bdeca254e4ea203e1b1bede3f01da7ced2c9efef7c6f3443c6",
+  "counts": {
+    "tests": 272,
+    "passed": 264,
+    "failed": 7,
+    "errors": 0,
+    "skipped": 1
+  },
+  "lanes": {
+    "ordinary": {
+      "tests": 208,
+      "passed": 201,
+      "failed": 6,
+      "errors": 0,
+      "skipped": 1,
+      "workers": 2,
+      "exit_code": 1,
+      "wall_seconds": 21.07141547500214
+    },
+    "isolated": {
+      "tests": 64,
+      "passed": 63,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "workers": 2,
+      "exit_code": 1,
+      "wall_seconds": 77.23383400500461
+    }
+  },
+  "configuration": {
+    "ordinary": "23 modules, pytest -n2, not serial and not isolated; reused workers",
+    "isolated": "5 modules, supported runner API,2 concurrent fresh pytest -n0 processes",
+    "serial": "Not part of this affected cohort; no policy reclassification.",
+    "qt_platform": "offscreen",
+    "qt_opengl": "software",
+    "per_test_guard_seconds": 300,
+    "isolated_module_timeout_seconds": 600,
+    "cache": "Per-run XDG_CACHE_HOME outside repository",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "versions": {
+      "PySide6": "6.11.2",
+      "pytest": "9.1.1",
+      "pytest-xdist": "3.8.0",
+      "CuteMica": "0.1.0",
+      "QPane": "3.0.5",
+      "torch": "2.14.1+cpu"
+    },
+    "exact_commands_source": "lane-results.json"
+  },
+  "coverage_and_integrity": {
+    "planned_and_observed_cases": 272,
+    "unique_cases": 272,
+    "planned_and_observed_modules": 28,
+    "recorded_coverage_errors": [],
+    "independent_coverage_errors": [],
+    "verified": [
+      "All26 mapped current baseline nodes present",
+      "Exact per-module counts",
+      "Every strengthened selector and parameter count",
+      "All66 explicit025 nodes",
+      "JUnit node inventory equals recorded reconciliation",
+      "No duplicate identities or unexpected modules",
+      "All28 module fingerprints match run metadata and plan",
+      "All40 current frozen fingerprints match",
+      "Recorded post-run and current tracked worktree are clean"
+    ],
+    "only_skip": {
+      "node": "tests/launcher/repair/test_controller.py::test_close_cancels_frozen_native_repair_before_window_retires",
+      "reason": "Existing Windows-native test; Linux platform policy unchanged."
+    }
+  },
+  "canonical008_non_permission_records": {
+    "records": 25,
+    "mapped_current_cases": 26,
+    "records_with_all_current_cases_passed": 19,
+    "records_with_current_failure": 6,
+    "passed_mapped_current_cases": 20,
+    "failed_mapped_current_cases": 6,
+    "worker_loss_case_included_in_passing_records": true,
+    "worker_loss_cause_resolved": false,
+    "additional_failure_outside_old_failure_set": "tests/qualification/prompt_editor/real_shell/projection_paths/test_weight_raster_alignment.py::test_weight_raster_alignment[1.5-emphasis]"
+  },
+  "current_failure_categories": {
+    "launcher_description_height": 1,
+    "about_subtitle_elision": 1,
+    "raster_marker_isolation_guard": 2,
+    "headless_renderer_windows_font_requirement": 3
+  },
+  "blocked_ipc": {
+    "count": 68,
+    "ordinary": 59,
+    "isolated": 9,
+    "status": "blocked_unexecuted_unresolved",
+    "note": "Historical EPERM diagnostics were not rerun or rerouted. Omission is neither pass nor skip. One original regex mismatch also contains EPERM."
+  },
+  "resources": {
+    "lanes": {
+      "ordinary": {
+        "sample_count": 5,
+        "nominal_sample_interval_seconds": 5,
+        "first_sample_elapsed_seconds": 0.001000423995719757,
+        "last_sample_elapsed_seconds": 20.004302251996705,
+        "peak_sampled_summed_rss_bytes": 1280905216,
+        "peak_sample_elapsed_seconds": 15.003556194002158,
+        "peak_sample_process_count": 3,
+        "minimum_sampled_disk_free_bytes": 4990259200,
+        "minimum_sampled_system_available_bytes": 6041067520
+      },
+      "isolated": {
+        "sample_count": 16,
+        "nominal_sample_interval_seconds": 5,
+        "first_sample_elapsed_seconds": 0.0008117910037981346,
+        "last_sample_elapsed_seconds": 75.01412324600096,
+        "peak_sampled_summed_rss_bytes": 738377728,
+        "peak_sample_elapsed_seconds": 20.003870216001815,
+        "peak_sample_process_count": 3,
+        "minimum_sampled_disk_free_bytes": 4990046208,
+        "minimum_sampled_system_available_bytes": 6508867584
+      }
+    },
+    "caveat": "Observed samples only, roughly every5 seconds; intervening peaks may be missed. Summed RSS can double-count shared pages. System-available memory is host-level, not a cgroup limit. These observations do not establish or exclude an OOM, signal, timeout or historical worker-loss cause."
+  },
+  "native_cpu_workflow": {
+    "evidence_file": "native-runtime-verification.json",
+    "recorded": {
+      "normal_entrypoint": "main.py",
+      "runtime_hooks": false,
+      "restored_prompt": "1.05 nested emphasis and323-character three-hard-line negative prompt restored after cold restart",
+      "theme": "Dark/Mica and compact stack preserved; automatic wallpaper discovery",
+      "backend": "ComfyUI0.28.0, Device:cpu; no GPU inference qualification",
+      "queue": "0 pending; Stop disabled after completion",
+      "known_startup_warnings": "Transient connection refused while backend starts; missing live definitions preserved; SeedVR2 unavailable without GPU"
+    },
+    "output_relative_to_user_outputs": "2026-10-01/001_01_untitled_workflow_load_image.png",
+    "output_sha256": "36384a23418563f240c00d50a69c6a83532f3d4f02a2b4545a985c8bd28c0e36",
+    "pixel_dimensions": [
+      320,
+      240
+    ],
+    "pixel_identical_to_input_recorded": true,
+    "previous_outputs_unchanged_independently_verified": 4,
+    "independent_summary_checks": "Verified output bytes/hash, PNG dimensions and four prior-output hashes. Runtime UI observations and pixel equality are recorded evidence; this reconciliation did not repeat GUI execution or the input pixel comparison.",
+    "scope": "Normal cold-start main.py, restored state and a CPU-backed Load Image workflow completing with a new output. This is not hardware-GPU or general model-inference qualification."
+  },
+  "remaining_limits": [
+    "Seven focused test failures remain; the cohort is not green and does not establish release readiness.",
+    "The complete ordinary, isolated and serial gates were not rerun. This is a28-module affected cohort.",
+    "The historical wildcard Settings worker loss remains unexplained despite this case passing in reused workers.",
+    "All68 historical native IPC permission diagnostics remain blocked/unexecuted/unresolved.",
+    "Whole-tree strict typing was not rerun by this cohort. Do not subtract focused fixes from historical diagnostics to invent a remaining global count.",
+    "No native Windows or macOS runtime qualification is claimed.",
+    "No hardware-GPU execution or GPU inference qualification is claimed; backend reported Device:cpu.",
+    "Crashpad runtime assets were fingerprinted, but no deliberate crash, minidump generation or crash-report recovery path was verified here.",
+    "Two raster cases fail the background-marker guard before initial alignment comparison; their root cause and full-suite order sensitivity remain open."
+  ],
+  "strengthened_oracle_results_by_checkpoint": {
+    "013": {
+      "tests": 22,
+      "passed": 22,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "017": {
+      "tests": 20,
+      "passed": 18,
+      "failed": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "018": {
+      "tests": 15,
+      "passed": 15,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "020": {
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "021": {
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "022": {
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "023": {
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "024": {
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "025": {
+      "tests": 66,
+      "passed": 66,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}

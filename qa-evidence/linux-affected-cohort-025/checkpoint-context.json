@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "as_run_source_commit": "e5dfae4840c6745838ca45d94cf350b516d91f65",
+  "as_run_result": "264 passed,7 failed,1 existing Windows skip in272 planned cases; this affected cohort failed.",
+  "publication_context": "The JSON summaries are immutable observations of the canonical025 run and its normal native CPU workflow. Statements about clean source or matching fingerprints refer to the completed run/reconciliation, not to later work. Paths are normalized repository/evidence/profile-relative identifiers; external input hashes identify retained evidence and do not imply all raw inputs are included in this addendum.",
+  "later_focused_repair": {
+    "commit": "99bb63754051a7440416b19a32b3b08cab511b22",
+    "url": "https://github.com/Daisy-Bluemel/SugarSubstitute/commit/99bb63754051a7440416b19a32b3b08cab511b22",
+    "cause": "Launcher dark pink accent produced low-alpha antialiasing pixels on unrelated emphasis punctuation that matched the raster oracle magenta marker. Native weight geometry was unchanged in the controlled comparison.",
+    "repair": "Explicit test-owned non-marker accent with exact configured-color restoration and unchanged theme mode; production geometry, marker guard and tolerances unchanged.",
+    "results": "9 raster variants passed fresh; launcher precursor plus9 variants passed in one worker;2 owner restoration/exception cases passed; separate plugin-free one-worker run passed all12 combined cases.",
+    "limits": "These focused026 results do not replace the recorded025 failures or establish a new cohort/full-suite pass."
+  },
+  "native_capture": "The actual normal-app output screenshot is retained separately in the user Library; no image is published in this text-only addendum.",
+  "remaining_limits": [
+    "68 historical IPC permission diagnostics remain blocked/unexecuted/unresolved, not passes or skips.",
+    "Historical full-lane worker loss cause remains unexplained.",
+    "Whole-tree typing and complete parallel/isolated/serial gates remain open.",
+    "No hardware-GPU inference, native Windows/macOS or fatal Linux minidump qualification is claimed."
+  ]
+}
