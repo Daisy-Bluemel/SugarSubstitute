@@ -133,6 +133,9 @@ from tests.support.prompt_editor.real_shell.session_support import (
     _PromptNodeDefinitionGateway,
     _StaticPromptFeatureProfileService,
 )
+from tests.support.prompt_editor.real_shell.workflow_surfaces import (
+    install_prompt_workflow_surface,
+)
 from cutecanvas import ExecutionRuntime
 
 
@@ -443,60 +446,9 @@ class PromptEditorRealShell(QMainWindow):
             QApplication.setActiveWindow(self)
 
     def install_workflow_surface(self, workflow_id: str) -> None:
-        """Install real workflow widgets used by coordinator route switching."""
+        """Install real workflow widgets through the mounted-surface owner."""
 
-        cube_stack = self.cube_stacks.get(workflow_id)
-        if cube_stack is None:
-            cube_stack = CubeStack(self)
-            cube_stack.setObjectName(f"{workflow_id}-cube-stack")
-            self.cube_stack_presentation_controller.prepare_stack(cube_stack)
-            self.cube_stacks[workflow_id] = cube_stack
-            self.cube_stack_container.addWidget(cast(QWidget, cube_stack))
-        editor_panel = self.editor_panels.get(workflow_id)
-        if editor_panel is None:
-            editor_panel = EditorPanel(
-                node_definition_gateway=self.node_definition_gateway,
-                prompt_autocomplete_gateway=self.prompt_autocomplete_gateway,
-                prompt_wildcard_catalog_gateway=(self.prompt_wildcard_catalog_gateway),
-                node_behavior_service=self.node_behavior_service,
-                node_presentation_service=self.node_presentation_service,
-                danbooru_url_import_service=self.danbooru_url_import_service,
-                danbooru_wiki_service=self.danbooru_wiki_service,
-                prompt_lora_catalog_service=self.prompt_lora_catalog_service,
-                prompt_spellcheck_service=self.prompt_spellcheck_service,
-                prompt_feature_profile_service=cast(
-                    Any,
-                    self.prompt_feature_profile_service,
-                ),
-                wheel_adjustment_mode=self.prompt_wheel_adjustment_mode,
-                model_catalog_service=self.model_catalog_service,
-                thumbnail_asset_repository=self.thumbnail_asset_repository,
-                user_preset_service=self.user_preset_service,
-                workflow_id=workflow_id,
-                editor_panel_execution_factories=(
-                    immediate_editor_panel_execution_factories()
-                ),
-            )
-            editor_panel.mainwindow = self
-            editor_panel.setObjectName(f"{workflow_id}-editor-panel")
-            editor_panel.setMinimumWidth(412)
-            self.main_window_signal_binder.connect_editor_panel_signals(editor_panel)
-            self.editor_panels[workflow_id] = editor_panel
-            self.editor_panel_container.addWidget(editor_panel)
-        if workflow_id not in self.override_managers:
-            manager = GlobalOverridesManager(
-                self,
-                pinned_override_service=self.pinned_override_service,
-                node_definition_gateway=self.node_definition_gateway,
-                prompt_autocomplete_gateway=self.prompt_autocomplete_gateway,
-                prompt_wildcard_catalog_gateway=self.prompt_wildcard_catalog_gateway,
-                prompt_lora_catalog_service=self.prompt_lora_catalog_service,
-                model_choice_snapshot_controller=(
-                    editor_panel.model_choice_snapshot_controller
-                ),
-                thumbnail_asset_repository=self.thumbnail_asset_repository,
-            )
-            self.override_managers[workflow_id] = manager
+        install_prompt_workflow_surface(self, workflow_id)
 
     @property
     def active_editor_panel(self) -> EditorPanel | None:

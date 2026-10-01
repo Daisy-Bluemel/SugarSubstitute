@@ -113,7 +113,7 @@ class EditorPanel(
     inputMaskClicked: Any
     inputMaskOpacityChanged: Any
     inputMaskOpacityCommitted: Any
-    mainwindow: Any
+    mainwindow: object
     scheduled_lora_provider: ScheduledLoraProvider | None
     prompt_feature_profile_service: PromptFeatureProfileService | None
     model_choice_snapshot_controller: PanelModelChoiceSnapshotController

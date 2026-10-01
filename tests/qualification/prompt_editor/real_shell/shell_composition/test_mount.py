@@ -74,6 +74,63 @@ def test_real_shell_composes_cube_icon_resolution(
     assert field.workflow.workflow_id in real_shell_scenario.shell.cube_stacks
 
 
+def test_workflow_surface_installation_reuses_each_workflows_owned_widgets(
+    real_shell_scenario: PromptEditorRealShellScenario,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep mounting idempotent without sharing or activating another document."""
+
+    shell = real_shell_scenario.shell
+    autosaves: list[None] = []
+    monkeypatch.setattr(
+        shell, "request_session_autosave", lambda: autosaves.append(None)
+    )
+    first = real_shell_scenario.workflows.add_prompt_workflow(
+        "first", initial_text="first"
+    )
+    second = real_shell_scenario.workflows.add_prompt_workflow(
+        "second", initial_text="second"
+    )
+    identifiers = (first.workflow.workflow_id, second.workflow.workflow_id)
+    panels = tuple(shell.editor_panels[key] for key in identifiers)
+    stacks = tuple(shell.cube_stacks[key] for key in identifiers)
+    overrides = tuple(shell.override_managers[key] for key in identifiers)
+    active_before = shell.workflow_session_service.active_workflow_id
+    counts = (shell.editor_panel_container.count(), shell.cube_stack_container.count())
+
+    for workflow_id in (*identifiers, *identifiers):
+        shell.install_workflow_surface(workflow_id)
+
+    for index, workflow_id in enumerate(identifiers):
+        assert shell.editor_panels[workflow_id] is panels[index]
+        assert shell.cube_stacks[workflow_id] is stacks[index]
+        assert shell.override_managers[workflow_id] is overrides[index]
+        assert panels[index].mainwindow is shell
+        assert shell.editor_panel_container.isAncestorOf(panels[index])
+        stack = stacks[index]
+        assert isinstance(stack, QWidget)
+        assert shell.cube_stack_container.isAncestorOf(stack)
+    assert panels[0] is not panels[1]
+    assert stacks[0] is not stacks[1]
+    assert overrides[0] is not overrides[1]
+    assert (
+        shell.editor_panel_container.count(),
+        shell.cube_stack_container.count(),
+    ) == counts
+    assert shell.workflow_session_service.active_workflow_id == active_before
+    assert first.editor.toPlainText() == "first"
+    assert second.editor.toPlainText() == "second"
+
+    real_shell_scenario.input.set_source_cursor_position(second, len("second"))
+    real_shell_scenario.input.focus_editor(second)
+    autosaves.clear()
+    real_shell_scenario.input.type_text(second, "x")
+    assert second.editor.toPlainText() == "secondx"
+    assert shell.unsaved_work_service.state_for(identifiers[1]).dirty
+    assert not shell.unsaved_work_service.state_for(identifiers[0]).dirty
+    assert len(autosaves) == 1
+
+
 def test_real_shell_uses_composed_prompt_editor_collaborators(
     real_shell_scenario: PromptEditorRealShellScenario,
 ) -> None:

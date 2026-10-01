@@ -18,8 +18,10 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QEvent, QObject, Signal
+from PySide6.QtGui import QResizeEvent
 from PySide6.QtWidgets import QWidget
 from shiboken6 import isValid as _qt_is_valid
 
@@ -97,6 +99,13 @@ from .navigation_search_host import EditorPanelNavigationSearchHost
 from .link_synchronization import EditorPanelLinkSynchronization
 from .prompt_interaction import EditorPanelPromptInteraction
 
+if TYPE_CHECKING:
+    from .content_gutter_controller import EditorPanelContentGutterController
+    from .field_presentation_controller import EditorPanelFieldPresentationController
+    from .model_choice_snapshot_controller import PanelModelChoiceSnapshotController
+    from .service_bundle import EditorPanelServiceBundle
+    from .surface_motion import EditorSurfaceMotionController
+
 _LOGGER = get_logger("presentation.editor.panel.view")
 
 
@@ -131,7 +140,14 @@ class EditorPanel(
     promptEditorLayoutChanged = Signal()
     promptSceneQueueRequested = Signal(str)
 
-    def resizeEvent(self, event):
+    mainwindow: object
+    model_choice_snapshot_controller: PanelModelChoiceSnapshotController
+    field_presentation: EditorPanelFieldPresentationController
+    _surface_motion: EditorSurfaceMotionController
+    _content_gutter_controller: EditorPanelContentGutterController
+    _services: EditorPanelServiceBundle
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
         """Forward resize events to the base widget implementation."""
 
         super().resizeEvent(event)
@@ -163,7 +179,9 @@ class EditorPanel(
         _cube_reveal_controller_for_panel(self).cancel_active_cube_reveal_scroll()
         self._surface_motion.cancel(reason="user_scroll_interruption")
 
-    def refresh_mask_picker(self, cube_alias: str, node_name: str, new_path: str):
+    def refresh_mask_picker(
+        self, cube_alias: str, node_name: str, new_path: str
+    ) -> None:
         """Refresh the mask picker matching one cube and node identity."""
 
         self.field_presentation.refresh_mask_picker(cube_alias, node_name, new_path)
