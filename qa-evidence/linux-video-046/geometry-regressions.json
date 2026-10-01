@@ -1,0 +1,338 @@
+{
+  "poster_checkpoint": "d70b7617a8a8105bd66e0b2141a0a9ec6a4729a9",
+  "poster_failure": {
+    "coded_dimensions": [
+      160,
+      90
+    ],
+    "native_screenshot_dimensions": [
+      90,
+      160
+    ],
+    "stride_bytes": 384,
+    "incorrect_poster_dimensions": [
+      96,
+      160
+    ],
+    "cause": "Pillow buffer width was inferred from padded native stride rather than native frame width."
+  },
+  "poster_final": {
+    "scope": "Final production probe preserving subtitles capture flag, real pinned Linux native library, no fake; four nonrotated poster PNGs byte-identical to043",
+    "library_sha256": "898281e2605fe3e582abb79f0d075f356dfe29d7fef794cfaf73d9933763e7e6",
+    "results": [
+      {
+        "fixture": "bframes-h264-silent.mp4",
+        "poster_size": [
+          160,
+          90
+        ],
+        "poster_sha256": "bc00f2ad63d80ce118ca02f5f29bade844b296dafcacdd03c9db6b7e3789f9f1",
+        "poster_bytes": 13809,
+        "source_metadata": [
+          160,
+          90
+        ],
+        "nonrotated_bytes_unchanged": true
+      },
+      {
+        "fixture": "cfr-h264-silent.mp4",
+        "poster_size": [
+          160,
+          90
+        ],
+        "poster_sha256": "5dee96c313ffd202892a3f8128631715dcba3f62de0033d67853bc2daf664407",
+        "poster_bytes": 13862,
+        "source_metadata": [
+          160,
+          90
+        ],
+        "nonrotated_bytes_unchanged": true
+      },
+      {
+        "fixture": "h264-aac.mp4",
+        "poster_size": [
+          160,
+          90
+        ],
+        "poster_sha256": "846595bc3a958d528758b27bcbf6ede2dcad214ff139d5c632d2b1cad280e4fe",
+        "poster_bytes": 13829,
+        "source_metadata": [
+          160,
+          90
+        ],
+        "nonrotated_bytes_unchanged": true
+      },
+      {
+        "fixture": "rotated-h264-silent.mp4",
+        "poster_size": [
+          90,
+          160
+        ],
+        "poster_sha256": "f6321943f9a61229421ea88af8e8ed77ff73a0501ab72886c226d8440cb50be0",
+        "poster_bytes": 13908,
+        "source_metadata": [
+          160,
+          90
+        ],
+        "nonrotated_bytes_unchanged": null
+      },
+      {
+        "fixture": "vfr-vp9-silent.webm",
+        "poster_size": [
+          160,
+          90
+        ],
+        "poster_sha256": "30c46c3958a3db9a75432ee143e2646b651d052b7babc9f9c0d2e26f5d749b04",
+        "poster_bytes": 13260,
+        "source_metadata": [
+          160,
+          90
+        ],
+        "nonrotated_bytes_unchanged": true
+      }
+    ]
+  },
+  "display_checkpoint": "c3ae52d058e3d71067a5d17481f6ae83aecd6583",
+  "display_contract": "Use one current video-out-params snapshot, display width/height after sample-aspect correction and residual rotation exactly once; require matching loaded path and completed seek before accepting geometry.",
+  "normal_app_progression": {
+    "before045": [
+      80,
+      142
+    ],
+    "after045": [
+      89,
+      160
+    ],
+    "strict_expected": [
+      90,
+      160
+    ],
+    "045_exact_size_result": "FAILED and published explicitly as incomplete WIP"
+  },
+  "actual_size_checkpoint": "50d9de4bf91cecb5264cd7f22689ddc7986d6ba9",
+  "actual_size_contract": "Explicit Actual Size uses native video-unscaled=yes and video-zoom=0. Fit and Custom preserve their prior zoom behavior.",
+  "native_production_surface_matrix": {
+    "scope": "Standalone actual production native GL surface/player, CPU decoding, explicit Actual Size intent, no main-app hook; framebuffer captures unmodified",
+    "results": [
+      {
+        "fixture": "cfr-h264-silent.mp4",
+        "media_sha256": "677e9e3966458103e32fa78da03d65415d4f283b60af946e59a32746d5253503",
+        "snapshot_size": [
+          160,
+          90
+        ],
+        "rendered_size": [
+          160,
+          90
+        ],
+        "expected_size": [
+          160,
+          90
+        ],
+        "bounds_xyxy": [
+          510,
+          361,
+          670,
+          451
+        ],
+        "surface_physical": [
+          1180,
+          812
+        ],
+        "native_unscaled": true,
+        "native_zoom": 0.0,
+        "framebuffer_sha256": "694e0659e025e6da0cd8fc852c94c26b053f1d5b3042add4e85ca1e08bfa77e9"
+      },
+      {
+        "fixture": "rotated-h264-silent.mp4",
+        "media_sha256": "c3e68e2b50b10b9b877490698e7b0f7e516baf19f7e108a9dbec1b88e137d60d",
+        "snapshot_size": [
+          90,
+          160
+        ],
+        "rendered_size": [
+          90,
+          160
+        ],
+        "expected_size": [
+          90,
+          160
+        ],
+        "bounds_xyxy": [
+          545,
+          326,
+          635,
+          486
+        ],
+        "surface_physical": [
+          1180,
+          812
+        ],
+        "native_unscaled": true,
+        "native_zoom": 0.0,
+        "framebuffer_sha256": "c609675bad0e91506bcf959a04763736bd72ba87cd37b337505f2c9e117a2086"
+      },
+      {
+        "fixture": "anamorphic.mp4",
+        "media_sha256": "28e4e2fbd3491fa4a37bd053608a6de756723e072507d57817d5dd21b58c23d8",
+        "snapshot_size": [
+          768,
+          576
+        ],
+        "rendered_size": [
+          768,
+          576
+        ],
+        "expected_size": [
+          768,
+          576
+        ],
+        "bounds_xyxy": [
+          206,
+          118,
+          974,
+          694
+        ],
+        "surface_physical": [
+          1180,
+          812
+        ],
+        "native_unscaled": true,
+        "native_zoom": 0.0,
+        "framebuffer_sha256": "a69415f382ce604f32a8620073befc73347b95d69af9bb443808c563e1811dbc"
+      },
+      {
+        "fixture": "anamorphic-rotation90.mp4",
+        "media_sha256": "dd2b7dbc0168d9c289ffc21f9519cd18a026227342ad0bfcca1759361b7fc959",
+        "snapshot_size": [
+          576,
+          768
+        ],
+        "rendered_size": [
+          576,
+          768
+        ],
+        "expected_size": [
+          576,
+          768
+        ],
+        "bounds_xyxy": [
+          302,
+          22,
+          878,
+          790
+        ],
+        "surface_physical": [
+          1180,
+          812
+        ],
+        "native_unscaled": true,
+        "native_zoom": 0.0,
+        "framebuffer_sha256": "d98cbc176097d61c1caba405d9437360f8d321051cf01ae145286b4b7affa785"
+      },
+      {
+        "fixture": "display180.mp4",
+        "media_sha256": "ec76991c82d07f72d49eb3816cc9a3cf1b49e31078e31763e186611634253658",
+        "snapshot_size": [
+          160,
+          90
+        ],
+        "rendered_size": [
+          160,
+          90
+        ],
+        "expected_size": [
+          160,
+          90
+        ],
+        "bounds_xyxy": [
+          510,
+          361,
+          670,
+          451
+        ],
+        "surface_physical": [
+          1180,
+          812
+        ],
+        "native_unscaled": true,
+        "native_zoom": 0.0,
+        "framebuffer_sha256": "ee4385c06be8776390a556a3d366bcef5df4bf27737dcede49ad7ac34278fb21"
+      },
+      {
+        "fixture": "display270.mp4",
+        "media_sha256": "80fe647d2423950618d2db79061b4da5bdaeb424131bce31796f486d0c44eb0b",
+        "snapshot_size": [
+          90,
+          160
+        ],
+        "rendered_size": [
+          90,
+          160
+        ],
+        "expected_size": [
+          90,
+          160
+        ],
+        "bounds_xyxy": [
+          545,
+          326,
+          635,
+          486
+        ],
+        "surface_physical": [
+          1180,
+          812
+        ],
+        "native_unscaled": true,
+        "native_zoom": 0.0,
+        "framebuffer_sha256": "e26fd89649a40a2ca16631cd545a29d159478435886262e287cb090b16e5ce2b"
+      }
+    ],
+    "last_bounds": [
+      545,
+      326,
+      635,
+      486
+    ],
+    "error": null
+  },
+  "normal_application": {
+    "scope": "Normal main.py after cold restart, native pointer Actual Size, same persisted rotated fixture, no hook",
+    "screenshot_sha256": "27c36b314b7071dadb953df1ac3111a62cd90baebf70f4730eb435a5295b3cce",
+    "colored_video_bounds_xyxy": [
+      850,
+      284,
+      940,
+      444
+    ],
+    "rendered_size": [
+      90,
+      160
+    ],
+    "expected_size": [
+      90,
+      160
+    ],
+    "exact_size_passed": true,
+    "measurement": "Identical fixed ROI and saturation rule as045 before/after; no tolerance",
+    "prior_045_size": [
+      89,
+      160
+    ],
+    "plain_video_controls": {
+      "restored_from_local_persisted_output": true,
+      "fit_to_actual_size_to_fit": true,
+      "play_observed_frame": 9,
+      "pause_observed_frame": 7,
+      "pause_time_seconds": 0.583,
+      "queue_pending": 0,
+      "plain_normal_app_pixel_measurement": "Actual Size visually inspected; exact160x90 independently measured in production-surface native matrix"
+    },
+    "limits": [
+      "Dragging from Actual Size enters the existing Custom mode and can reintroduce fit-relative integer rounding",
+      "Audible audio, hardware GPU and native Windows/macOS are not qualified"
+    ]
+  },
+  "measurement_policy": "Unmodified real framebuffer/app captures and exact dimensions. No tolerance increase. Six final native cases passed. An initial harness readback assertion expected a string but the native NODE value was boolean; that observation assertion was corrected without changing any pixel oracle."
+}

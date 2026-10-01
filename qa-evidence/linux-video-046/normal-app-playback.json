@@ -1,0 +1,87 @@
+{
+  "source_checkpoint": "b8866bc279a10e113f3aefee637cb29390689320",
+  "runtime_sha256": "898281e2605fe3e582abb79f0d075f356dfe29d7fef794cfaf73d9933763e7e6",
+  "scope": "CPU decoding and normal Linux desktop application on this host; host-linked library, not portable release qualification",
+  "fixture": "Repository synthetic silent CFR H.264 fixture, copied into managed backend input for LoadVideo/SaveVideo. This does not qualify the frontend file-upload flow.",
+  "native_passes": [
+    "Generated and persisted local MP4 through normal managed CPU backend",
+    "Displayed first frame using native libmpv OpenGL surface",
+    "Forward frame 0 to 1 and previous frame 1 to 0",
+    "Play showed changing frame counter; Pause stopped at frame 9 / 0.750s",
+    "Timeline seek reached frame 11 / 0.917s",
+    "Fit and Actual Size controls responded to native pointer input; exact pixel dimensions were qualified separately on046.",
+    "Paused frame 11 and Actual Size survived switching to the saved mask workflow and back",
+    "Playing video returned paused after hiding its workflow"
+  ],
+  "pre_build_failure": "Backend generated MP4 but frontend reported missing bundled libmpv.so.2 and marked generation failed. App survived; no video success was claimed before the runtime existed.",
+  "owned_runtime_qualification": {
+    "source_checkpoint": "d70b7617a8a8105bd66e0b2141a0a9ec6a4729a9",
+    "execution": "Existing production runtime qualification runner from source checkout with null audio/video outputs, not a frozen distribution.",
+    "playback": {
+      "audio_visibility": {
+        "effectively_muted": true,
+        "paused": true,
+        "user_muted": false,
+        "volume": 37
+      },
+      "bframe_step": {
+        "after_next": 0.5833333333333333,
+        "after_previous": 0.5,
+        "before": 0.5
+      },
+      "cfr_step": {
+        "after_next": 0.5833333333333333,
+        "after_previous": 0.5,
+        "before": 0.5
+      },
+      "loop": {
+        "default_enabled": true,
+        "ended_time": 1.1666666666666665,
+        "loop_maximum": 1.1666666666666665,
+        "wrapped_at": 0.0
+      },
+      "representative_frame": {
+        "captured_positions": 3,
+        "height": 90,
+        "pixel_sha256": "895a74eaa935a30ee263b4c63c661e2e9b0ac2756996e90952ab25f9bb6f93f7",
+        "stride": 640,
+        "time_seconds": 0.5,
+        "width": 160
+      },
+      "vfr_step": {
+        "distinct_deltas": [
+          0.083,
+          0.084,
+          0.125,
+          0.167
+        ],
+        "timestamps": [
+          0.0,
+          0.08299999999999999,
+          0.16699999999999998,
+          0.25,
+          0.375,
+          0.5,
+          0.625,
+          0.75,
+          0.875,
+          1.042
+        ]
+      }
+    },
+    "truncated_file_rejected": true,
+    "fixture_names": [
+      "bframes-h264-silent.mp4",
+      "cfr-h264-silent.mp4",
+      "h264-aac.mp4",
+      "rotated-h264-silent.mp4",
+      "vfr-vp9-silent.webm"
+    ]
+  },
+  "limits": [
+    "No audible sound qualification; null-audio hidden pause/effective mute is a bounded state result.",
+    "No cross-process playback-position persistence assertion.",
+    "No hardware GPU or native Windows/macOS qualification.",
+    "Native controls were exercised with pointer input because AX Toggle alone did not emit their clicked action."
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "source_commit": "50d9de4bf91cecb5264cd7f22689ddc7986d6ba9",
+  "source_tree": "3d3a7a4c3fe77e04e09e3fb67d6bd262763e09f4",
+  "results": [
+    {
+      "platform": "linux",
+      "argv": [
+        ".venv/bin/python",
+        "-m",
+        "mypy",
+        "--strict",
+        "--platform",
+        "linux",
+        "--cache-dir",
+        "<owned platform cache>",
+        "substitute",
+        "tests"
+      ],
+      "exit_code": 1,
+      "seconds": 35.97209873799875,
+      "diagnostic_count": 175,
+      "error_files": 53,
+      "summary": [
+        "Found 175 errors in 53 files (checked 6770 source files)"
+      ],
+      "log_sha256": "1999c5bee3ee82bb5c716dc992ad73ef2f5e0598e5ad83ca9a7ee1f8ec1b23b0",
+      "checked_source_files": 6770
+    },
+    {
+      "platform": "win32",
+      "argv": [
+        ".venv/bin/python",
+        "-m",
+        "mypy",
+        "--strict",
+        "--platform",
+        "win32",
+        "--cache-dir",
+        "<owned platform cache>",
+        "substitute",
+        "tests"
+      ],
+      "exit_code": 1,
+      "seconds": 35.2194322150026,
+      "diagnostic_count": 6,
+      "error_files": 3,
+      "summary": [
+        "Found 6 errors in 3 files (checked 6770 source files)"
+      ],
+      "log_sha256": "85ee7941f755375e7dc1826019a80361f990fb9d920efd5b57f2ae000e37bf78",
+      "checked_source_files": 6770
+    }
+  ],
+  "comparison_039": {
+    "linux": {
+      "errors": 193,
+      "files": 55
+    },
+    "win32": {
+      "errors": 8,
+      "files": 4
+    },
+    "checked_source_files": 6755
+  },
+  "no_new_linux_diagnostic_signatures_since039": true,
+  "linux_errors_by_file": {
+    "launcher/sugarsubstitute_launcher/crash_diagnostic_context.py": 1,
+    "launcher/sugarsubstitute_launcher/interprocess_log_handler.py": 9,
+    "substitute/app/bootstrap/splash_process.py": 1,
+    "substitute/infrastructure/comfy/managed_process_probe.py": 4,
+    "substitute/infrastructure/comfy/manager_requirements_installer.py": 1,
+    "substitute/infrastructure/comfy/standalone_environment/environment_builder.py": 1,
+    "substitute/infrastructure/comfy/standalone_environment/extraction_process.py": 1,
+    "substitute/infrastructure/comfy/standalone_environment/recovery.py": 1,
+    "substitute/infrastructure/comfy/windows_job_containment.py": 12,
+    "substitute/infrastructure/comfy/windows_tcp_listener_query.py": 3,
+    "substitute/infrastructure/comfy/workspace_python_discovery.py": 1,
+    "substitute/infrastructure/external/photoshop_gateway.py": 2,
+    "substitute/infrastructure/security/windows_civitai_credential_store.py": 1,
+    "substitute/infrastructure/spellcheck/windows_spellcheck_gateway.py": 2,
+    "substitute/infrastructure/version_control/clone_process.py": 1,
+    "sugarsubstitute_shared/application_instance_windows.py": 22,
+    "sugarsubstitute_shared/launcher_update/persistence.py": 10,
+    "sugarsubstitute_shared/localization/system_languages.py": 1,
+    "sugarsubstitute_shared/windows_independent_process.py": 11,
+    "tests/app/maintenance/test_owned_nodes.py": 1,
+    "tests/infrastructure/filesystem/test_path_removal.py": 1,
+    "tests/launcher/application_launch/test_departed_session_owner.py": 1,
+    "tests/launcher/application_launch/test_interrupted_repair_startup.py": 1,
+    "tests/launcher/application_readiness/process_family_fixture.py": 2,
+    "tests/launcher/application_readiness/splash_family_fixture.py": 1,
+    "tests/launcher/installation_workflow/first_run/test_crash_recovery.py": 2,
+    "tests/launcher/installation_workflow/first_run/test_mutation_admission.py": 1,
+    "tests/launcher/installation_workflow/test_runtime_cancellation.py": 7,
+    "tests/launcher/repair/blocked_preparation_fixture.py": 1,
+    "tests/launcher/repair/execution_process_fixture.py": 1,
+    "tests/launcher/repair/test_activation_crash_recovery.py": 1,
+    "tests/launcher/repair/test_interrupted_recovery.py": 1,
+    "tests/launcher/repair/test_mutation_ownership.py": 2,
+    "tests/launcher/repair/test_prior_update_recovery.py": 1,
+    "tests/launcher/update_activation/test_mutation_lifetime.py": 1,
+    "tests/launcher/update_activation/test_recovery.py": 6,
+    "tests/launcher/update_activation/transaction/detachment_fixture.py": 1,
+    "tests/launcher/update_activation/transaction/test_detachment_admission.py": 1,
+    "tests/launcher/update_activation/transaction/test_process_scheduling.py": 1,
+    "tests/qualification/comfy/bundled_workflows/rendering_runner.py": 2,
+    "tests/shared/application_instance_broker/test_windows_accept_shutdown.py": 1,
+    "tests/shared/installation_mutation/test_ownership.py": 10,
+    "tests/shared/process_identity/test_native_windows_wait.py": 1,
+    "tests/support/crash_reporting/process_synchronization.py": 15,
+    "tests/support/window_backdrop_recreation_probe.py": 1,
+    "tools/ci/comfy_git.py": 1,
+    "tools/ci/comfy_probe_support.py": 2,
+    "tools/ci/drive_windows_installer.py": 16,
+    "tools/ci/native_process_smoke.py": 1,
+    "tools/ci/owned_process_runner.py": 1,
+    "tools/ci/windows_desktop_process.py": 2,
+    "tools/ci/windows_process_memory_guard.py": 2,
+    "tools/startup_harness.py": 1
+  },
+  "win32_errors": [
+    {
+      "path": "substitute/infrastructure/spellcheck/windows_spellcheck_gateway.py",
+      "line": 27,
+      "message": "Unused \"type: ignore\" comment",
+      "code": "unused-ignore"
+    },
+    {
+      "path": "substitute/infrastructure/spellcheck/windows_spellcheck_gateway.py",
+      "line": 27,
+      "message": "Cannot find implementation or library stub for module named \"comtypes\"",
+      "code": "import-not-found"
+    },
+    {
+      "path": "tools/ci/drive_windows_installer.py",
+      "line": 190,
+      "message": "Unused \"type: ignore\" comment",
+      "code": "unused-ignore"
+    },
+    {
+      "path": "tools/ci/drive_windows_installer.py",
+      "line": 190,
+      "message": "Cannot find implementation or library stub for module named \"pywinauto\"",
+      "code": "import-not-found"
+    },
+    {
+      "path": "substitute/infrastructure/external/photoshop_gateway.py",
+      "line": 162,
+      "message": "Unused \"type: ignore\" comment",
+      "code": "unused-ignore"
+    },
+    {
+      "path": "substitute/infrastructure/external/photoshop_gateway.py",
+      "line": 162,
+      "message": "Cannot find implementation or library stub for module named \"photoshop\"",
+      "code": "import-not-found"
+    }
+  ],
+  "resources": [
+    {
+      "platform": "linux",
+      "peak_sampled_summed_rss_bytes": 1220788224,
+      "sample_period_seconds": 5
+    },
+    {
+      "platform": "win32",
+      "peak_sampled_summed_rss_bytes": 1223651328,
+      "sample_period_seconds": 5
+    }
+  ],
+  "normal_app_closed_for_both_passes_and_restored_after": true,
+  "interpretation": "Both full strict gates remain FAILED. The win32 option changes static target definitions; these checks ran on Linux and do not qualify native Windows execution. All target files were included, without follow-imports=silent."
+}

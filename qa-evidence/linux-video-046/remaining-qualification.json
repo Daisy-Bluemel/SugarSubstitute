@@ -1,0 +1,39 @@
+{
+  "source_commit": "50d9de4bf91cecb5264cd7f22689ddc7986d6ba9",
+  "focused046": {
+    "passed": 107,
+    "skipped": 2,
+    "skip_reason": "Existing Windows-only native GL cases",
+    "independent_review_tests_passed": 7,
+    "targeted_strict_platforms": [
+      "linux",
+      "win32"
+    ],
+    "targeted_strict_files": 10,
+    "static_gates": [
+      "Ruff lint",
+      "Ruff format",
+      "license headers",
+      "architecture",
+      "test governance"
+    ],
+    "full_typing": "Refreshed separately and remains failed as recorded in full-typing-046.json"
+  },
+  "remaining": [
+    "Existing Actual Size navigation changes to Custom on drag and can reintroduce fit-relative integer rounding. Exact post-drag Custom size is not claimed.",
+    "Audible audio, native Windows/macOS, hardware GPU, and portable/frozen app packaging remain unqualified.",
+    "Native fatal minidump capture remains blocked by ptrace EPERM. Handler initialization/registration is distinct from successful dump capture.",
+    "Restricted AF_UNIX tests remain blocked, not passed.",
+    "The held-brush clear/reopen dependency regression remains a meaningful failing test; dependency fork permission is pending.",
+    "Historical ordinary-suite worker exit remains unexplained. No OOM or SIGKILL cause is inferred.",
+    "No fresh whole ordinary/isolated/serial suite result is claimed from these video-focused runs.",
+    "A separate native layout restart drift was observed after046 and is being repaired separately; it is not covered by video success."
+  ],
+  "excluded_from_this_addendum": [
+    "Screenshots and framebuffer bytes",
+    "Private profile, session, workflow and project data",
+    "Raw logs and environment dumps",
+    "Native runtime binaries and build caches",
+    "Credentials and authorization values"
+  ]
+}

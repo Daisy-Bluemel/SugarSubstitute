@@ -1,0 +1,57 @@
+{
+  "source_checkpoint": "b8866bc279a10e113f3aefee637cb29390689320",
+  "upstream": {
+    "repository": "https://github.com/mpv-player/mpv",
+    "version": "0.41.0",
+    "commit": "41f6a645068483470267271e1d09966ca3b9f413",
+    "tree": "d0cc1c088a9c72f52d6c232438215c50ceeb11a3"
+  },
+  "library": {
+    "basename": "libmpv.so.2",
+    "size_bytes": 2407672,
+    "sha256": "898281e2605fe3e582abb79f0d075f356dfe29d7fef794cfaf73d9933763e7e6",
+    "license": "GPL-2.0-or-later",
+    "elf": "64-bit x86_64 shared object",
+    "soname": "libmpv.so.2",
+    "rpath_or_runpath": false,
+    "debug_sections": false,
+    "contains_nonsecret_workspace_build_paths": true
+  },
+  "build": {
+    "exit_code": 0,
+    "jobs": 2,
+    "elapsed_seconds": 21.6789,
+    "peak_sampled_summed_child_rss_bytes": 89997312,
+    "minimum_sampled_free_disk_bytes": 3866423296,
+    "features": [
+      "release/shared",
+      "OpenGL and plain-GL output",
+      "C plugins enabled for production load-scripts option",
+      "PulseAudio output enabled"
+    ],
+    "disabled": [
+      "automatic dependency features",
+      "Lua",
+      "JavaScript",
+      "standalone mpv executable"
+    ],
+    "offline_meson": true,
+    "native_exports_and_dependencies_checked": true
+  },
+  "acquisition": {
+    "official_debian_workspace_only_packages": 24,
+    "archive_total_bytes": 19275816,
+    "advertised_extracted_kib": 99989,
+    "exact_source_pin_and_package_sha256_verified": true,
+    "maintainer_scripts_executed": false,
+    "system_packages_or_apt_configuration_changed": false
+  },
+  "qualification": "Linked to the existing libraries on this Linux host. Not a portable or frozen release build; not hardware GPU qualification. Copyright notices and full pinned mpv source accompany the separately retained runtime archive.",
+  "runtime_backup": {
+    "size_bytes": 8278833,
+    "sha256": "652ca69298a20fd18dedeb6e76224cb0c30d137139c9d8227af52d8f28986541",
+    "verified_files": 847,
+    "delivered_separately": true,
+    "profile_or_project_data_included": false
+  }
+}
