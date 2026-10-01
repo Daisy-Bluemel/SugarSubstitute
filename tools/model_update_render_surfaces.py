@@ -69,6 +69,7 @@ from tools.install_experience_capture import (
     prepare_opaque_dark_capture_surface,
     save_opaque_dark_widget_capture,
 )
+from tools.qualification_widgets import CaptureWidgetOwner
 
 
 @dataclass(frozen=True, slots=True)
@@ -241,11 +242,16 @@ def _catalog_item(version: DiscoveredModel, asset: ThumbnailAsset) -> ModelCatal
 
 
 def mount_shell(
-    *, settings: bool, service: UpdatePreferenceService
+    *,
+    settings: bool,
+    service: UpdatePreferenceService,
+    roots: CaptureWidgetOwner | None = None,
 ) -> tuple[SubstituteWindowFrame, QVBoxLayout | None]:
-    """Mount production controls within a complete application-sized frame."""
+    """Mount a frame, registering capture ownership before fallible construction."""
 
     frame = SubstituteWindowFrame(backdrop_mode=None)
+    if roots is not None:
+        roots.own(frame)
     frame.resize(1280, 820)
     prepare_opaque_dark_capture_surface(frame)
     body = QWidget(frame)

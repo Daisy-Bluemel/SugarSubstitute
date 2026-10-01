@@ -26,7 +26,6 @@ from typing import cast
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from PySide6.QtCore import Qt  # noqa: E402
-from PySide6.QtGui import QFont, QFontDatabase  # noqa: E402
 from PySide6.QtTest import QTest  # noqa: E402
 from PySide6.QtWidgets import QApplication, QLabel, QLineEdit, QVBoxLayout, QWidget  # noqa: E402
 from qfluentwidgets import Theme, setTheme  # type: ignore[import-untyped] # noqa: E402
@@ -66,6 +65,10 @@ from tools.model_acquisition_render_fixtures import (  # noqa: E402
     unavailable_requirement,
 )
 
+from substitute.presentation.localization import LocalizedSubtitleLabel  # noqa: E402
+from tools.qualification_font import QualificationFontSession  # noqa: E402
+from tools.qualification_widgets import CaptureWidgetOwner  # noqa: E402
+
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _DEFAULT_ARTIFACT_ROOT = _REPO_ROOT / "build" / "qualification" / "model-acquisition"
 _HOST_SIZE = (1280, 800)
@@ -80,71 +83,76 @@ def run_headless_qualification(
     artifact_root = artifact_root.resolve()
     artifact_root.mkdir(parents=True, exist_ok=True)
     application = cast(QApplication, QApplication.instance() or QApplication([]))
-    _register_headless_fluent_font(application)
-    setTheme(Theme.DARK)
-    ready = ready_requirement()
-    gated = gated_requirement()
-    unavailable = unavailable_requirement()
-    states = [
-        _capture_acquisition(
-            application,
-            artifact_root,
-            "multi-model-ready",
-            ready,
-            has_api_key=False,
-        ),
-        _capture_acquisition(
-            application,
-            artifact_root,
-            "api-key-required",
-            gated,
-            has_api_key=False,
-        ),
-        _capture_acquisition(
-            application,
-            artifact_root,
-            "api-key-satisfied",
-            gated,
-            has_api_key=False,
-            entered_api_key="qualification-key",
-        ),
-        _capture_acquisition(
-            application,
-            artifact_root,
-            "unavailable-unsafe-model",
-            unavailable,
-            has_api_key=False,
-        ),
-        _capture_progress(application, artifact_root, ready),
-        _capture_failure(application, artifact_root),
-    ]
-    evidence: dict[str, object] = {
-        "schema_version": 1,
-        "result": "passed",
-        "headless": os.environ.get("QT_QPA_PLATFORM") == "offscreen",
-        "production_surfaces": (
-            f"{ModelAcquisitionDialog.__module__}.{ModelAcquisitionDialog.__name__}",
-            f"{EditorBusyOverlay.__module__}.{EditorBusyOverlay.__name__}",
-            f"{ErrorReportDialog.__module__}.{ErrorReportDialog.__name__}",
-        ),
-        "states": states,
-        "completion": {
-            "distinct_surface": False,
-            "behavior": "The progress overlay closes and the resolved workflow materializes.",
-        },
-        "side_effects": {
-            "network_requests": 0,
-            "downloads": 0,
-            "credentials_persisted": 0,
-            "external_urls_opened": 0,
-        },
-    }
-    report_path = artifact_root / "evidence.json"
-    report_path.write_text(
-        json.dumps(evidence, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    return evidence
+    with QualificationFontSession(application) as fonts:
+        setTheme(Theme.DARK)
+        ready = ready_requirement()
+        gated = gated_requirement()
+        unavailable = unavailable_requirement()
+        states = [
+            _capture_acquisition(
+                application,
+                artifact_root,
+                "multi-model-ready",
+                ready,
+                has_api_key=False,
+                font_session=fonts,
+            ),
+            _capture_acquisition(
+                application,
+                artifact_root,
+                "api-key-required",
+                gated,
+                has_api_key=False,
+                font_session=fonts,
+            ),
+            _capture_acquisition(
+                application,
+                artifact_root,
+                "api-key-satisfied",
+                gated,
+                has_api_key=False,
+                font_session=fonts,
+                entered_api_key="qualification-key",
+            ),
+            _capture_acquisition(
+                application,
+                artifact_root,
+                "unavailable-unsafe-model",
+                unavailable,
+                has_api_key=False,
+                font_session=fonts,
+            ),
+            _capture_progress(application, artifact_root, ready),
+            _capture_failure(application, artifact_root),
+        ]
+        evidence: dict[str, object] = {
+            "font": states[0]["font"],
+            "schema_version": 1,
+            "result": "passed",
+            "headless": os.environ.get("QT_QPA_PLATFORM") == "offscreen",
+            "production_surfaces": (
+                f"{ModelAcquisitionDialog.__module__}.{ModelAcquisitionDialog.__name__}",
+                f"{EditorBusyOverlay.__module__}.{EditorBusyOverlay.__name__}",
+                f"{ErrorReportDialog.__module__}.{ErrorReportDialog.__name__}",
+            ),
+            "states": states,
+            "completion": {
+                "distinct_surface": False,
+                "behavior": "The progress overlay closes and the resolved workflow materializes.",
+            },
+            "side_effects": {
+                "network_requests": 0,
+                "downloads": 0,
+                "credentials_persisted": 0,
+                "external_urls_opened": 0,
+            },
+        }
+        report_path = artifact_root / "evidence.json"
+        report_path.write_text(
+            json.dumps(evidence, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return evidence
 
 
 def _capture_acquisition(
@@ -154,31 +162,38 @@ def _capture_acquisition(
     required: RecipeModelResolutionRequired,
     *,
     has_api_key: bool,
+    font_session: QualificationFontSession,
     entered_api_key: str = "",
 ) -> dict[str, object]:
     """Capture one production review-cart state without external requests."""
 
-    host = _host()
-    dialog = ModelAcquisitionDialog(
-        required,
-        has_api_key=has_api_key,
-        downloads_enabled=True,
-        open_url=lambda _url: False,
-        preview_images_by_sha256=preview_images(required),
-        parent=host,
-    )
-    if entered_api_key:
-        key_edit = dialog.findChild(QLineEdit, "ModelAcquisitionApiKey")
-        if key_edit is None:
-            raise RuntimeError("The API-key editor is missing from its required state.")
-        key_edit.setText(entered_api_key)
-    screenshot_path = artifact_root / f"{state}.png"
-    try:
+    with CaptureWidgetOwner() as roots:
+        host = _host(roots)
+        dialog = ModelAcquisitionDialog(
+            required,
+            has_api_key=has_api_key,
+            downloads_enabled=True,
+            open_url=lambda _url: False,
+            preview_images_by_sha256=preview_images(required),
+            parent=host,
+        )
+        if entered_api_key:
+            key_edit = dialog.findChild(QLineEdit, "ModelAcquisitionApiKey")
+            if key_edit is None:
+                raise RuntimeError(
+                    "The API-key editor is missing from its required state."
+                )
+            key_edit.setText(entered_api_key)
+        screenshot_path = artifact_root / f"{state}.png"
         dialog.show()
         _settle(application)
         save_opaque_dark_widget_capture(host, screenshot_path)
         key_edit = dialog.findChild(QLineEdit, "ModelAcquisitionApiKey")
+        title_label = dialog.findChild(LocalizedSubtitleLabel)
+        if title_label is None:
+            raise AssertionError("The production acquisition title is missing.")
         return {
+            "font": font_session.evidence(title_label),
             "state": state,
             "screenshot": str(screenshot_path),
             "cards": len(dialog.cards),
@@ -188,12 +203,6 @@ def _capture_acquisition(
             "download_enabled": dialog.download_action.isEnabled(),
             "dialog_size": [dialog.widget.width(), dialog.widget.height()],
         }
-    finally:
-        dialog.close()
-        host.close()
-        dialog.deleteLater()
-        host.deleteLater()
-        application.processEvents()
 
 
 def _capture_progress(
@@ -203,43 +212,40 @@ def _capture_progress(
 ) -> dict[str, object]:
     """Capture the real editor overlay during a determinate model download."""
 
-    host = _host()
-    overlay = EditorBusyOverlay(host)
-    job = BackendModelDownloadJob(
-        job_id="qualification-download",
-        status=ModelDownloadStatus.RUNNING,
-        kind="checkpoints",
-        sha256="A" * 64,
-        value=None,
-        result=None,
-        error=None,
-        bytes_downloaded=3_145_728_000,
-        bytes_total=6_291_456_000,
-        detail=None,
-    )
-    label = model_download_label(required)
-    overlay.show_download_progress(
-        title=app_text("Downloading %1", label),
-        message=model_download_message(job),
-        detail=model_download_detail(job),
-        progress_per_mille=model_download_progress(job),
-    )
-    screenshot_path = artifact_root / "download-progress.png"
-    try:
-        _settle(application)
-        save_opaque_dark_widget_capture(host, screenshot_path)
-        return {
-            "state": "download-progress",
-            "screenshot": str(screenshot_path),
-            "progress_per_mille": model_download_progress(job),
-            "cancel_enabled": True,
-        }
-    finally:
-        overlay.hide_loading()
-        host.close()
-        overlay.deleteLater()
-        host.deleteLater()
-        application.processEvents()
+    with CaptureWidgetOwner() as roots:
+        host = _host(roots)
+        overlay = EditorBusyOverlay(host)
+        job = BackendModelDownloadJob(
+            job_id="qualification-download",
+            status=ModelDownloadStatus.RUNNING,
+            kind="checkpoints",
+            sha256="A" * 64,
+            value=None,
+            result=None,
+            error=None,
+            bytes_downloaded=3_145_728_000,
+            bytes_total=6_291_456_000,
+            detail=None,
+        )
+        label = model_download_label(required)
+        overlay.show_download_progress(
+            title=app_text("Downloading %1", label),
+            message=model_download_message(job),
+            detail=model_download_detail(job),
+            progress_per_mille=model_download_progress(job),
+        )
+        screenshot_path = artifact_root / "download-progress.png"
+        try:
+            _settle(application)
+            save_opaque_dark_widget_capture(host, screenshot_path)
+            return {
+                "state": "download-progress",
+                "screenshot": str(screenshot_path),
+                "progress_per_mille": model_download_progress(job),
+                "cancel_enabled": True,
+            }
+        finally:
+            overlay.hide_loading()
 
 
 def _capture_failure(
@@ -248,26 +254,26 @@ def _capture_failure(
 ) -> dict[str, object]:
     """Capture the production report shown after a verified download fails."""
 
-    host = _host()
-    report = ErrorReport(
-        kind=ErrorReportKind.SUBSTITUTE_INTERNAL,
-        title=app_text("Model download failed"),
-        message=app_text(
-            "Substitute could not download and verify every model this workflow needs."
-        ),
-        stage="load",
-        severity=DiagnosticSeverity.ERROR,
-        workflow_id="qualification-workflow",
-        exception_type="RecipeModelDownloadResolutionError",
-        technical_detail="CivitAI API key was rejected by the provider.",
-    )
-    dialog = ErrorReportDialog(
-        report=report,
-        report_text=report.technical_detail or "",
-        parent=host,
-    )
-    screenshot_path = artifact_root / "download-failure.png"
-    try:
+    with CaptureWidgetOwner() as roots:
+        host = _host(roots)
+        report = ErrorReport(
+            kind=ErrorReportKind.SUBSTITUTE_INTERNAL,
+            title=app_text("Model download failed"),
+            message=app_text(
+                "Substitute could not download and verify every model this workflow needs."
+            ),
+            stage="load",
+            severity=DiagnosticSeverity.ERROR,
+            workflow_id="qualification-workflow",
+            exception_type="RecipeModelDownloadResolutionError",
+            technical_detail="CivitAI API key was rejected by the provider.",
+        )
+        dialog = ErrorReportDialog(
+            report=report,
+            report_text=report.technical_detail or "",
+            parent=host,
+        )
+        screenshot_path = artifact_root / "download-failure.png"
         dialog.show()
         _settle(application)
         save_opaque_dark_widget_capture(host, screenshot_path)
@@ -277,18 +283,12 @@ def _capture_failure(
             "recoverable": True,
             "dialog_size": [dialog.widget.width(), dialog.widget.height()],
         }
-    finally:
-        dialog.close()
-        host.close()
-        dialog.deleteLater()
-        host.deleteLater()
-        application.processEvents()
 
 
-def _host() -> QWidget:
+def _host(roots: CaptureWidgetOwner) -> QWidget:
     """Create a deterministic dark editor-shaped owner for production overlays."""
 
-    host = QWidget()
+    host = roots.own(QWidget())
     host.setObjectName("ModelAcquisitionQualificationHost")
     host.resize(*_HOST_SIZE)
     prepare_opaque_dark_capture_surface(host)
@@ -310,24 +310,6 @@ def _host() -> QWidget:
     layout.addWidget(canvas, 1)
     host.show()
     return host
-
-
-def _register_headless_fluent_font(application: QApplication) -> None:
-    """Load Segoe UI into Qt's isolated offscreen font database."""
-
-    windows_root = os.environ.get("WINDIR")
-    if not windows_root:
-        raise RuntimeError("WINDIR is required for headless Fluent rendering.")
-    font_path = Path(windows_root) / "Fonts" / "segoeui.ttf"
-    if not font_path.is_file():
-        raise RuntimeError(f"Headless Fluent render font is missing: {font_path}")
-    font_id = QFontDatabase.addApplicationFont(str(font_path))
-    if font_id < 0:
-        raise RuntimeError(f"Qt could not register the render font: {font_path}")
-    families = QFontDatabase.applicationFontFamilies(font_id)
-    if not families:
-        raise RuntimeError(f"Qt registered no font family for: {font_path}")
-    application.setFont(QFont(families[0], 10))
 
 
 def _settle(application: QApplication) -> None:

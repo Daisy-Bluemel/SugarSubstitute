@@ -26,7 +26,6 @@ from typing import Mapping, cast
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtGui import QFont, QFontDatabase  # noqa: E402
 from PySide6.QtTest import QTest  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
     QApplication,
@@ -93,6 +92,9 @@ from tools.install_experience_capture import (  # noqa: E402
     save_opaque_dark_widget_capture,
 )
 
+from tools.qualification_font import QualificationFontSession  # noqa: E402
+from tools.qualification_widgets import CaptureWidgetOwner  # noqa: E402
+
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _DEFAULT_ARTIFACT_ROOT = _REPO_ROOT / "build" / "qualification" / "openmodeldb"
 
@@ -136,124 +138,127 @@ def run_headless_qualification(
     artifact_root = artifact_root.resolve()
     artifact_root.mkdir(parents=True, exist_ok=True)
     application = cast(QApplication, QApplication.instance() or QApplication([]))
-    register_qualification_font(application)
-    setTheme(Theme.DARK)
-    if (plan is None) != (thumbnail_assets is None):
-        raise ValueError("Plan and thumbnail assets must be injected together.")
-    source_mode = "live_catalog" if plan is None else "injected_plan"
-    if plan is None:
-        plan, thumbnail_assets = _load_live_content(artifact_root)
-    assert thumbnail_assets is not None
-    suggestions = plan.suggestions
-    opened_urls: list[str] = []
+    with QualificationFontSession(application) as fonts, CaptureWidgetOwner() as roots:
+        setTheme(Theme.DARK)
+        if (plan is None) != (thumbnail_assets is None):
+            raise ValueError("Plan and thumbnail assets must be injected together.")
+        source_mode = "live_catalog" if plan is None else "injected_plan"
+        if plan is None:
+            plan, thumbnail_assets = _load_live_content(artifact_root)
+        assert thumbnail_assets is not None
+        suggestions = plan.suggestions
+        opened_urls: list[str] = []
 
-    def record_url(url: str) -> bool:
-        """Record unexpected navigation without opening an external browser."""
+        def record_url(url: str) -> bool:
+            """Record unexpected navigation without opening an external browser."""
 
-        opened_urls.append(url)
-        return True
+            opened_urls.append(url)
+            return True
 
-    modal = ModelDiscoveryModal(open_url=record_url)
-    prepare_opaque_dark_capture_surface(modal)
-    modal.show_plan(plan)
-    modal.show()
-    _settle(application)
-    cards = modal.findChildren(ModelSuggestionCard)
-    if len(cards) != len(suggestions):
-        raise AssertionError("The production picker did not render every upscaler.")
-    for card, suggestion in zip(cards, suggestions, strict=True):
-        thumbnail = thumbnail_assets.get(suggestion.sha256)
-        if thumbnail is not None and not card.set_thumbnail(thumbnail):
-            raise AssertionError("The production card rejected its thumbnail.")
-    cards[0].portrait.checkbox.click()
-    _settle(application)
-    screenshot_path = artifact_root / "openmodeldb-upscaler-picker.png"
-    save_opaque_dark_widget_capture(modal, screenshot_path)
-    menu_actions = [
-        [
-            entry.action_id
-            for entry in card.provider_menu_model().entries
-            if isinstance(entry, MenuItem)
-        ]
-        for card in cards
-    ]
-    civitai_source_screenshot: Path | None = None
-    for card, actions in zip(cards, menu_actions, strict=True):
-        if "model_provider.acquire.civitai" not in actions:
-            continue
-        civitai_action = next(
-            entry
-            for entry in card.provider_menu_model().entries
-            if isinstance(entry, MenuItem)
-            and entry.action_id == "model_provider.acquire.civitai"
-        )
-        assert civitai_action.callback is not None
-        civitai_action.callback()
-        if card.selected_provider_id != "civitai":
-            raise AssertionError("The real card did not switch acquisition sources.")
+        modal = roots.own(ModelDiscoveryModal(open_url=record_url))
+        prepare_opaque_dark_capture_surface(modal)
+        modal.show_plan(plan)
+        modal.show()
         _settle(application)
-        civitai_source_screenshot = (
-            artifact_root / "openmodeldb-upscaler-civitai-source.png"
+        cards = modal.findChildren(ModelSuggestionCard)
+        if len(cards) != len(suggestions):
+            raise AssertionError("The production picker did not render every upscaler.")
+        for card, suggestion in zip(cards, suggestions, strict=True):
+            thumbnail = thumbnail_assets.get(suggestion.sha256)
+            if thumbnail is not None and not card.set_thumbnail(thumbnail):
+                raise AssertionError("The production card rejected its thumbnail.")
+        cards[0].portrait.checkbox.click()
+        _settle(application)
+        screenshot_path = artifact_root / "openmodeldb-upscaler-picker.png"
+        save_opaque_dark_widget_capture(modal, screenshot_path)
+        menu_actions = [
+            [
+                entry.action_id
+                for entry in card.provider_menu_model().entries
+                if isinstance(entry, MenuItem)
+            ]
+            for card in cards
+        ]
+        civitai_source_screenshot: Path | None = None
+        for card, actions in zip(cards, menu_actions, strict=True):
+            if "model_provider.acquire.civitai" not in actions:
+                continue
+            civitai_action = next(
+                entry
+                for entry in card.provider_menu_model().entries
+                if isinstance(entry, MenuItem)
+                and entry.action_id == "model_provider.acquire.civitai"
+            )
+            assert civitai_action.callback is not None
+            civitai_action.callback()
+            if card.selected_provider_id != "civitai":
+                raise AssertionError(
+                    "The real card did not switch acquisition sources."
+                )
+            _settle(application)
+            civitai_source_screenshot = (
+                artifact_root / "openmodeldb-upscaler-civitai-source.png"
+            )
+            save_opaque_dark_widget_capture(modal, civitai_source_screenshot)
+            break
+        shell_screenshot, shell_civitai_screenshot, _ = render_contained_shell(
+            application,
+            plan,
+            thumbnail_assets,
+            artifact_root,
+            font_session=fonts,
         )
-        save_opaque_dark_widget_capture(modal, civitai_source_screenshot)
-        break
-    shell_screenshot, shell_civitai_screenshot = render_contained_shell(
-        application,
-        plan,
-        thumbnail_assets,
-        artifact_root,
-    )
-    evidence: dict[str, object] = {
-        "schema_version": 1,
-        "result": "passed",
-        "headless": os.environ.get("QT_QPA_PLATFORM") == "offscreen",
-        "production_surface": (
-            f"{ModelDiscoveryModal.__module__}.{ModelDiscoveryModal.__name__}"
-        ),
-        "screenshot": str(screenshot_path),
-        "contained_shell_screenshot": str(shell_screenshot),
-        "contained_shell_civitai_screenshot": (
-            str(shell_civitai_screenshot)
-            if shell_civitai_screenshot is not None
-            else None
-        ),
-        "civitai_source_screenshot": (
-            str(civitai_source_screenshot)
-            if civitai_source_screenshot is not None
-            else None
-        ),
-        "artifact_kind": plan.context.artifact_kind.value,
-        "cards": len(cards),
-        "source_mode": source_mode,
-        "selected_model": suggestions[0].model_name,
-        "download_enabled": modal.download_button.isEnabled(),
-        "provider_order": [
-            [offer.reference.provider_id for offer in suggestion.offers]
-            for suggestion in suggestions
-        ],
-        "provider_menu_actions": menu_actions,
-        "models": [
-            {
-                "name": suggestion.model_name,
-                "sha256": suggestion.sha256,
-                "model_pages": [offer.model_page_url for offer in suggestion.offers],
-                "thumbnail_url": suggestion.primary_offer.thumbnail_url,
-                "thumbnail_rendered": suggestion.sha256 in thumbnail_assets,
-            }
-            for suggestion in suggestions
-        ],
-        "downloads_performed": 0,
-        "external_urls_opened": len(opened_urls),
-    }
-    report_path = artifact_root / "evidence.json"
-    report_path.write_text(
-        json.dumps(evidence, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    modal.close()
-    modal.deleteLater()
-    application.processEvents()
-    return evidence
+        evidence: dict[str, object] = {
+            "font": fonts.evidence(modal.title_label),
+            "schema_version": 1,
+            "result": "passed",
+            "headless": os.environ.get("QT_QPA_PLATFORM") == "offscreen",
+            "production_surface": (
+                f"{ModelDiscoveryModal.__module__}.{ModelDiscoveryModal.__name__}"
+            ),
+            "screenshot": str(screenshot_path),
+            "contained_shell_screenshot": str(shell_screenshot),
+            "contained_shell_civitai_screenshot": (
+                str(shell_civitai_screenshot)
+                if shell_civitai_screenshot is not None
+                else None
+            ),
+            "civitai_source_screenshot": (
+                str(civitai_source_screenshot)
+                if civitai_source_screenshot is not None
+                else None
+            ),
+            "artifact_kind": plan.context.artifact_kind.value,
+            "cards": len(cards),
+            "source_mode": source_mode,
+            "selected_model": suggestions[0].model_name,
+            "download_enabled": modal.download_button.isEnabled(),
+            "provider_order": [
+                [offer.reference.provider_id for offer in suggestion.offers]
+                for suggestion in suggestions
+            ],
+            "provider_menu_actions": menu_actions,
+            "models": [
+                {
+                    "name": suggestion.model_name,
+                    "sha256": suggestion.sha256,
+                    "model_pages": [
+                        offer.model_page_url for offer in suggestion.offers
+                    ],
+                    "thumbnail_url": suggestion.primary_offer.thumbnail_url,
+                    "thumbnail_rendered": suggestion.sha256 in thumbnail_assets,
+                }
+                for suggestion in suggestions
+            ],
+            "downloads_performed": 0,
+            "external_urls_opened": len(opened_urls),
+        }
+        report_path = artifact_root / "evidence.json"
+        report_path.write_text(
+            json.dumps(evidence, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        return evidence
 
 
 def _load_live_content(
@@ -330,123 +335,114 @@ def render_contained_shell(
     thumbnails: Mapping[str, ThumbnailAsset],
     artifact_root: Path,
     *,
+    font_session: QualificationFontSession,
     capture_layer: (
         Callable[[QApplication, QWidget, ModelDiscoveryModal, Path], None] | None
     ) = None,
     select_first_protected: bool = False,
-) -> tuple[Path, Path | None]:
+) -> tuple[Path, Path | None, dict[str, object]]:
     """Click the production empty picker and capture its full-shell modal wash."""
 
-    family_id = plan.context.family_id
-    role = family_id.value if family_id is not None else "upscaler"
-    label = "Upscaler" if family_id is None else family_id.value.upper()
-    screenshot_prefix = (
-        "openmodeldb-upscaler" if family_id is None else f"civitai-{role}"
-    )
-
-    frame = SubstituteWindowFrame(backdrop_mode=None)
-    frame.resize(1280, 820)
-    prepare_opaque_dark_capture_surface(frame)
-    body = QWidget(frame)
-    body.setStyleSheet("QWidget { background-color: #181818; }")
-    body_layout = QHBoxLayout(body)
-    body_layout.setContentsMargins(20, 16, 20, 20)
-    sidebar = QFrame(body)
-    sidebar.setFixedWidth(380)
-    sidebar.setStyleSheet("QFrame { background-color: #242222; border-radius: 8px; }")
-    sidebar_layout = QVBoxLayout(sidebar)
-    sidebar_layout.setContentsMargins(22, 18, 22, 18)
-    sidebar_layout.setSpacing(12)
-    sidebar_layout.addWidget(LocalizedSubtitleLabel(app_text("Models"), sidebar))
-    sidebar_layout.addWidget(LocalizedBodyLabel(app_text(label), sidebar))
-    overlay = ModelDiscoveryOverlay(owner=frame)
-    contained_modal = ModelDiscoveryModal(parent=overlay)
-    overlay.attach(contained_modal)
-
-    def open_discovery() -> None:
-        """Follow the field's real empty-picker activation into the child modal."""
-
-        overlay.present()
-        contained_modal.show_loading()
-        contained_modal.show_plan(plan)
-        for suggestion in plan.suggestions:
-            thumbnail = thumbnails.get(suggestion.sha256)
-            if thumbnail is not None:
-                contained_modal.set_thumbnail(suggestion.identity, thumbnail)
-
-    picker = ModelPickerField(
-        sidebar,
-        choice_source=_EmptyChoiceSource(plan.context.artifact_kind),
-        empty_model_action=open_discovery,
-    )
-    sidebar_layout.addWidget(picker)
-    sidebar_layout.addStretch(1)
-    body_layout.addWidget(sidebar)
-    body_layout.addStretch(1)
-    frame.add_body_widget(body)
-    frame.show()
-    _settle(application)
-    button = picker.findChild(QAbstractButton, "modelPickerEmptyActionButton")
-    if button is None or not picker.is_empty_action_visible():
-        raise AssertionError("The empty model picker did not offer discovery.")
-    button.click()
-    _settle(application)
-    if not overlay.isVisible() or contained_modal.isWindow():
-        raise AssertionError("Model discovery escaped the owning shell.")
-    if select_first_protected:
-        protected_card = next(
-            (
-                card
-                for card in contained_modal.findChildren(ModelSuggestionCard)
-                if not card.key_indicator.isHidden()
-            ),
-            None,
+    with CaptureWidgetOwner() as roots:
+        family_id = plan.context.family_id
+        role = family_id.value if family_id is not None else "upscaler"
+        label = "Upscaler" if family_id is None else family_id.value.upper()
+        screenshot_prefix = (
+            "openmodeldb-upscaler" if family_id is None else f"civitai-{role}"
         )
-        if protected_card is None:
-            raise AssertionError("The offer lacks a protected card to select.")
-        protected_card.portrait.checkbox.click()
+
+        frame = roots.own(SubstituteWindowFrame(backdrop_mode=None))
+        frame.resize(1280, 820)
+        prepare_opaque_dark_capture_surface(frame)
+        body = QWidget(frame)
+        body.setStyleSheet("QWidget { background-color: #181818; }")
+        body_layout = QHBoxLayout(body)
+        body_layout.setContentsMargins(20, 16, 20, 20)
+        sidebar = QFrame(body)
+        sidebar.setFixedWidth(380)
+        sidebar.setStyleSheet(
+            "QFrame { background-color: #242222; border-radius: 8px; }"
+        )
+        sidebar_layout = QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(22, 18, 22, 18)
+        sidebar_layout.setSpacing(12)
+        sidebar_layout.addWidget(LocalizedSubtitleLabel(app_text("Models"), sidebar))
+        sidebar_layout.addWidget(LocalizedBodyLabel(app_text(label), sidebar))
+        overlay = ModelDiscoveryOverlay(owner=frame)
+        contained_modal = ModelDiscoveryModal(parent=overlay)
+        overlay.attach(contained_modal)
+
+        def open_discovery() -> None:
+            """Follow the field's real empty-picker activation into the child modal."""
+
+            overlay.present()
+            contained_modal.show_loading()
+            contained_modal.show_plan(plan)
+            for suggestion in plan.suggestions:
+                thumbnail = thumbnails.get(suggestion.sha256)
+                if thumbnail is not None:
+                    contained_modal.set_thumbnail(suggestion.identity, thumbnail)
+
+        picker = ModelPickerField(
+            sidebar,
+            choice_source=_EmptyChoiceSource(plan.context.artifact_kind),
+            empty_model_action=open_discovery,
+        )
+        sidebar_layout.addWidget(picker)
+        sidebar_layout.addStretch(1)
+        body_layout.addWidget(sidebar)
+        body_layout.addStretch(1)
+        frame.add_body_widget(body)
+        frame.show()
         _settle(application)
-    screenshot = artifact_root / f"{screenshot_prefix}-contained-shell.png"
-    save_opaque_dark_widget_capture(frame, screenshot)
-    civitai_screenshot: Path | None = None
-    for card in contained_modal.findChildren(ModelSuggestionCard):
-        for entry in card.provider_menu_model().entries:
-            if not isinstance(entry, MenuItem):
-                continue
-            if entry.action_id != "model_provider.acquire.civitai":
-                continue
-            assert entry.callback is not None
-            entry.callback()
-            _settle(application)
-            civitai_screenshot = (
-                artifact_root / f"{screenshot_prefix}-contained-shell-civitai.png"
+        button = picker.findChild(QAbstractButton, "modelPickerEmptyActionButton")
+        if button is None or not picker.is_empty_action_visible():
+            raise AssertionError("The empty model picker did not offer discovery.")
+        button.click()
+        _settle(application)
+        if not overlay.isVisible() or contained_modal.isWindow():
+            raise AssertionError("Model discovery escaped the owning shell.")
+        if select_first_protected:
+            protected_card = next(
+                (
+                    card
+                    for card in contained_modal.findChildren(ModelSuggestionCard)
+                    if not card.key_indicator.isHidden()
+                ),
+                None,
             )
-            save_opaque_dark_widget_capture(frame, civitai_screenshot)
-            break
-        if civitai_screenshot is not None:
-            break
-    if capture_layer is not None:
-        capture_layer(application, frame, contained_modal, artifact_root)
-    contained_modal.reject()
-    overlay.hide()
-    frame.close()
-    frame.deleteLater()
-    application.processEvents()
-    return screenshot, civitai_screenshot
-
-
-def register_qualification_font(application: QApplication) -> None:
-    """Register Segoe UI for deterministic offscreen Fluent rendering."""
-
-    windows_root = os.environ.get("WINDIR")
-    if not windows_root:
-        raise RuntimeError("WINDIR is required for headless Fluent rendering.")
-    font_path = Path(windows_root) / "Fonts" / "segoeui.ttf"
-    font_id = QFontDatabase.addApplicationFont(str(font_path))
-    families = QFontDatabase.applicationFontFamilies(font_id)
-    if font_id < 0 or not families:
-        raise RuntimeError(f"Could not register the render font: {font_path}")
-    application.setFont(QFont(families[0], 10))
+            if protected_card is None:
+                raise AssertionError("The offer lacks a protected card to select.")
+            protected_card.portrait.checkbox.click()
+            _settle(application)
+        screenshot = artifact_root / f"{screenshot_prefix}-contained-shell.png"
+        save_opaque_dark_widget_capture(frame, screenshot)
+        civitai_screenshot: Path | None = None
+        for card in contained_modal.findChildren(ModelSuggestionCard):
+            for entry in card.provider_menu_model().entries:
+                if not isinstance(entry, MenuItem):
+                    continue
+                if entry.action_id != "model_provider.acquire.civitai":
+                    continue
+                assert entry.callback is not None
+                entry.callback()
+                _settle(application)
+                civitai_screenshot = (
+                    artifact_root / f"{screenshot_prefix}-contained-shell-civitai.png"
+                )
+                save_opaque_dark_widget_capture(frame, civitai_screenshot)
+                break
+            if civitai_screenshot is not None:
+                break
+        if capture_layer is not None:
+            capture_layer(application, frame, contained_modal, artifact_root)
+        contained_modal.reject()
+        overlay.hide()
+        return (
+            screenshot,
+            civitai_screenshot,
+            font_session.evidence(contained_modal.title_label),
+        )
 
 
 def _settle(application: QApplication) -> None:
@@ -470,7 +466,6 @@ if __name__ == "__main__":
 
 
 __all__ = [
-    "register_qualification_font",
     "render_contained_shell",
     "run_headless_qualification",
 ]

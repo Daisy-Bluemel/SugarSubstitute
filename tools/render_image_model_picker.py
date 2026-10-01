@@ -77,12 +77,13 @@ from sugarsubstitute_shared.presentation.localization import (  # noqa: E402
     render_application_text,
 )
 from tools.render_openmodeldb_upscaler_picker import (  # noqa: E402
-    register_qualification_font,
     render_contained_shell,
 )
 from tools.install_experience_capture import (  # noqa: E402
     save_opaque_dark_widget_capture,
 )
+
+from tools.qualification_font import QualificationFontSession  # noqa: E402
 
 _ARTIFACT_ROOT = (
     Path(__file__).resolve().parents[1]
@@ -142,73 +143,79 @@ def run_headless_image_model_qualification(
     artifact_root = artifact_root.resolve()
     artifact_root.mkdir(parents=True, exist_ok=True)
     application = cast(QApplication, QApplication.instance() or QApplication([]))
-    register_qualification_font(application)
-    setTheme(Theme.DARK)
-    source_mode = "live_civitai" if content is None else "injected_plan"
-    if content is None:
-        content = _load_live_content(artifact_root)
-    family_evidence: dict[str, object] = {}
-    for family_id in _FAMILIES:
-        plan, thumbnails = content[family_id]
-        if plan.context.family_id is not family_id or not plan.suggestions:
-            raise AssertionError(f"The {family_id.value} picker has no family cards.")
-        if source_mode == "live_civitai" and len(plan.suggestions) != 8:
-            raise AssertionError(
-                f"The {family_id.value} picker lacks eight real cards."
+    with QualificationFontSession(application) as fonts:
+        setTheme(Theme.DARK)
+        source_mode = "live_civitai" if content is None else "injected_plan"
+        if content is None:
+            content = _load_live_content(artifact_root)
+        family_evidence: dict[str, object] = {}
+        for family_id in _FAMILIES:
+            plan, thumbnails = content[family_id]
+            if plan.context.family_id is not family_id or not plan.suggestions:
+                raise AssertionError(
+                    f"The {family_id.value} picker has no family cards."
+                )
+            if source_mode == "live_civitai" and len(plan.suggestions) != 8:
+                raise AssertionError(
+                    f"The {family_id.value} picker lacks eight real cards."
+                )
+            screenshot, _, font_evidence = render_contained_shell(
+                application,
+                plan,
+                thumbnails,
+                artifact_root,
+                font_session=fonts,
+                capture_layer=lambda app, frame, modal, root: _capture_credential_layer(
+                    app,
+                    frame,
+                    modal,
+                    root,
+                    family_id,
+                    min(len(plan.suggestions), 5),
+                ),
+                select_first_protected=True,
             )
-        screenshot, _ = render_contained_shell(
-            application,
-            plan,
-            thumbnails,
-            artifact_root,
-            capture_layer=lambda app, frame, modal, root: _capture_credential_layer(
-                app,
-                frame,
-                modal,
-                root,
-                family_id,
-                min(len(plan.suggestions), 5),
-            ),
-            select_first_protected=True,
-        )
-        credential_screenshot = (
-            artifact_root / f"civitai-{family_id.value}-credential-layer.png"
-        )
-        multiple_model_screenshot = (
-            artifact_root / f"civitai-{family_id.value}-credential-count-stress.png"
-        )
-        title, explanation = discovery_copy(plan.context)
-        family_evidence[family_id.value] = {
-            "screenshot": str(screenshot),
-            "credential_layer_screenshot": str(credential_screenshot),
-            "credential_count_stress_screenshot": (
-                str(multiple_model_screenshot) if len(plan.suggestions) > 1 else None
-            ),
-            "title": render_application_text(title),
-            "explanation": render_application_text(explanation),
-            "cards": len(plan.suggestions),
-            "rendered_thumbnails": len(thumbnails),
-            "models": [
-                {
-                    "name": suggestion.model_name,
-                    "sha256": suggestion.sha256,
-                    "provider": suggestion.primary_offer.reference.provider_name,
-                    "thumbnail_rendered": suggestion.sha256 in thumbnails,
-                }
-                for suggestion in plan.suggestions
-            ],
+            credential_screenshot = (
+                artifact_root / f"civitai-{family_id.value}-credential-layer.png"
+            )
+            multiple_model_screenshot = (
+                artifact_root / f"civitai-{family_id.value}-credential-count-stress.png"
+            )
+            title, explanation = discovery_copy(plan.context)
+            family_evidence[family_id.value] = {
+                "font": font_evidence,
+                "screenshot": str(screenshot),
+                "credential_layer_screenshot": str(credential_screenshot),
+                "credential_count_stress_screenshot": (
+                    str(multiple_model_screenshot)
+                    if len(plan.suggestions) > 1
+                    else None
+                ),
+                "title": render_application_text(title),
+                "explanation": render_application_text(explanation),
+                "cards": len(plan.suggestions),
+                "rendered_thumbnails": len(thumbnails),
+                "models": [
+                    {
+                        "name": suggestion.model_name,
+                        "sha256": suggestion.sha256,
+                        "provider": suggestion.primary_offer.reference.provider_name,
+                        "thumbnail_rendered": suggestion.sha256 in thumbnails,
+                    }
+                    for suggestion in plan.suggestions
+                ],
+            }
+        evidence: dict[str, object] = {
+            "result": "passed",
+            "headless": os.environ.get("QT_QPA_PLATFORM") == "offscreen",
+            "source_mode": source_mode,
+            "downloads_performed": 0,
+            "families": family_evidence,
         }
-    evidence: dict[str, object] = {
-        "result": "passed",
-        "headless": os.environ.get("QT_QPA_PLATFORM") == "offscreen",
-        "source_mode": source_mode,
-        "downloads_performed": 0,
-        "families": family_evidence,
-    }
-    (artifact_root / "evidence.json").write_text(
-        json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    return evidence
+        (artifact_root / "evidence.json").write_text(
+            json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+        return evidence
 
 
 def _capture_credential_layer(
@@ -241,32 +248,46 @@ def _capture_credential_layer(
             protected_model_count=protected_model_count,
         )
 
+        capture_error: BaseException | None = None
+
         def capture_and_close() -> None:
             """Record the visible layer and cancel without storing a key."""
 
-            application.processEvents()
-            actions = (
-                prompt.cancel_button,
-                prompt.public_only_button,
-                prompt.save_button,
-            )
-            if len({button.geometry().center().y() for button in actions}) != 1:
-                raise AssertionError("Credential choices are not in one action row.")
-            if any(
-                left.geometry().right() >= right.geometry().left()
-                for left, right in zip(actions, actions[1:])
-            ):
-                raise AssertionError("Credential choices overlap.")
-            if (
-                actions[0].geometry().top() - prompt.api_key_edit.geometry().bottom()
-                < 24
-            ):
-                raise AssertionError("Credential choices crowd the key input.")
-            save_opaque_dark_widget_capture(frame, screenshot)
-            prompt.reject()
+            nonlocal capture_error
+            try:
+                application.processEvents()
+                actions = (
+                    prompt.cancel_button,
+                    prompt.public_only_button,
+                    prompt.save_button,
+                )
+                if len({button.geometry().center().y() for button in actions}) != 1:
+                    raise AssertionError(
+                        "Credential choices are not in one action row."
+                    )
+                if any(
+                    left.geometry().right() >= right.geometry().left()
+                    for left, right in zip(actions, actions[1:])
+                ):
+                    raise AssertionError("Credential choices overlap.")
+                if (
+                    actions[0].geometry().top()
+                    - prompt.api_key_edit.geometry().bottom()
+                    < 24
+                ):
+                    raise AssertionError("Credential choices crowd the key input.")
+                save_opaque_dark_widget_capture(frame, screenshot)
+            except BaseException as error:
+                # Return errors across the nested Qt event loop before re-raising.
+                capture_error = error
+            finally:
+                prompt.reject()
 
         QTimer.singleShot(0, capture_and_close)
-        if prompt.request_key():
+        key_saved = prompt.request_key()
+        if capture_error is not None:
+            raise capture_error
+        if key_saved:
             raise AssertionError("Credential qualification unexpectedly stored a key.")
         prompt.deleteLater()
 

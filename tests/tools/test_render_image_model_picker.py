@@ -21,7 +21,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import cast
 
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QFont, QImage
+from PySide6.QtWidgets import QApplication, QWidget
+import pytest
+from shiboken6 import isValid
 
 from substitute.domain.model_recommendations import (
     ModelFamilyId,
@@ -37,9 +40,12 @@ from substitute.domain.model_suggestions import (
     ModelSuggestionReference,
 )
 from tools.render_image_model_picker import run_headless_image_model_qualification
+from tools import render_image_model_picker
 
 
-def test_sdxl_and_anima_render_in_contained_shell(tmp_path: Path) -> None:
+def test_sdxl_and_anima_render_in_contained_shell(
+    tmp_path: Path, qt_application_owner: QApplication
+) -> None:
     """Show both production modal contexts over real-shaped family offers."""
 
     content: dict[
@@ -49,16 +55,24 @@ def test_sdxl_and_anima_render_in_contained_shell(tmp_path: Path) -> None:
         for family_id in (ModelFamilyId.SDXL, ModelFamilyId.ANIMA)
     }
 
+    original_font = QFont(qt_application_owner.font())
     evidence = run_headless_image_model_qualification(
         artifact_root=tmp_path, content=content
     )
 
+    assert qt_application_owner.font() == original_font
     assert evidence["result"] == "passed"
     assert evidence["source_mode"] == "injected_plan"
     assert evidence["downloads_performed"] == 0
     families = cast(dict[str, dict[str, object]], evidence["families"])
     for family_id in (ModelFamilyId.SDXL, ModelFamilyId.ANIMA):
         family = families[family_id.value]
+        font = cast(dict[str, object], family["font"])
+        for key in ("application", "fluent_label"):
+            details = cast(dict[str, object], font[key])
+            assert details["resolved_family"]
+            assert details["raw_family"]
+            assert details["glyphs_available"] is True
         assert family["title"] == "Download an image model?"
         assert family["explanation"] == (
             "Image models create new images from your prompts."
@@ -70,6 +84,38 @@ def test_sdxl_and_anima_render_in_contained_shell(tmp_path: Path) -> None:
         assert not image.isNull()
         assert image.width() >= 1000
         assert image.height() >= 700
+
+
+def test_credential_capture_failure_exits_nested_loop_and_disposes_its_shell(
+    tmp_path: Path,
+    qt_application_owner: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Propagate screenshot failures without stranding the modal or font scope."""
+
+    content: dict[
+        ModelFamilyId, tuple[ModelSuggestionPlan, dict[str, ThumbnailAsset]]
+    ] = {
+        family_id: (_plan(tmp_path, family_id), {})
+        for family_id in (ModelFamilyId.SDXL, ModelFamilyId.ANIMA)
+    }
+    captured: list[QWidget] = []
+    original_font = QFont(qt_application_owner.font())
+
+    def fail_capture(widget: QWidget, path: Path) -> None:
+        """Interrupt the actual credential capture inside its nested event loop."""
+
+        captured.append(widget)
+        raise RuntimeError("injected credential screenshot failure")
+
+    monkeypatch.setattr(
+        render_image_model_picker, "save_opaque_dark_widget_capture", fail_capture
+    )
+    with pytest.raises(RuntimeError, match="injected credential screenshot failure"):
+        run_headless_image_model_qualification(artifact_root=tmp_path, content=content)
+    assert len(captured) == 1
+    assert not isValid(captured[0])
+    assert qt_application_owner.font() == original_font
 
 
 def _plan(root: Path, family_id: ModelFamilyId) -> ModelSuggestionPlan:

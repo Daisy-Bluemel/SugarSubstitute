@@ -21,7 +21,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import cast
 
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QFont, QImage
+from PySide6.QtWidgets import QApplication
 
 from substitute.domain.model_suggestions import (
     ModelAcquisitionOffer,
@@ -37,6 +38,7 @@ from tools.render_openmodeldb_upscaler_picker import run_headless_qualification
 
 def test_headless_upscaler_picker_renders_real_model_identity(
     tmp_path: Path,
+    qt_application_owner: QApplication,
 ) -> None:
     """The production card shows one real hash and both provider sources."""
 
@@ -88,12 +90,20 @@ def test_headless_upscaler_picker_renders_real_model_identity(
         ),
     )
 
+    original_font = QFont(qt_application_owner.font())
     evidence = run_headless_qualification(
         artifact_root=tmp_path, plan=plan, thumbnail_assets={}
     )
 
+    assert qt_application_owner.font() == original_font
     assert evidence["result"] == "passed"
     assert evidence["headless"] is True
+    font = cast(dict[str, object], evidence["font"])
+    for key in ("application", "fluent_label"):
+        details = cast(dict[str, object], font[key])
+        assert details["resolved_family"]
+        assert details["raw_family"]
+        assert details["glyphs_available"] is True
     assert evidence["artifact_kind"] == "upscale_models"
     assert evidence["cards"] == 1
     assert evidence["source_mode"] == "injected_plan"

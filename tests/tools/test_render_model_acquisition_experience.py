@@ -21,20 +21,33 @@ from __future__ import annotations
 from pathlib import Path
 from typing import cast
 
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QFont, QImage
+from PySide6.QtWidgets import QApplication, QWidget
+import pytest
+from shiboken6 import isValid
 
 from tools.render_model_acquisition_experience import run_headless_qualification
+from tools import render_model_acquisition_experience
 
 
 def test_headless_model_acquisition_matrix_uses_production_surfaces(
     tmp_path: Path,
+    qt_application_owner: QApplication,
 ) -> None:
     """Every material interaction state should produce readable evidence."""
 
+    original_font = QFont(qt_application_owner.font())
     evidence = run_headless_qualification(artifact_root=tmp_path)
 
+    assert qt_application_owner.font() == original_font
     assert evidence["result"] == "passed"
     assert evidence["headless"] is True
+    font = cast(dict[str, object], evidence["font"])
+    for key in ("application", "fluent_label"):
+        details = cast(dict[str, object], font[key])
+        assert details["resolved_family"]
+        assert details["raw_family"]
+        assert details["glyphs_available"] is True
     states = {
         cast(str, state["state"]): state
         for state in cast(list[dict[str, object]], evidence["states"])
@@ -69,3 +82,31 @@ def test_headless_model_acquisition_matrix_uses_production_surfaces(
         "credentials_persisted": 0,
         "external_urls_opened": 0,
     }
+
+
+def test_capture_failure_disposes_only_its_host_and_restores_application_font(
+    tmp_path: Path,
+    qt_application_owner: QApplication,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Unwind production dialogs when saving one qualification image fails."""
+
+    captured: list[QWidget] = []
+    original_font = QFont(qt_application_owner.font())
+
+    def fail_capture(widget: QWidget, path: Path) -> None:
+        """Fail at the external image-file write boundary."""
+
+        captured.append(widget)
+        raise RuntimeError("injected acquisition screenshot failure")
+
+    monkeypatch.setattr(
+        render_model_acquisition_experience,
+        "save_opaque_dark_widget_capture",
+        fail_capture,
+    )
+    with pytest.raises(RuntimeError, match="injected acquisition screenshot failure"):
+        run_headless_qualification(artifact_root=tmp_path)
+    assert len(captured) == 1
+    assert not isValid(captured[0])
+    assert qt_application_owner.font() == original_font

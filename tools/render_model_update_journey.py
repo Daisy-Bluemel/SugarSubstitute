@@ -65,9 +65,8 @@ from tools.model_update_render_surfaces import (  # noqa: E402
 )
 from tools.model_update_lora_render import render_lora_prompt_node_card  # noqa: E402
 from tools.model_update_node_card_render import render_node_card  # noqa: E402
-from tools.render_openmodeldb_upscaler_picker import (  # noqa: E402
-    register_qualification_font,
-)
+from tools.qualification_font import QualificationFontSession  # noqa: E402
+from tools.qualification_widgets import CaptureWidgetOwner  # noqa: E402
 
 
 def _scenario(
@@ -119,7 +118,8 @@ def _render_family(
     prefix: str,
     *,
     decisions: bool,
-) -> int:
+    font_session: QualificationFontSession,
+) -> tuple[int, dict[str, object]]:
     """Capture chronological real-version cards inside the full-window wash."""
 
     overlay = ModelDiscoveryOverlay(owner=frame)
@@ -171,133 +171,159 @@ def _render_family(
         save_opaque_dark_widget_capture(frame, output / f"{prefix}-downloaded.png")
     modal.reject()
     overlay.close()
-    return image_count
+    return image_count, font_session.evidence(modal.title_label)
 
 
 def main() -> int:
     """Capture opt-in, a real node card, and exact model-family decisions."""
 
     app = cast(QApplication, QApplication.instance() or QApplication([]))
-    register_qualification_font(app)
-    setTheme(Theme.DARK)
-    output = Path("build/qualification/model-update-journey").resolve()
-    output.mkdir(parents=True, exist_ok=True)
-    service = UpdatePreferenceService()
-    settings, _ = mount_shell(settings=True, service=service)
-    settle(app)
-    save_opaque_dark_widget_capture(settings, output / "01-opt-in-off.png")
-    switch = settings.findChild(LocalizedSwitchButton)
-    if switch is None:
-        raise AssertionError("The real settings switch was not mounted.")
-    switch.setChecked(True)
-    settle(app)
-    assert service.model_update_notifications_enabled
-    save_opaque_dark_widget_capture(settings, output / "02-opt-in-on.png")
-    settings.close()
+    with QualificationFontSession(app) as fonts, CaptureWidgetOwner() as roots:
+        setTheme(Theme.DARK)
+        output = Path("build/qualification/model-update-journey").resolve()
+        output.mkdir(parents=True, exist_ok=True)
+        service = UpdatePreferenceService()
+        settings, _ = mount_shell(settings=True, service=service, roots=roots)
+        settle(app)
+        save_opaque_dark_widget_capture(settings, output / "01-opt-in-off.png")
+        switch = settings.findChild(LocalizedSwitchButton)
+        if switch is None:
+            raise AssertionError("The real settings switch was not mounted.")
+        switch.setChecked(True)
+        settle(app)
+        assert service.model_update_notifications_enabled
+        save_opaque_dark_widget_capture(settings, output / "02-opt-in-on.png")
+        settings.close()
 
-    fetcher = CivitaiThumbnailFetcher()
-    client = CivitaiDiscoveryClient(
-        thumbnail_selector=lambda images: safe_version_thumbnail(
-            images, thumbnail_policy=CivitaiThumbnailPolicy()
-        )
-    )
-    gateway = CivitaiCompatibleUpdateGateway(client)
-    checkpoint = _scenario(
-        client,
-        gateway,
-        model_id=934764,
-        installed_version_id=2673989,
-        kind=ModelArtifactKind.CHECKPOINTS,
-    )
-    second_checkpoint = _scenario(
-        client,
-        gateway,
-        model_id=1318945,
-        installed_version_id=2823418,
-        kind=ModelArtifactKind.CHECKPOINTS,
-    )
-    lora = _scenario(
-        client,
-        gateway,
-        model_id=1145743,
-        installed_version_id=2196453,
-        kind=ModelArtifactKind.LORAS,
-    )
-    diffusion = _scenario(
-        client,
-        gateway,
-        model_id=934764,
-        installed_version_id=3153747,
-        kind=ModelArtifactKind.DIFFUSION_MODELS,
-    )
-    frame = render_node_card(
-        app,
-        service,
-        (checkpoint, second_checkpoint),
-        fetcher,
-        output,
-        "03-checkpoint",
-        workflow_fixture="workflow_sdxl_baseline.json",
-        cube_alias="Cube 1: SDXL/Text to Image",
-        node_name="checkpoint",
-        input_name="ckpt_name",
-    )
-    counts = {
-        "checkpoint": _render_family(
-            app, frame, checkpoint, fetcher, output, "04-checkpoint", decisions=True
-        )
-    }
-    frame.close()
-    frame = render_lora_prompt_node_card(app, service, lora, fetcher, output, "05-lora")
-    counts["lora"] = _render_family(
-        app, frame, lora, fetcher, output, "06-lora", decisions=False
-    )
-    frame.close()
-    frame = render_node_card(
-        app,
-        service,
-        (diffusion,),
-        fetcher,
-        output,
-        "07-diffusion",
-        workflow_fixture="workflow_anima_baseline.json",
-        cube_alias="Cube 1: Anima/Text to Image",
-        node_name="models",
-        input_name="diffusion_model",
-    )
-    counts["diffusion"] = _render_family(
-        app, frame, diffusion, fetcher, output, "08-diffusion", decisions=False
-    )
-    frame.close()
-    evidence = {
-        "source": "live public CivitAI API, safe real-version preview images",
-        "checkpoint_capture": "production SDXL checkpoint node card and model picker",
-        "diffusion_capture": "production Anima diffusion-model node card and model picker",
-        "download_states": "visual states; atomic side-by-side transfer verified by lifecycle test",
-        "scenarios": [
-            {
-                "kind": scenario.proposal.current.artifact_kind.value,
-                "model_id": scenario.proposal.current.model_id,
-                "model_name": scenario.proposal.candidate.model_name,
-                "installed_version_id": scenario.proposal.current.version_id,
-                "newest_version_id": scenario.proposal.candidate.version_id,
-                "family_version_ids": [
-                    version.version_id for version in scenario.versions
-                ],
-                "real_images_rendered": counts[name],
-            }
-            for name, scenario in (
-                ("checkpoint", checkpoint),
-                ("lora", lora),
-                ("diffusion", diffusion),
+        fetcher = CivitaiThumbnailFetcher()
+        client = CivitaiDiscoveryClient(
+            thumbnail_selector=lambda images: safe_version_thumbnail(
+                images, thumbnail_policy=CivitaiThumbnailPolicy()
             )
-        ],
-    }
-    (output / "evidence.json").write_text(
-        json.dumps(evidence, indent=2) + "\n", encoding="utf-8"
-    )
-    print(output)
-    return 0
+        )
+        gateway = CivitaiCompatibleUpdateGateway(client)
+        checkpoint = _scenario(
+            client,
+            gateway,
+            model_id=934764,
+            installed_version_id=2673989,
+            kind=ModelArtifactKind.CHECKPOINTS,
+        )
+        second_checkpoint = _scenario(
+            client,
+            gateway,
+            model_id=1318945,
+            installed_version_id=2823418,
+            kind=ModelArtifactKind.CHECKPOINTS,
+        )
+        lora = _scenario(
+            client,
+            gateway,
+            model_id=1145743,
+            installed_version_id=2196453,
+            kind=ModelArtifactKind.LORAS,
+        )
+        diffusion = _scenario(
+            client,
+            gateway,
+            model_id=934764,
+            installed_version_id=3153747,
+            kind=ModelArtifactKind.DIFFUSION_MODELS,
+        )
+        frame = render_node_card(
+            app,
+            service,
+            (checkpoint, second_checkpoint),
+            fetcher,
+            output,
+            "03-checkpoint",
+            roots=roots,
+            workflow_fixture="workflow_sdxl_baseline.json",
+            cube_alias="Cube 1: SDXL/Text to Image",
+            node_name="checkpoint",
+            input_name="ckpt_name",
+        )
+        counts = {
+            "checkpoint": _render_family(
+                app,
+                frame,
+                checkpoint,
+                fetcher,
+                output,
+                "04-checkpoint",
+                decisions=True,
+                font_session=fonts,
+            )
+        }
+        frame.close()
+        frame = render_lora_prompt_node_card(
+            app, service, lora, fetcher, output, "05-lora", roots=roots
+        )
+        counts["lora"] = _render_family(
+            app,
+            frame,
+            lora,
+            fetcher,
+            output,
+            "06-lora",
+            decisions=False,
+            font_session=fonts,
+        )
+        frame.close()
+        frame = render_node_card(
+            app,
+            service,
+            (diffusion,),
+            fetcher,
+            output,
+            "07-diffusion",
+            roots=roots,
+            workflow_fixture="workflow_anima_baseline.json",
+            cube_alias="Cube 1: Anima/Text to Image",
+            node_name="models",
+            input_name="diffusion_model",
+        )
+        counts["diffusion"] = _render_family(
+            app,
+            frame,
+            diffusion,
+            fetcher,
+            output,
+            "08-diffusion",
+            decisions=False,
+            font_session=fonts,
+        )
+        frame.close()
+        evidence = {
+            "font": counts["checkpoint"][1],
+            "source": "live public CivitAI API, safe real-version preview images",
+            "checkpoint_capture": "production SDXL checkpoint node card and model picker",
+            "diffusion_capture": "production Anima diffusion-model node card and model picker",
+            "download_states": "visual states; atomic side-by-side transfer verified by lifecycle test",
+            "scenarios": [
+                {
+                    "kind": scenario.proposal.current.artifact_kind.value,
+                    "model_id": scenario.proposal.current.model_id,
+                    "model_name": scenario.proposal.candidate.model_name,
+                    "installed_version_id": scenario.proposal.current.version_id,
+                    "newest_version_id": scenario.proposal.candidate.version_id,
+                    "family_version_ids": [
+                        version.version_id for version in scenario.versions
+                    ],
+                    "real_images_rendered": counts[name][0],
+                }
+                for name, scenario in (
+                    ("checkpoint", checkpoint),
+                    ("lora", lora),
+                    ("diffusion", diffusion),
+                )
+            ],
+        }
+        (output / "evidence.json").write_text(
+            json.dumps(evidence, indent=2) + "\n", encoding="utf-8"
+        )
+        print(output)
+        return 0
 
 
 if __name__ == "__main__":

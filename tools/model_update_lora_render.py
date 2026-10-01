@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import cast
 
 from PySide6.QtCore import QPoint
 from PySide6.QtTest import QTest
@@ -29,6 +30,7 @@ from substitute.application.localization import (
     NodePresentationService,
 )
 from substitute.application.node_behavior.behavior_service import NodeBehaviorService
+from substitute.domain.common import JsonObject
 from substitute.application.prompt_editor.lora.catalog_models import (
     PromptLoraCatalogItem,
     PromptLoraThumbnailVariant,
@@ -60,12 +62,11 @@ from tools.editor_projection_rig.fake_gateways import (
     FixtureNodeDefinitionGateway,
 )
 from tools.editor_projection_rig.fixtures import read_json
-from tools.editor_projection_rig.production_trace import (
-    _build_trace_shell,
-    _workflow_from_fixture,
-)
+from tools.editor_projection_rig.production_mount import build_trace_shell
+from tools.editor_projection_rig.production_fixture import workflow_from_fixture
 from tools.editor_projection_rig.trace_events import ProjectionTraceRecorder
 from tools.install_experience_capture import save_opaque_dark_widget_capture
+from tools.qualification_widgets import CaptureWidgetOwner
 from tools.model_update_render_surfaces import (
     RealUpdateScenario,
     UpdatePreferenceService,
@@ -85,10 +86,12 @@ def render_lora_prompt_node_card(
     fetcher: CivitaiThumbnailFetcher,
     output: Path,
     prefix: str,
+    *,
+    roots: CaptureWidgetOwner,
 ) -> SubstituteWindowFrame:
-    """Capture an installed real LoRA in the prompt node's shared picker."""
+    """Capture a LoRA picker with its frame and independent editor owned by roots."""
 
-    frame, layout = mount_shell(settings=False, service=service)
+    frame, layout = mount_shell(settings=False, service=service, roots=roots)
     assert layout is not None
     installed = next(
         version
@@ -127,7 +130,7 @@ def render_lora_prompt_node_card(
         sha256=installed.sha256,
     )
     bridge = ModelUpdatePickerBridge(frame)
-    workflow, definitions = _workflow_from_fixture(
+    workflow, definitions = workflow_from_fixture(
         read_json(
             Path("artifacts/editor_projection_rig/fixtures/workflow_sdxl_baseline.json")
         )
@@ -135,36 +138,45 @@ def render_lora_prompt_node_card(
     cube_alias = "Cube 1: SDXL/Text to Image"
     node_name = "positive_prompt"
     cube = workflow.cubes[cube_alias]
-    node_payload = cube.buffer["nodes"][node_name]
+    nodes = cast(dict[str, JsonObject], cube.buffer["nodes"])
+    node_payload = nodes[node_name]
+    node_inputs = cast(JsonObject, node_payload["inputs"])
+    class_type = node_payload["class_type"]
+    if not isinstance(class_type, str):
+        raise AssertionError("The qualification prompt node has no class identity.")
     gateway = FixtureNodeDefinitionGateway(definitions)
     node_catalog = ActiveComfyNodeCatalogStore()
-    panel = EditorPanel(
-        node_definition_gateway=gateway,
-        prompt_autocomplete_gateway=EmptyPromptAutocompleteGateway(),
-        prompt_wildcard_catalog_gateway=EmptyPromptWildcardCatalogGateway(),
-        node_behavior_service=NodeBehaviorService(node_definition_gateway=gateway),
-        node_presentation_service=NodePresentationService(
-            lambda: node_catalog.snapshot("en"),
-            application_text_renderer=render_source_application_text,
-        ),
-        thumbnail_asset_repository=repository,
-        model_updates=bridge,
-        workflow_id="model-update-lora-node-card-render",
-        editor_panel_execution_factories=immediate_editor_panel_execution_factories(),
+    panel = roots.own(
+        EditorPanel(
+            node_definition_gateway=gateway,
+            prompt_autocomplete_gateway=EmptyPromptAutocompleteGateway(),
+            prompt_wildcard_catalog_gateway=EmptyPromptWildcardCatalogGateway(),
+            node_behavior_service=NodeBehaviorService(node_definition_gateway=gateway),
+            node_presentation_service=NodePresentationService(
+                lambda: node_catalog.snapshot("en"),
+                application_text_renderer=render_source_application_text,
+            ),
+            thumbnail_asset_repository=repository,
+            model_updates=bridge,
+            workflow_id="model-update-lora-node-card-render",
+            editor_panel_execution_factories=immediate_editor_panel_execution_factories(),
+        )
     )
     panel._cube_states = workflow.cubes
     panel._stack_order = list(workflow.stack_order)
-    panel.mainwindow = _build_trace_shell(
+    panel.mainwindow = build_trace_shell(
         workflow_id="model-update-lora-node-card-render",
         workflow=workflow,
         panel=panel,
         recorder=ProjectionTraceRecorder(),
     ).shell
     snapshot = panel._build_behavior_snapshot()
+    if snapshot is None:
+        raise AssertionError("The qualification editor has no behavior snapshot.")
     wrapper = panel.build_node_card(
         node_name,
-        node_payload["inputs"],
-        node_payload["class_type"],
+        node_inputs,
+        class_type,
         snapshot.field_specs_by_alias[cube_alias][node_name],
         cube,
         snapshot.resolved_nodes_by_alias[cube_alias][node_name],

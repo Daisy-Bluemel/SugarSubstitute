@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import cast
 
 from PySide6.QtCore import QPoint, Qt
 from PySide6.QtTest import QTest
@@ -33,6 +34,7 @@ from substitute.application.model_metadata import (
     RichChoiceResolver,
 )
 from substitute.application.node_behavior.behavior_service import NodeBehaviorService
+from substitute.domain.common import JsonObject
 from substitute.infrastructure.model_recommendations.thumbnail_fetcher import (
     CivitaiThumbnailFetcher,
 )
@@ -57,12 +59,11 @@ from tools.editor_projection_rig.fake_gateways import (
     FixtureNodeDefinitionGateway,
 )
 from tools.editor_projection_rig.fixtures import read_json
-from tools.editor_projection_rig.production_trace import (
-    _build_trace_shell,
-    _workflow_from_fixture,
-)
+from tools.editor_projection_rig.production_mount import build_trace_shell
+from tools.editor_projection_rig.production_fixture import workflow_from_fixture
 from tools.editor_projection_rig.trace_events import ProjectionTraceRecorder
 from tools.install_experience_capture import save_opaque_dark_widget_capture
+from tools.qualification_widgets import CaptureWidgetOwner
 from tools.model_update_render_surfaces import (
     RealUpdateScenario,
     UpdatePreferenceService,
@@ -84,14 +85,15 @@ def render_node_card(
     output: Path,
     prefix: str,
     *,
+    roots: CaptureWidgetOwner,
     workflow_fixture: str,
     cube_alias: str,
     node_name: str,
     input_name: str,
 ) -> SubstituteWindowFrame:
-    """Capture a real node-card banner, context menu, and picker tiles."""
+    """Capture a node card with its frame and independent editor owned by roots."""
 
-    frame, layout = mount_shell(settings=False, service=service)
+    frame, layout = mount_shell(settings=False, service=service, roots=roots)
     assert layout is not None
     installed = tuple(
         next(
@@ -108,50 +110,61 @@ def render_node_card(
     )
     bridge = ModelUpdatePickerBridge(frame)
     catalog = _RenderedModelCatalog(items)
-    workflow, definitions = _workflow_from_fixture(
+    workflow, definitions = workflow_from_fixture(
         read_json(Path("artifacts/editor_projection_rig/fixtures") / workflow_fixture)
     )
     cube = workflow.cubes[cube_alias]
-    node_payload = cube.buffer["nodes"][node_name]
+    nodes = cast(dict[str, JsonObject], cube.buffer["nodes"])
+    node_payload = nodes[node_name]
     class_type = node_payload["class_type"]
+    if not isinstance(class_type, str):
+        raise AssertionError("The qualification node has no class identity.")
+    node_inputs = cast(JsonObject, node_payload["inputs"])
     choices = [item.backend_value for item in items]
     definitions[class_type]["input"]["required"][input_name][0] = choices
-    cube.buffer["definitions"][class_type]["input"]["required"][input_name][0] = choices
-    node_payload["inputs"][input_name] = items[0].backend_value
+    runtime_definitions = cast(dict[str, JsonObject], cube.buffer["definitions"])
+    input_definitions = cast(JsonObject, runtime_definitions[class_type]["input"])
+    required_inputs = cast(dict[str, list[object]], input_definitions["required"])
+    required_inputs[input_name][0] = choices
+    node_inputs[input_name] = items[0].backend_value
     gateway = FixtureNodeDefinitionGateway(definitions)
     node_catalog = ActiveComfyNodeCatalogStore()
-    panel = EditorPanel(
-        node_definition_gateway=gateway,
-        prompt_autocomplete_gateway=EmptyPromptAutocompleteGateway(),
-        prompt_wildcard_catalog_gateway=EmptyPromptWildcardCatalogGateway(),
-        node_behavior_service=NodeBehaviorService(node_definition_gateway=gateway),
-        node_presentation_service=NodePresentationService(
-            lambda: node_catalog.snapshot("en"),
-            application_text_renderer=render_source_application_text,
-        ),
-        model_catalog_service=catalog,
-        model_choice_resolver=RichChoiceResolver(
-            catalog_index=ModelChoiceCatalogIndex(model_catalog=catalog)
-        ),
-        thumbnail_asset_repository=_ThumbnailRepository(
-            {asset.storage_key: asset for asset in assets}
-        ),
-        model_updates=bridge,
-        workflow_id="model-update-node-card-render",
-        editor_panel_execution_factories=immediate_editor_panel_execution_factories(),
+    panel = roots.own(
+        EditorPanel(
+            node_definition_gateway=gateway,
+            prompt_autocomplete_gateway=EmptyPromptAutocompleteGateway(),
+            prompt_wildcard_catalog_gateway=EmptyPromptWildcardCatalogGateway(),
+            node_behavior_service=NodeBehaviorService(node_definition_gateway=gateway),
+            node_presentation_service=NodePresentationService(
+                lambda: node_catalog.snapshot("en"),
+                application_text_renderer=render_source_application_text,
+            ),
+            model_catalog_service=catalog,
+            model_choice_resolver=RichChoiceResolver(
+                catalog_index=ModelChoiceCatalogIndex(model_catalog=catalog)
+            ),
+            thumbnail_asset_repository=_ThumbnailRepository(
+                {asset.storage_key: asset for asset in assets}
+            ),
+            model_updates=bridge,
+            workflow_id="model-update-node-card-render",
+            editor_panel_execution_factories=immediate_editor_panel_execution_factories(),
+        )
     )
     panel._cube_states = workflow.cubes
     panel._stack_order = list(workflow.stack_order)
-    panel.mainwindow = _build_trace_shell(
+    panel.mainwindow = build_trace_shell(
         workflow_id="model-update-node-card-render",
         workflow=workflow,
         panel=panel,
         recorder=ProjectionTraceRecorder(),
     ).shell
     snapshot = panel._build_behavior_snapshot()
+    if snapshot is None:
+        raise AssertionError("The qualification editor has no behavior snapshot.")
     wrapper = panel.build_node_card(
         node_name,
-        node_payload["inputs"],
+        node_inputs,
         class_type,
         snapshot.field_specs_by_alias[cube_alias][node_name],
         cube,
@@ -239,12 +252,15 @@ def render_node_card(
 
     bridge.replace(tuple(scenario.proposal for scenario in scenarios))
     disabled: list[str] = []
+    model_id = scenarios[0].proposal.current.model_id
+    if model_id is None:
+        raise AssertionError("The qualification offer has no provider model page.")
 
     def disable_for_capture(sha256: str) -> None:
         """Project the controller's page-wide badge removal after opt-out."""
 
         disabled.append(sha256)
-        bridge.remove_page(scenarios[0].proposal.current.model_id)
+        bridge.remove_page(model_id)
 
     bridge.pageOptOutRequested.connect(disable_for_capture)
     page_menu = update_icon_menu(
