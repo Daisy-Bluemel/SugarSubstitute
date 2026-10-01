@@ -24,8 +24,16 @@ from pathlib import Path
 from tools.architecture_governance.model import Diagnostic
 
 _POLICY_OWNER = "substitute/application/workflows/input_asset_field_policy.py"
-_TRANSPORT_METADATA_KEYS = frozenset(
-    {"image_upload", "image_folder", "allow_batch", "multiselect"}
+_ASSET_METADATA_KEYS = frozenset(
+    {
+        "image_upload",
+        "audio_upload",
+        "video_upload",
+        "file_upload",
+        "image_folder",
+        "allow_batch",
+        "multiselect",
+    }
 )
 _REQUIRED_POLICY_IMPORTS = {
     "substitute/application/node_behavior/field_classification.py": (
@@ -82,7 +90,7 @@ def _policy_ownership_diagnostics(
             relative_path != _POLICY_OWNER
             and isinstance(node, ast.Constant)
             and isinstance(node.value, str)
-            and node.value in _TRANSPORT_METADATA_KEYS
+            and node.value in _ASSET_METADATA_KEYS
         ):
             diagnostics.append(
                 Diagnostic(

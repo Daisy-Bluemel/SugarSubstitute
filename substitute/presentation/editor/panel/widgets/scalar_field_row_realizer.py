@@ -49,6 +49,7 @@ from .field_row_geometry import (
 )
 from .field_row_metadata import leaf_field_key, scoped_field_key
 from .field_row_models import BuiltFieldRow, FieldRowTextTarget
+from .fields.choice_combo import EditorChoiceComboBox
 
 
 def build_scalar_field_row(
@@ -72,6 +73,8 @@ def build_scalar_field_row(
         padded_layout.setContentsMargins(*EDITOR_FULL_WIDTH_ROW_MARGINS)
         padded_layout.setSpacing(6)
         padded_layout.addWidget(widget)
+        if isinstance(widget, EditorChoiceComboBox):
+            padded_layout.addWidget(widget.retained_choice_indicator)
         if input_metadata is not None:
             padded.setProperty("input_metadata", input_metadata)
         padded.setVisible(not field_key_is_hidden(field_key, hidden_keys))
@@ -131,6 +134,10 @@ def build_scalar_field_row(
         field_stretch_for_field(widget),
         field_alignment_for_field(widget),
     )
+    if isinstance(widget, EditorChoiceComboBox):
+        row_layout.addWidget(
+            widget.retained_choice_indicator, 0, Qt.AlignmentFlag.AlignVCenter
+        )
     row_layout.addSpacing(EDITOR_ROW_ICON_SIZE)
     if input_metadata is not None:
         row.setProperty("input_metadata", input_metadata)

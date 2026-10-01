@@ -8117,6 +8117,11 @@ Diagnostic evidence:
       <translation>无法渲染此立方体，因为实时 Comfy 元数据不可用。</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/editor/panel/widgets/fields/choice_combo.py" line="37"></location>
+      <source>This filename is not in Comfy's current list. It will be checked when generating.</source>
+      <translation>此文件名不在 Comfy 当前的列表中。生成时将检查该文件。</translation>
+    </message>
+    <message>
       <location filename="../substitute/application/onboarding/failure_classifier.py" line="186"></location>
       <source>This folder already contains ComfyUI. Choose Use My Current ComfyUI to connect it without replacing its files.</source>
       <translation>此文件夹已包含 ComfyUI。请选择“使用我当前的 ComfyUI”，在不替换文件的情况下连接该安装。</translation>

@@ -6464,6 +6464,10 @@ Dïàgnöstïc ëvïdëncë:
       <translation>⟦Thïs cübë cànnöt bë rëndërëd bëcàüsë lïvë Cömfy mëtàdàtà ïs ünàvàïlàblë. ···⟧</translation>
     </message>
     <message>
+      <source>This filename is not in Comfy's current list. It will be checked when generating.</source>
+      <translation>⟦Thïs fïlënàmë ïs nöt ïn Cömfy's cürrënt lïst. Ït wïll bë chëckëd whën gënëràtïng. ···⟧</translation>
+    </message>
+    <message>
       <source>This folder already contains ComfyUI. Choose Use My Current ComfyUI to connect it without replacing its files.</source>
       <translation>⟦Thïs földër àlrëàdy cöntàïns CömfyÜÏ. Chöösë Üsë My Cürrënt CömfyÜÏ tö cönnëct ït wïthöüt rëplàcïng ïts fïlës. ···⟧</translation>
     </message>

@@ -125,8 +125,12 @@ class _FakeComboBox:
         self,
         items: object,
         selected_label: str,
+        *,
+        retained_value: str | None = None,
     ) -> None:
         """Record one prepared editor-choice replacement."""
+
+        self.retained_value = retained_value
 
         prepared = list(cast(list[tuple[str, object]], items))
         self.addItems([label for label, _value in prepared])

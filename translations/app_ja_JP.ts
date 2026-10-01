@@ -8117,6 +8117,11 @@ Diagnostic evidence:
       <translation>ライブ Comfy メタデータを利用できないため、このキューブを表示できません。</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/editor/panel/widgets/fields/choice_combo.py" line="37"></location>
+      <source>This filename is not in Comfy's current list. It will be checked when generating.</source>
+      <translation>このファイル名は Comfy の現在の一覧にありません。生成時に確認されます。</translation>
+    </message>
+    <message>
       <location filename="../substitute/application/onboarding/failure_classifier.py" line="186"></location>
       <source>This folder already contains ComfyUI. Choose Use My Current ComfyUI to connect it without replacing its files.</source>
       <translation>このフォルダーには既に ComfyUI があります。「現在の ComfyUI を使用」を選択すると、ファイルを置き換えずに接続できます。</translation>

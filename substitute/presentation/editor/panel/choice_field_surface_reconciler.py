@@ -31,7 +31,7 @@ from substitute.application.node_behavior import (
 from substitute.presentation.editor.utils import sanitation
 from substitute.shared.logging.logger import get_logger, log_debug, log_warning
 
-from .choice_items import prepare_choice_items, selected_choice_label
+from .choice_items import prepare_choice_selection
 from .field_registry import EditorFieldIdentity, EditorFieldRegistry
 from .field_state_binding import EditorFieldBinding
 from .model_choice_snapshots import (
@@ -239,18 +239,19 @@ class ChoiceFieldSurfaceReconciler:
                 if not callable(reconcile_combo):
                     return False
                 node_data = self._node_data(identity)
-                items = prepare_choice_items(
+                selection = prepare_choice_selection(
                     key=field_spec.field_key,
                     node_data=node_data,
                     options=inventory.string_options,
-                )
-                selected_label = selected_choice_label(
-                    key=field_spec.field_key,
-                    node_data=node_data,
-                    items=items,
                     value=field_spec.value,
+                    class_type=field_spec.class_type,
+                    field_info=field_spec.field_info,
                 )
-                reconcile_combo(items, selected_label)
+                reconcile_combo(
+                    selection.items,
+                    selection.selected_label,
+                    retained_value=selection.retained_value,
+                )
             self._update_widget_metadata(widget, field_spec)
         except (RuntimeError, TypeError, ValueError) as error:
             log_warning(

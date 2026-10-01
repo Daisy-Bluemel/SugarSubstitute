@@ -8062,6 +8062,11 @@ Diagnostic evidence:
       <translation>실시간 Comfy 메타데이터를 사용할 수 없어 이 큐브를 표시할 수 없습니다.</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/editor/panel/widgets/fields/choice_combo.py" line="37"></location>
+      <source>This filename is not in Comfy's current list. It will be checked when generating.</source>
+      <translation>이 파일 이름은 현재 Comfy 목록에 없습니다. 생성할 때 확인됩니다.</translation>
+    </message>
+    <message>
       <location filename="../substitute/application/onboarding/failure_classifier.py" line="186"></location>
       <source>This folder already contains ComfyUI. Choose Use My Current ComfyUI to connect it without replacing its files.</source>
       <translation>이 폴더에는 이미 ComfyUI가 있습니다. 파일을 교체하지 않고 연결하려면 "현재 ComfyUI 사용"을 선택하세요.</translation>

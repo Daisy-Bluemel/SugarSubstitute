@@ -58,6 +58,7 @@ from .field_row_geometry import (
 from .field_row_models import BuiltFieldRow, FieldRowTextTarget
 from .field_row_metadata import scoped_field_key
 from .scalar_field_row_realizer import build_scalar_field_row
+from .fields.choice_combo import EditorChoiceComboBox
 
 
 class FieldRowBuilder:
@@ -224,6 +225,10 @@ class FieldRowBuilder:
                 field_stretch_for_field(widget),
                 field_alignment_for_field(widget),
             )
+            if isinstance(widget, EditorChoiceComboBox):
+                col_layout.addWidget(
+                    widget.retained_choice_indicator, 0, Qt.AlignmentFlag.AlignVCenter
+                )
             tooltip_targets = (
                 (col, widget) if label_widget is None else (col, label_widget, widget)
             )

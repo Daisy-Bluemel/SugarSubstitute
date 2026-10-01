@@ -52,7 +52,7 @@ def classify_node_field(
 
     if _has_active_list_link(field_key=field_key, node_data=node_data):
         return NodeFieldKind.LINKED_FIELD
-    if _INPUT_ASSET_FIELD_POLICY.is_asset_field(
+    if _INPUT_ASSET_FIELD_POLICY.preserves_file_reference(
         class_type=class_type,
         field_key=field_key,
         field_info=field_info,

@@ -39,8 +39,7 @@ from substitute.presentation.editor.panel.model_choice_snapshots import (
     PanelModelChoiceSnapshot,
 )
 from substitute.presentation.editor.panel.choice_items import (
-    prepare_choice_items,
-    selected_choice_label,
+    prepare_choice_selection,
 )
 from substitute.presentation.editor.panel.projection_observability import (
     log_panel_projection_timing,
@@ -257,10 +256,13 @@ def widget_factory_list_str(
     options = list(inventory.string_options)
     node_data = field_meta.get("node_data") if isinstance(field_meta, dict) else None
     prepare_started_at = panel_projection_observability_started_at()
-    combo_items = prepare_choice_items(
+    selection = prepare_choice_selection(
         key=key,
         node_data=node_data,
         options=options,
+        value=value,
+        class_type=node_type,
+        field_info=kwargs.get("field_info"),
     )
     log_panel_projection_timing(
         "choice_factory.combo_prepare_items",
@@ -276,13 +278,11 @@ def widget_factory_list_str(
     set_enabled = getattr(combo, "setEnabled", None)
     if callable(set_enabled):
         set_enabled(bool(options))
-    selected_label = selected_choice_label(
-        key=key,
-        node_data=node_data,
-        items=combo_items,
-        value=value,
+    combo.reconcile_choice_items(
+        selection.items,
+        selection.selected_label,
+        retained_value=selection.retained_value,
     )
-    combo.reconcile_choice_items(combo_items, selected_label)
 
     parent_with_registries = cast(Any, parent)
 

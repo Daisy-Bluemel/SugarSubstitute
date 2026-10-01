@@ -20,11 +20,17 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from tools.input_asset_governance.validation import validate_input_asset_governance
 
 
+@pytest.mark.parametrize(
+    "metadata_key", ["image_upload", "audio_upload", "video_upload", "file_upload"]
+)
 def test_rejects_transport_metadata_interpretation_outside_policy_owner(
     tmp_path: Path,
+    metadata_key: str,
 ) -> None:
     """Competing image-upload metadata interpretation should fail governance."""
 
@@ -32,7 +38,7 @@ def test_rejects_transport_metadata_interpretation_outside_policy_owner(
     source.parent.mkdir(parents=True)
     source.write_text(
         "def accepts(metadata: dict[str, object]) -> bool:\n"
-        '    return metadata.get("image_upload") is True\n',
+        f'    return metadata.get("{metadata_key}") is True\n',
         encoding="utf-8",
     )
 

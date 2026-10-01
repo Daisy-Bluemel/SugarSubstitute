@@ -72,6 +72,30 @@ class InputAssetFieldSemantics:
 class InputAssetFieldPolicy:
     """Resolve live Comfy metadata with narrow restore-safe host fallbacks."""
 
+    def preserves_file_reference(
+        self,
+        *,
+        class_type: str,
+        field_key: str,
+        field_info: object,
+    ) -> bool:
+        """Preserve authored file choices independently of image staging rights.
+
+        A backend listing is a discovery hint, not permission to replace a
+        selected file. This policy does not validate paths, authorize uploads,
+        or expand the image/mask transport contract.
+        """
+
+        metadata = field_metadata(field_info)
+        return any(
+            metadata.get(key) is True
+            for key in ("image_upload", "audio_upload", "video_upload", "file_upload")
+        ) or self.is_asset_field(
+            class_type=class_type,
+            field_key=field_key,
+            field_info=field_info,
+        )
+
     def fields_for_node(
         self,
         class_type: str,

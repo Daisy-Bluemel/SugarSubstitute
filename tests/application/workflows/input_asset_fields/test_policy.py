@@ -18,8 +18,13 @@
 
 from __future__ import annotations
 
+import pytest
+
 from substitute.application.workflows.input_asset_field_policy import (
     InputAssetFieldPolicy,
+)
+from substitute.application.workflows.input_asset_field_service import (
+    InputAssetFieldService,
 )
 from substitute.domain.workflow import InputAssetCardinality, InputAssetRole
 
@@ -82,3 +87,63 @@ def test_legacy_contracts_recover_roles_before_live_metadata_arrives() -> None:
     assert mask_field.preferred_role is InputAssetRole.MASK
     assert ordered_field.preferred_role is InputAssetRole.MASK
     assert ordered_field.cardinality is InputAssetCardinality.ORDERED
+
+
+@pytest.mark.parametrize("upload_key", ["audio_upload", "video_upload", "file_upload"])
+def test_preserved_upload_reference_does_not_authorize_image_staging(
+    upload_key: str,
+) -> None:
+    """Preserving a backend filename cannot acquire image/mask transport roles."""
+    policy = InputAssetFieldPolicy()
+    field_info: list[object] = ["COMBO", {upload_key: True, "options": ["old.ext"]}]
+    assert policy.preserves_file_reference(
+        class_type="CustomSource", field_key="resource", field_info=field_info
+    )
+    assert not policy.is_asset_field(
+        class_type="CustomSource", field_key="resource", field_info=field_info
+    )
+    assert (
+        policy.fields_for_node(
+            "CustomSource",
+            {"input": {"required": {"resource": field_info}}, "output": ["VIDEO"]},
+        )
+        == ()
+    )
+
+
+def test_output_folder_reference_preserves_name_without_input_staging() -> None:
+    """A declared output-file selector still owns its authored reference."""
+    policy = InputAssetFieldPolicy()
+    field_info: list[object] = [
+        "COMBO",
+        {"image_upload": True, "image_folder": "output"},
+    ]
+    assert policy.preserves_file_reference(
+        class_type="CustomSource", field_key="resource", field_info=field_info
+    )
+    assert not policy.is_asset_field(
+        class_type="CustomSource", field_key="resource", field_info=field_info
+    )
+
+
+@pytest.mark.parametrize("upload_key", ["audio_upload", "video_upload", "file_upload"])
+def test_non_image_uploads_never_become_graph_staging_targets(upload_key: str) -> None:
+    """Path-looking upload references stay outside image transport discovery."""
+    graph: dict[str, object] = {
+        "nodes": {
+            "custom": {
+                "class_type": "CustomSource",
+                "inputs": {"resource": "/private/asset.ext"},
+            }
+        }
+    }
+    definitions: dict[str, dict[str, object]] = {
+        "CustomSource": {
+            "input": {"required": {"resource": ["COMBO", {upload_key: True}]}},
+            "output": ["VIDEO"],
+        }
+    }
+    assert (
+        InputAssetFieldService().fields_for_graph(graph, node_definitions=definitions)
+        == ()
+    )

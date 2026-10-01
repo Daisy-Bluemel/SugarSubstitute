@@ -8117,6 +8117,11 @@ Evidencia de diagnóstico:
       <translation>Este cubo no se puede mostrar porque los metadatos actuales de Comfy no están disponibles.</translation>
     </message>
     <message>
+      <location filename="../substitute/presentation/editor/panel/widgets/fields/choice_combo.py" line="37"></location>
+      <source>This filename is not in Comfy's current list. It will be checked when generating.</source>
+      <translation>Este nombre de archivo no aparece en la lista actual de Comfy. Se comprobará al generar.</translation>
+    </message>
+    <message>
       <location filename="../substitute/application/onboarding/failure_classifier.py" line="186"></location>
       <source>This folder already contains ComfyUI. Choose Use My Current ComfyUI to connect it without replacing its files.</source>
       <translation>Esta carpeta ya contiene ComfyUI. Elige Usar mi ComfyUI actual para conectarlo sin reemplazar sus archivos.</translation>

@@ -18,6 +18,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from substitute.application.node_behavior import NodeFieldKind, classify_node_field
 
 
@@ -121,4 +123,48 @@ def test_classify_non_list_fields_as_plain_fields() -> None:
             field_info=None,
         )
         is NodeFieldKind.PLAIN_FIELD
+    )
+
+
+@pytest.mark.parametrize(
+    "upload_key", ["image_upload", "audio_upload", "video_upload", "file_upload"]
+)
+@pytest.mark.parametrize("typed", [False, True], ids=["classic", "typed"])
+def test_upload_metadata_preserves_custom_filename_choices(
+    upload_key: str, typed: bool
+) -> None:
+    """Only declared upload references bypass finite-enum replacement."""
+    metadata: dict[str, object] = {upload_key: True}
+    if typed:
+        metadata["options"] = ["old.ext"]
+    field_info: list[object] = ["COMBO" if typed else ["old.ext"], metadata]
+    assert (
+        classify_node_field(
+            class_type="CustomSource",
+            field_key="resource",
+            node_data={"inputs": {"resource": "new.ext"}},
+            field_type="COMBO" if typed else "LIST",
+            field_info=field_info,
+        )
+        is NodeFieldKind.ASSET_FIELD
+    )
+
+
+@pytest.mark.parametrize("flag", [False, "true", 1, None])
+@pytest.mark.parametrize(
+    "upload_key", ["image_upload", "audio_upload", "video_upload", "file_upload"]
+)
+def test_non_boolean_upload_hints_do_not_reclassify_enums(
+    upload_key: str, flag: object
+) -> None:
+    """Filename-like literals and truthy metadata cannot grant reference semantics."""
+    assert (
+        classify_node_field(
+            class_type="CustomSource",
+            field_key="resource",
+            node_data={"inputs": {"resource": "new.ext"}},
+            field_type="COMBO",
+            field_info=["COMBO", {upload_key: flag, "options": ["old.ext"]}],
+        )
+        is NodeFieldKind.COMFY_ENUM_FIELD
     )

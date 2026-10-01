@@ -19,6 +19,12 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
+
+from substitute.application.node_behavior.field_classification import (
+    NodeFieldKind,
+    classify_node_field,
+)
 
 from substitute.application.overrides.link_policy import (
     build_sampler_choice_items,
@@ -31,6 +37,46 @@ _COMBO_ITEM_CACHE: dict[
     tuple[str, tuple[str, ...], tuple[tuple[str, str, str], ...]],
     tuple[tuple[str, object], ...],
 ] = {}
+
+
+@dataclass(frozen=True, slots=True)
+class EditorChoiceSelection:
+    """Keep backend listing rows separate from a retained authored reference."""
+
+    items: tuple[tuple[str, object], ...]
+    selected_label: str
+    retained_value: str | None = None
+
+
+def prepare_choice_selection(
+    *,
+    key: str,
+    node_data: object,
+    options: Sequence[str],
+    value: object,
+    class_type: object,
+    field_info: object,
+) -> EditorChoiceSelection:
+    """Prepare one honest selection without adding authored values to a catalog."""
+
+    items = prepare_choice_items(key=key, node_data=node_data, options=options)
+    kind = classify_node_field(
+        class_type=class_type if isinstance(class_type, str) else "",
+        field_key=key,
+        node_data=node_data if isinstance(node_data, Mapping) else {},
+        field_type="COMBO",
+        field_info=field_info,
+    )
+    if (
+        kind is NodeFieldKind.ASSET_FIELD
+        and isinstance(value, str)
+        and not any(item_value == value for _label, item_value in items)
+    ):
+        return EditorChoiceSelection(items, value, value)
+    return EditorChoiceSelection(
+        items,
+        selected_choice_label(key=key, node_data=node_data, items=items, value=value),
+    )
 
 
 def prepare_choice_items(
@@ -143,7 +189,9 @@ def _thaw_item_value(value: object) -> object:
 
 
 __all__ = [
+    "EditorChoiceSelection",
     "clear_choice_item_cache_for_tests",
     "prepare_choice_items",
+    "prepare_choice_selection",
     "selected_choice_label",
 ]
