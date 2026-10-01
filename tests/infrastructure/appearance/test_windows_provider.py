@@ -18,6 +18,11 @@
 
 from __future__ import annotations
 
+import pytest
+
+from substitute.application.ports.system_appearance_provider import (
+    SystemAppearanceProbe,
+)
 from substitute.domain.appearance import RgbColor, SystemColorScheme
 from substitute.infrastructure.appearance.qt_system_appearance import (
     QtSystemAppearanceProvider,
@@ -28,21 +33,47 @@ from substitute.infrastructure.appearance.windows_system_appearance import (
 from tests.infrastructure.appearance.support import StubQtAppearanceReader
 
 
-def test_provider_prefers_native_fields_and_fills_missing_accent() -> None:
+class ObservedQtProvider(QtSystemAppearanceProvider):
+    """Observe fallback probes while retaining the real Qt provider behavior."""
+
+    def __init__(self) -> None:
+        """Supply deterministic Qt fields and an initially unused probe."""
+
+        super().__init__(
+            reader=StubQtAppearanceReader(SystemColorScheme.LIGHT, RgbColor(1, 2, 3))
+        )
+        self.calls = 0
+
+    def probe(self) -> SystemAppearanceProbe:
+        """Count every fresh fallback observation."""
+
+        self.calls += 1
+        return super().probe()
+
+
+@pytest.mark.parametrize("native_scheme", [None, SystemColorScheme.DARK])
+@pytest.mark.parametrize("native_accent", [None, RgbColor(4, 5, 6)])
+def test_provider_prefers_native_fields_and_fills_missing_values(
+    native_scheme: SystemColorScheme | None, native_accent: RgbColor | None
+) -> None:
     """Keep Windows native and Qt fallback responsibilities field-specific."""
 
-    qt_provider = QtSystemAppearanceProvider(
-        reader=StubQtAppearanceReader(SystemColorScheme.LIGHT, RgbColor(1, 2, 3))
-    )
+    qt_provider = ObservedQtProvider()
     provider = WindowsSystemAppearanceProvider(
-        scheme_reader=lambda: SystemColorScheme.DARK,
-        accent_reader=lambda: None,
+        scheme_reader=lambda: native_scheme,
+        accent_reader=lambda: native_accent,
         qt_provider=qt_provider,
     )
 
     probe = provider.probe()
 
-    assert probe.snapshot.color_scheme is SystemColorScheme.DARK
-    assert probe.snapshot.accent_color == RgbColor(1, 2, 3)
-    assert probe.color_scheme_source == "windows_registry"
-    assert probe.accent_color_source == "qt_palette"
+    assert probe.snapshot.color_scheme is (native_scheme or SystemColorScheme.LIGHT)
+    assert probe.snapshot.accent_color == (native_accent or RgbColor(1, 2, 3))
+    assert probe.adapter_name == "windows"
+    assert probe.color_scheme_source == (
+        "windows_registry" if native_scheme is not None else "qt_style_hints"
+    )
+    assert probe.accent_color_source == (
+        "windows_accent" if native_accent is not None else "qt_palette"
+    )
+    assert qt_provider.calls == 1

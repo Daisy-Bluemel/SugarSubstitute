@@ -19,6 +19,9 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from contextlib import AbstractContextManager
+from importlib import import_module
+from typing import Protocol, cast
 
 from PySide6.QtGui import QColor
 
@@ -38,6 +41,25 @@ from substitute.shared.logging.logger import get_logger, log_warning
 _LOGGER = get_logger("infrastructure.appearance.windows")
 WindowsSchemeReader = Callable[[], SystemColorScheme | None]
 WindowsAccentReader = Callable[[], RgbColor | None]
+
+
+class _WindowsRegistry(Protocol):
+    """Describe the trusted winreg surface needed for personalization reads."""
+
+    HKEY_CURRENT_USER: int
+
+    def OpenKey(self, key: int, sub_key: str) -> AbstractContextManager[object]:
+        """Open one read-only key whose context owns the native handle."""
+
+    def QueryValueEx(self, key: object, value_name: str) -> tuple[object, int]:
+        """Read an unvalidated registry value and its native value type."""
+
+
+class _WindowsAccentHelper(Protocol):
+    """Describe the trusted native helper while leaving its color unvalidated."""
+
+    def getSystemAccentColor(self) -> object:
+        """Return the native accent for runtime QColor validation."""
 
 
 class WindowsSystemAppearanceProvider:
@@ -84,7 +106,7 @@ def read_windows_color_scheme() -> SystemColorScheme | None:
     """Read the current app theme from Windows personalization settings."""
 
     try:
-        import winreg
+        winreg = cast(_WindowsRegistry, import_module("winreg"))
 
         with winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,
@@ -109,15 +131,17 @@ def read_windows_accent_color() -> RgbColor | None:
     """Read the current Windows accent using available native helpers."""
 
     try:
-        import winaccent  # type: ignore[import-untyped]
+        winaccent = import_module("winaccent")
 
-        accent_value = getattr(winaccent, "accent", None)
+        accent_value: object = getattr(winaccent, "accent", None)
         if isinstance(accent_value, str):
             return RgbColor.from_hex(accent_value)
     except (ModuleNotFoundError, ValueError):
         pass
     try:
-        from qframelesswindow.utils import win32_utils  # type: ignore[import-untyped]
+        win32_utils = cast(
+            _WindowsAccentHelper, import_module("qframelesswindow.utils.win32_utils")
+        )
 
         color = win32_utils.getSystemAccentColor()
         if isinstance(color, QColor) and color.isValid():
