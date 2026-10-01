@@ -73,6 +73,7 @@ from tests.support.prompt_editor.projection_engine_support import (
     StaticPromptWildcardCatalogGateway,
 )
 
+from .caret_geometry_snapshot import line_caret_signature
 from .support import (
     _line_texts,
     _assert_line_fragments_match_current_runs,
@@ -220,6 +221,16 @@ def test_canonical_reflow_rebinds_optimistic_prefix_without_rebuilding_it() -> N
     )
 
     second_edit_start = first_text.index("suffix") + len("suffix")
+    previous_lines = tuple(layout.frame.output.snapshot.lines)
+    edited_line_index = next(
+        index
+        for index, line in enumerate(previous_lines)
+        if line.source_start <= second_edit_start - 1 < line.source_end
+    )
+    prefix_geometry = _layout_geometry_signature(layout)[:edited_line_index]
+    prefix_carets = tuple(
+        line_caret_signature(line) for line in previous_lines[:edited_line_index]
+    )
     next_text = f"{first_text[:second_edit_start]}Y{first_text[second_edit_start:]}"
     next_document_view, next_projection = _projection_for(next_text)
     full_layout, _ = _layout_for(next_text, text_width=110.0)
@@ -231,9 +242,18 @@ def test_canonical_reflow_rebinds_optimistic_prefix_without_rebuilding_it() -> N
         replacement_text="Y",
     )
 
-    assert result.first_reflowed_line_index > 0
-    assert result.reflowed_line_count == 3
-    for line in layout.frame.output.snapshot.lines:
+    current_lines = layout.frame.output.snapshot.lines
+    assert edited_line_index > 0
+    assert result.first_reflowed_line_index == edited_line_index
+    assert result.upstream_line_count == edited_line_index
+    suffix_line_count = len(current_lines) - edited_line_index
+    assert 0 < result.reflowed_line_count <= suffix_line_count
+    assert _layout_geometry_signature(layout)[:edited_line_index] == prefix_geometry
+    assert (
+        tuple(line_caret_signature(line) for line in current_lines[:edited_line_index])
+        == prefix_carets
+    )
+    for line in current_lines:
         _assert_line_fragments_match_current_runs(layout, line)
     assert _layout_geometry_signature(layout) == _layout_geometry_signature(
         full_layout

@@ -173,9 +173,15 @@ def test_projection_layout_wraps_before_trailing_space_hides_caret() -> None:
 def test_wrapped_wildcard_line_keeps_its_start_caret_stop_first() -> None:
     """Order the wrap boundary before each editable wildcard caret stop."""
 
+    suffix_layout, _ = _layout_for("{lighting/day}, heart", text_width=10_000.0)
+    (suffix_line,) = suffix_layout.frame.output.snapshot.lines
+    text_width = (
+        suffix_line.caret_stops[-1].rect.right()
+        + suffix_line.caret_stops[0].rect.left()
+    )
     layout, _projection = _layout_for(
         "portrait,  {lighting/day}, heart",
-        text_width=280.0,
+        text_width=text_width,
     )
     lines = layout.frame.output.snapshot.lines
 
@@ -462,7 +468,7 @@ def test_projection_layout_preserves_long_raw_unicode_geometry() -> None:
     layout, projection = _layout_for(
         prompt_text,
         display_mode=PromptProjectionDisplayMode.RAW,
-        text_width=180.0,
+        text_width=_plain_text_wrap_width("cinematic background, "),
     )
     line_texts = _line_texts(layout)
 

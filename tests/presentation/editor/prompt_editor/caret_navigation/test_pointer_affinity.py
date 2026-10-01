@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+from math import ceil
 
 import pytest
 from PySide6.QtCore import QPoint, Qt
@@ -87,8 +88,11 @@ def test_projection_surface_click_wrapped_trailing_edge_keeps_visual_row(
     )
     surface = surface_for(box)
     first_line, second_line = _projection_lines(surface)[:2]
+    expected_rect = first_line.caret_stops[-1].rect
+    click_x = ceil(expected_rect.right()) + 1
+    assert expected_rect.right() < click_x < surface.viewport().width()
     click_point = QPoint(
-        surface.viewport().width() - 8,
+        click_x,
         int(first_line.top + (first_line.height / 2.0)),
     )
 
@@ -97,7 +101,6 @@ def test_projection_surface_click_wrapped_trailing_edge_keeps_visual_row(
         Qt.MouseButton.LeftButton,
         pos=click_point,
     )
-    expected_rect = first_line.caret_stops[-1].rect
     wait_for_caret_geometry(
         box,
         surface,
