@@ -18,10 +18,57 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+from copy import deepcopy
 from dataclasses import dataclass
 
+from substitute.application.node_behavior.live_definition_authority import (
+    LiveNodeDefinitionAuthority,
+)
 from substitute.domain.common import JsonObject
+
+
+class CanonicalCubeAssetDefinitionError(RuntimeError):
+    """Describe execution metadata that cannot safely accompany a staged node."""
+
+    def __init__(
+        self,
+        *,
+        section_key: str,
+        node_name: str,
+        class_type: str,
+        reason: str,
+    ) -> None:
+        """Retain credential-free context for a generation preflight failure."""
+        self.section_key = section_key
+        self.node_name = node_name
+        self.class_type = class_type
+        self.reason = reason
+        super().__init__(
+            f"Invalid staged definition for {section_key}:{node_name} ({class_type}): {reason}"
+        )
+
+
+@dataclass(frozen=True)
+class _CanonicalCubeAssetTarget:
+    """Bind one execution proxy to its embedded document's metadata owner."""
+
+    section_key: str
+    node_name: str
+    proxy: dict[str, object]
+    node: dict[str, object]
+    implementation: dict[str, object]
+
+    def definition_error(
+        self, class_type: str, reason: str
+    ) -> CanonicalCubeAssetDefinitionError:
+        """Build a failure without including transient execution values."""
+        return CanonicalCubeAssetDefinitionError(
+            section_key=self.section_key,
+            node_name=self.node_name,
+            class_type=class_type,
+            reason=reason,
+        )
 
 
 @dataclass(frozen=True)
@@ -29,22 +76,100 @@ class CanonicalCubeAssetProjection:
     """Expose mutable asset-bearing node proxies over embedded Cube documents."""
 
     prompt: dict[str, object]
-    class_type_targets: tuple[tuple[dict[str, object], dict[str, object]], ...]
+    class_type_targets: tuple[_CanonicalCubeAssetTarget, ...]
 
-    def commit_class_types(self) -> None:
-        """Commit staged classes and values through canonical Cube identities."""
+    def commit_class_types(
+        self,
+        live_definitions: LiveNodeDefinitionAuthority | None = None,
+    ) -> None:
+        """Commit changed classes with one live schema snapshot, preserving presets."""
+        definitions_by_class: dict[str, Mapping[str, object]] = {}
+        changes: list[tuple[_CanonicalCubeAssetTarget, str]] = []
+        for target in self.class_type_targets:
+            class_type = target.proxy.get("class_type")
+            if not isinstance(class_type, str) or class_type == target.node.get(
+                "class_type"
+            ):
+                continue
+            if live_definitions is None:
+                raise target.definition_error(
+                    class_type, "live_definition_authority_missing"
+                )
+            if class_type not in definitions_by_class:
+                try:
+                    definitions_by_class[class_type] = (
+                        live_definitions.get_required_definition(
+                            class_type,
+                            operation="canonical_asset_staging",
+                            cube_aliases=(target.section_key,),
+                            node_names=(target.node_name,),
+                        )
+                    )
+                except (OSError, RuntimeError, TypeError, ValueError) as error:
+                    raise target.definition_error(
+                        class_type, "live_definition_unavailable"
+                    ) from error
+            _validate_execution_definition(
+                target, class_type, definitions_by_class[class_type]
+            )
+            existing = target.implementation.get("definitions")
+            if "definitions" in target.implementation and not isinstance(
+                existing, dict
+            ):
+                raise target.definition_error(
+                    class_type, "invalid_definition_container"
+                )
+            changes.append((target, class_type))
+        for target, class_type in changes:
+            definitions = target.implementation.setdefault("definitions", {})
+            assert isinstance(definitions, dict)
+            definitions[class_type] = deepcopy(dict(definitions_by_class[class_type]))
+            target.node["class_type"] = class_type
 
-        for proxy, target in self.class_type_targets:
-            class_type = proxy.get("class_type")
-            if isinstance(class_type, str):
-                target["class_type"] = class_type
+
+def _validate_execution_definition(
+    target: _CanonicalCubeAssetTarget,
+    class_type: str,
+    definition: Mapping[str, object],
+) -> None:
+    """Reject incomplete live schemas before they enter an execution document."""
+    if definition.get("name") != class_type:
+        raise target.definition_error(class_type, "live_definition_class_mismatch")
+    groups = definition.get("input")
+    outputs = definition.get("output")
+    if (
+        not isinstance(groups, Mapping)
+        or not isinstance(outputs, Sequence)
+        or isinstance(outputs, (str, bytes))
+        or not all(isinstance(value, str) and value for value in outputs)
+    ):
+        raise target.definition_error(class_type, "malformed_live_definition")
+    fields: dict[str, object] = {}
+    for group_name in ("required", "optional"):
+        group = groups.get(group_name, {})
+        if not isinstance(group, Mapping):
+            raise target.definition_error(class_type, "malformed_live_definition")
+        fields.update({str(name): info for name, info in group.items()})
+    inputs = target.proxy.get("inputs")
+    assert isinstance(inputs, Mapping)
+    for field_key in inputs:
+        info = fields.get(str(field_key))
+        if (
+            not isinstance(info, Sequence)
+            or isinstance(info, (str, bytes))
+            or not info
+            or not isinstance(info[0], (str, list, tuple))
+            or not info[0]
+        ):
+            raise target.definition_error(
+                class_type, f"missing_or_malformed_input:{field_key}"
+            )
 
 
 def project_canonical_cube_asset_nodes(
     workflow: JsonObject,
 ) -> CanonicalCubeAssetProjection | None:
     """Return staging proxies when a workflow uses canonical Cube definitions."""
-
     instances = workflow.get("nodes")
     definitions_container = workflow.get("definitions")
     if not isinstance(instances, list) or not isinstance(
@@ -56,7 +181,7 @@ def project_canonical_cube_asset_nodes(
         return None
     documents = _documents_by_definition(definitions)
     prompt: dict[str, object] = {}
-    class_type_targets: list[tuple[dict[str, object], dict[str, object]]] = []
+    class_type_targets: list[_CanonicalCubeAssetTarget] = []
     for instance in instances:
         if not isinstance(instance, Mapping):
             continue
@@ -65,8 +190,13 @@ def project_canonical_cube_asset_nodes(
         document = (
             documents.get(definition_id) if isinstance(definition_id, str) else None
         )
-        nodes = _document_nodes(document)
-        if alias is None or nodes is None:
+        implementation = (
+            document.get("implementation") if document is not None else None
+        )
+        if alias is None or not isinstance(implementation, dict):
+            continue
+        nodes = implementation.get("nodes")
+        if not isinstance(nodes, dict):
             continue
         for node_name, raw_node in nodes.items():
             if not isinstance(raw_node, dict):
@@ -80,18 +210,22 @@ def project_canonical_cube_asset_nodes(
                 "_meta": {"title": f"{alias}.{node_name}"},
             }
             prompt[f"{alias}:{node_name}"] = proxy
-            class_type_targets.append((proxy, raw_node))
+            class_type_targets.append(
+                _CanonicalCubeAssetTarget(
+                    section_key=alias,
+                    node_name=str(node_name),
+                    proxy=proxy,
+                    node=raw_node,
+                    implementation=implementation,
+                )
+            )
     return CanonicalCubeAssetProjection(
-        prompt=prompt,
-        class_type_targets=tuple(class_type_targets),
+        prompt=prompt, class_type_targets=tuple(class_type_targets)
     )
 
 
-def _documents_by_definition(
-    definitions: list[object],
-) -> dict[str, JsonObject]:
+def _documents_by_definition(definitions: list[object]) -> dict[str, JsonObject]:
     """Index embedded canonical documents by subgraph definition id."""
-
     result: dict[str, JsonObject] = {}
     for definition in definitions:
         if not isinstance(definition, Mapping):
@@ -108,7 +242,6 @@ def _documents_by_definition(
 
 def _instance_alias(instance: Mapping[str, object]) -> str | None:
     """Read the stable authored alias from one marked Cube instance."""
-
     properties = instance.get("properties")
     marker = (
         properties.get("sugarcubes_cube") if isinstance(properties, Mapping) else None
@@ -117,12 +250,8 @@ def _instance_alias(instance: Mapping[str, object]) -> str | None:
     return alias if isinstance(alias, str) and alias else None
 
 
-def _document_nodes(document: Mapping[str, object] | None) -> dict[str, object] | None:
-    """Return the mutable implementation node map from one embedded document."""
-
-    implementation = document.get("implementation") if document is not None else None
-    nodes = implementation.get("nodes") if isinstance(implementation, Mapping) else None
-    return nodes if isinstance(nodes, dict) else None
-
-
-__all__ = ["CanonicalCubeAssetProjection", "project_canonical_cube_asset_nodes"]
+__all__ = [
+    "CanonicalCubeAssetDefinitionError",
+    "CanonicalCubeAssetProjection",
+    "project_canonical_cube_asset_nodes",
+]

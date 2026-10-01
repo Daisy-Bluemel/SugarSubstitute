@@ -80,6 +80,9 @@ from substitute.application.workspace_state import (
     WorkspaceSnapshot,
 )
 from substitute.app.bootstrap.app_layout import resolve_app_layout
+from substitute.app.bootstrap.asset_staging_composition import (
+    build_comfy_asset_staging_service,
+)
 from substitute.app.bootstrap.runtime import (
     ApplicationRuntimeServices,
     build_application_runtime_services,
@@ -892,41 +895,6 @@ def _configure_control_registry_service() -> None:
     )
 
 
-def _build_comfy_asset_staging_service(
-    context: InstallationContext,
-    *,
-    input_asset_staging_plan_service: Any | None = None,
-) -> Any:
-    """Compose target-specific Comfy asset staging at the bootstrap boundary."""
-
-    from substitute.application.generation.asset_staging_service import (
-        ComfyAssetStagingService,
-    )
-    from substitute.application.ports.comfy_asset_stager import ComfyAssetStager
-    from substitute.domain.onboarding import ComfyTargetMode
-    from substitute.infrastructure.comfy import (
-        LocalComfyAssetStager,
-        RemoteUploadComfyAssetStager,
-    )
-
-    if context.comfy_target.mode is ComfyTargetMode.REMOTE:
-        stager: ComfyAssetStager = RemoteUploadComfyAssetStager(
-            endpoint=context.comfy_target.endpoint
-        )
-        ordered_stager = stager
-    else:
-        stager = LocalComfyAssetStager(endpoint=context.comfy_target.endpoint)
-        ordered_stager = RemoteUploadComfyAssetStager(
-            endpoint=context.comfy_target.endpoint
-        )
-    return ComfyAssetStagingService.with_projects_dir(
-        stager=stager,
-        ordered_stager=ordered_stager,
-        projects_dir=context.projects_dir,
-        input_asset_staging_plan_service=input_asset_staging_plan_service,
-    )
-
-
 def _build_main_window_dependencies(
     runtime_services: ApplicationRuntimeServices,
 ) -> Any:
@@ -1531,8 +1499,9 @@ def _build_main_window_dependencies(
         graph_section_service,
         node_definition_service=workflow_node_definition_service,
     )
-    comfy_asset_staging_service = _build_comfy_asset_staging_service(
+    comfy_asset_staging_service = build_comfy_asset_staging_service(
         context,
+        node_definition_gateway=node_definition_gateway,
         input_asset_staging_plan_service=input_asset_staging_plan_service,
     )
     shell_resource_lifecycle.register(

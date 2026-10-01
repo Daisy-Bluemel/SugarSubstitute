@@ -28,6 +28,9 @@ from pathlib import Path
 from typing import Mapping
 
 from substitute.application.ports.comfy_asset_stager import ComfyAssetStager
+from substitute.application.node_behavior.live_definition_authority import (
+    LiveNodeDefinitionAuthority,
+)
 from substitute.application.recipes.workflow_payload_nodes import (
     executable_prompt_nodes,
 )
@@ -35,6 +38,7 @@ from substitute.application.generation.input_asset_source_resolver import (
     InputAssetSourceResolver,
 )
 from substitute.application.generation.canonical_cube_asset_projection import (
+    CanonicalCubeAssetDefinitionError,
     project_canonical_cube_asset_nodes,
 )
 from substitute.application.generation.input_asset_staging_postcondition import (
@@ -93,9 +97,11 @@ class ComfyAssetStagingService:
         stager: ComfyAssetStager,
         ordered_stager: ComfyAssetStager | None = None,
         input_asset_staging_plan_service: InputAssetStagingPlanService | None = None,
+        live_node_definitions: LiveNodeDefinitionAuthority | None = None,
     ) -> None:
         """Capture the concrete target stager used for source files."""
 
+        self._live_node_definitions = live_node_definitions
         self._stager = stager
         self._input_asset_staging_plan_service = (
             input_asset_staging_plan_service
@@ -119,6 +125,7 @@ class ComfyAssetStagingService:
         ordered_stager: ComfyAssetStager | None = None,
         projects_dir: Path,
         input_asset_staging_plan_service: InputAssetStagingPlanService | None = None,
+        live_node_definitions: LiveNodeDefinitionAuthority | None = None,
     ) -> "ComfyAssetStagingService":
         """Build a staging service that can resolve project-relative assets."""
 
@@ -126,6 +133,7 @@ class ComfyAssetStagingService:
             stager=stager,
             ordered_stager=ordered_stager,
             input_asset_staging_plan_service=input_asset_staging_plan_service,
+            live_node_definitions=live_node_definitions,
         )
         service._source_resolver = InputAssetSourceResolver(projects_dir)
         service._ordered_staging_service = OrderedInputAssetStagingService(
@@ -318,7 +326,28 @@ class ComfyAssetStagingService:
             workflow=workflow,
         )
         if canonical_projection is not None:
-            canonical_projection.commit_class_types()
+            try:
+                canonical_projection.commit_class_types(self._live_node_definitions)
+            except CanonicalCubeAssetDefinitionError as error:
+                log_exception(
+                    _LOGGER,
+                    "Rejected canonical asset staging without valid live execution metadata",
+                    error=error,
+                    workflow_id=workflow_id,
+                    section_key=error.section_key,
+                    node_name=error.node_name,
+                    execution_node_class=error.class_type,
+                    rejection_reason=error.reason,
+                )
+                failures.append(
+                    AssetStagingFailure(
+                        node_id=f"{error.section_key}:{error.node_name}",
+                        node_class=error.class_type,
+                        input_name="inputs",
+                        source_value="",
+                        message=app_text("Generation preflight failed"),
+                    )
+                )
         return ComfyAssetStagingResult(
             workflow_payload=staged_payload,
             staged_assets=tuple(staged_assets),
