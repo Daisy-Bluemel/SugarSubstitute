@@ -9,7 +9,7 @@ kind = "remediation"
 justification = "The assessed file still mixes other lazy infrastructure adapters, application service graph composition, shell construction and geometry, and runtime readiness probing. The Comfy gateway adapter and execution asset staging factory now have their own owners; extract the remaining adapters and shell construction next."
 issue = "chore:SS-ARCH-002"
 review_by = 2026-12-15
-max_lines = 2790
+max_lines = 2781
 next_limit = 2430
 debt = "SS-ARCH-002"
 

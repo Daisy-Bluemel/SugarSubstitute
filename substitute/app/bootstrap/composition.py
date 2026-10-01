@@ -136,7 +136,6 @@ from sugarsubstitute_shared.presentation.terminal.output_stream import (
 )
 from substitute.shared.logging.logger import (
     get_logger,
-    log_exception,
     log_warning,
 )
 
@@ -2670,18 +2669,8 @@ def build_main_window(
         "fluent_info_bars", shell_info_bars.shutdown
     )
     _install_startup_visibility_filters(frame, main_window)
-    _wire_shell_close_button(frame)
     trace_mark("composition.build_main_window.end", **_widget_geometry_fields(frame))
     return frame
-
-
-def _wire_shell_close_button(frame: CustomWindow) -> None:
-    """Route the shell titlebar close button through the frame close event."""
-
-    try:
-        frame.titleBar.closeBtn.clicked.connect(frame.close)
-    except Exception:
-        log_exception(_LOGGER, "Failed to connect shell close button")
 
 
 def _apply_main_window_geometry(frame: QWidget) -> None:
@@ -3020,7 +3009,6 @@ def reload_shell_frame(frame: CustomWindow) -> CustomWindow:
     )
     new_frame.setWindowTitle(frame.windowTitle())
     new_frame.setWindowIcon(frame.windowIcon())
-    _wire_shell_close_button(new_frame)
     _set_main_window_widget(new_frame, main_window)
     app_orb = getattr(new_frame, "appOrbMenuButton", None)
     frame_integration_controller = getattr(

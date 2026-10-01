@@ -78,7 +78,6 @@ def test_reload_shell_frame_reuses_existing_main_window_and_geometry(
     assert old_frame.deleted is True
     assert old_frame.quit_suppressed is True
     assert old_frame.direct_close_allowed is True
-    assert new_frame.close_callbacks == [new_frame.close]
     assert attached == [(new_frame, main_window)]
     assert stored == [(new_frame, main_window)]
     assert main_window.presenters == [f"presenter:{id(new_frame)}"]
@@ -204,8 +203,6 @@ class _FakeNewFrame:
         self.geometry: object | None = None
         self.shown = False
         self.maximized = False
-        self.close_callbacks: list[object] = []
-        self.titleBar = _FakeTitleBar(self.close_callbacks)
 
     def setWindowTitle(self, title: str) -> None:
         """Record the assigned shell title."""
@@ -231,38 +228,3 @@ class _FakeNewFrame:
         """Record that the new frame was shown maximized."""
 
         self.maximized = True
-
-    def close(self) -> None:
-        """Provide a close target for titlebar wiring assertions."""
-
-
-class _FakeTitleBar:
-    """Expose the close button surface used by shell wiring."""
-
-    def __init__(self, callbacks: list[object]) -> None:
-        """Store the callback sink for close-button signal connections."""
-
-        self.closeBtn = _FakeCloseButton(callbacks)
-
-
-class _FakeCloseButton:
-    """Expose the clicked signal surface used by shell wiring."""
-
-    def __init__(self, callbacks: list[object]) -> None:
-        """Store the callback sink for clicked connections."""
-
-        self.clicked = _FakeSignal(callbacks)
-
-
-class _FakeSignal:
-    """Record connected callbacks without Qt signal dependencies."""
-
-    def __init__(self, callbacks: list[object]) -> None:
-        """Store the callback sink for signal connections."""
-
-        self._callbacks = callbacks
-
-    def connect(self, callback: object) -> None:
-        """Record one connected callback."""
-
-        self._callbacks.append(callback)
