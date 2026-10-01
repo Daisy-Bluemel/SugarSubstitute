@@ -25,7 +25,7 @@ from threading import Event
 import pytest
 from collections.abc import Callable
 
-from PySide6.QtCore import QCoreApplication, QThread, Slot
+from PySide6.QtCore import QCoreApplication, QThread
 from PySide6.QtWidgets import QApplication, QPushButton
 
 from launcher.sugarsubstitute_launcher.application.repair.models import RepairScope
@@ -35,10 +35,18 @@ from launcher.sugarsubstitute_launcher.application.repair.request import (
 from launcher.sugarsubstitute_launcher.ui.repair_controller import RepairController
 from launcher.sugarsubstitute_launcher.ui.repair_window import RepairWindow
 from launcher.sugarsubstitute_launcher.ui.repair_worker import RepairWorker
-from tests.support.qt.semantic_wait import wait_for_qt_condition
+from tests.support.qt.semantic_wait import (
+    wait_for_qt_condition,
+    wait_for_queued_qt_turn,
+)
 from tests.support.qt.lifecycle import destroy_qt_object
 from launcher.sugarsubstitute_launcher.repair_process_supervisor import (
+    RepairProcessCancelled,
     RepairProcessSupervisor,
+)
+from sugarsubstitute_shared.session_recovery import (
+    SessionRecoveryResult,
+    SessionRecoveryState,
 )
 from sugarsubstitute_shared.installation_mutation import installation_mutation
 
@@ -179,32 +187,69 @@ def test_close_waits_for_active_worker_completion(
     qt_application_owner: QApplication,
 ) -> None:
     """A close request keeps the window and worker alive until mutation returns."""
-    started, release = Event(), Event()
+    started, cancelled, release, returned = Event(), Event(), Event(), Event()
+    affinities: list[tuple[bool, bool]] = []
+    workers: list[RepairWorker] = []
 
-    class HeldWorker(RepairWorker):
-        """Hold an external execution boundary until the test permits completion."""
+    class HeldExecution(RepairProcessSupervisor):
+        """Control the external boundary while retaining the production Qt slot."""
 
-        @Slot()
-        def run(self) -> None:
-            """Signal active work without blocking the Qt event loop."""
+        def request_cancel(self) -> None:
+            """Record intent without pretending that execution has completed."""
+            cancelled.set()
+
+        def run(
+            self,
+            *,
+            progress_observer: Callable[[dict[str, object]], None],
+            output_callback: Callable[[str], None],
+        ) -> dict[str, object]:
+            """Hold execution only on the real worker's owner thread."""
+            affinities.append(
+                (
+                    QThread.currentThread() == workers[0].thread(),
+                    QThread.currentThread() != qt_application_owner.thread(),
+                )
+            )
             started.set()
-            if release.wait(10):
-                self.succeeded.emit()
-            else:
-                self.failed.emit("Controlled worker timed out")
-            self.finished.emit()
+            try:
+                if affinities[-1] != (True, True):
+                    raise RuntimeError("Controlled execution ran on the wrong thread")
+                if not release.wait(10):
+                    raise TimeoutError("Controlled execution was not released")
+                raise RepairProcessCancelled("Controlled native cleanup completed")
+            finally:
+                returned.set()
+
+    def create(request: PreparedRepairRequest) -> RepairWorker:
+        """Replace external execution while keeping the production worker unchanged."""
+        worker = RepairWorker(
+            request,
+            supervisor=HeldExecution(
+                command_builder=lambda: (),
+                startup_log_path=tmp_path / "repair.log",
+            ),
+        )
+        workers.append(worker)
+        return worker
 
     window = RepairWindow()
-    controller = RepairController(window, _request(tmp_path), worker_factory=HeldWorker)
+    controller = RepairController(window, _request(tmp_path), worker_factory=create)
     window.show()
-    qt_application_owner.processEvents()
     try:
         controller.start()
         wait_for_qt_condition(started.is_set)
+        assert affinities == [(True, True)]
+        assert not returned.is_set()
+        assert workers[0].thread().isRunning()
         assert not window.close()
+        assert cancelled.is_set()
+        wait_for_queued_qt_turn()
         assert window.isVisible()
+        assert not returned.is_set()
         release.set()
         wait_for_qt_condition(lambda: not window.isVisible())
+        assert returned.is_set()
     finally:
         release.set()
         _dispose(window)
@@ -216,23 +261,46 @@ def test_retry_and_open_wait_for_worker_cleanup(
 ) -> None:
     """Retry starts a new worker and successful Open delegates to the supervisor."""
     attempts: list[RepairWorker] = []
+    affinities: list[tuple[bool, bool]] = []
     opened: list[bool] = []
 
-    class CompletedWorker(RepairWorker):
-        """Return controlled outcomes through the production worker signal contract."""
+    class CompletedExecution(RepairProcessSupervisor):
+        """Choose each attempt's external result before the real worker begins."""
 
-        @Slot()
-        def run(self) -> None:
-            """Fail the first attempt and finish the retry successfully."""
-            if len(attempts) == 1:
-                self.failed.emit("Synthetic recoverable failure")
-            else:
-                self.succeeded.emit()
-            self.finished.emit()
+        def __init__(self) -> None:
+            """Bind a stable outcome to this attempt rather than later list state."""
+            self._attempt_index = len(attempts)
+            super().__init__(
+                command_builder=lambda: (),
+                startup_log_path=tmp_path / f"repair-{self._attempt_index}.log",
+            )
+
+        def run(
+            self,
+            *,
+            progress_observer: Callable[[dict[str, object]], None],
+            output_callback: Callable[[str], None],
+        ) -> dict[str, object]:
+            """Fail once, then return the production terminal-result contract."""
+            affinities.append(
+                (
+                    QThread.currentThread() == attempts[self._attempt_index].thread(),
+                    QThread.currentThread() != qt_application_owner.thread(),
+                )
+            )
+            if affinities[-1] != (True, True):
+                raise RuntimeError("Controlled execution ran on the wrong thread")
+            if self._attempt_index == 0:
+                raise OSError("Synthetic recoverable failure")
+            return {
+                "session_recovery": SessionRecoveryResult(
+                    SessionRecoveryState.NO_SESSION,
+                ).to_json(),
+            }
 
     def create(request: PreparedRepairRequest) -> RepairWorker:
-        """Retain each distinct attempt for observable factory-call verification."""
-        worker = CompletedWorker(request)
+        """Retain each distinct real worker and its controlled external attempt."""
+        worker = RepairWorker(request, supervisor=CompletedExecution())
         attempts.append(worker)
         return worker
 
@@ -249,7 +317,6 @@ def test_retry_and_open_wait_for_worker_cleanup(
         open_application=open_application,
     )
     window.show()
-    qt_application_owner.processEvents()
     primary = window.findChild(QPushButton, "RepairPrimaryAction")
     assert primary is not None
     try:
@@ -260,6 +327,7 @@ def test_retry_and_open_wait_for_worker_cleanup(
             description="recoverable repair result",
             state=lambda: (primary.isVisible(), primary.text(), len(attempts)),
         )
+        assert affinities == [(True, True)]
         assert primary.text() == "Try again"
         primary.click()
         wait_for_qt_condition(
@@ -269,6 +337,8 @@ def test_retry_and_open_wait_for_worker_cleanup(
             state=lambda: (primary.isVisible(), primary.text(), len(attempts)),
         )
         assert len(attempts) == 2
+        assert attempts[0] is not attempts[1]
+        assert affinities == [(True, True), (True, True)]
         assert primary.text() == "Open SugarSubstitute"
         primary.click()
         assert opened == [True]
