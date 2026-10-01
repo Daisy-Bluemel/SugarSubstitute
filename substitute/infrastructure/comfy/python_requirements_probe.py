@@ -21,7 +21,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 import json
-import os
 from pathlib import Path
 import subprocess
 from typing import Final, cast
@@ -29,6 +28,7 @@ from typing import Final, cast
 from substitute.infrastructure.comfy.interpreter_path import (
     absolute_interpreter_path,
 )
+from substitute.infrastructure.process.hidden_process_runner import creation_flags
 
 _PROBE_MARKER: Final[str] = "SUGARSUBSTITUTE_REQUIREMENTS_PROBE="
 _PROBE_SCRIPT: Final[str] = r"""
@@ -140,7 +140,7 @@ class PythonRequirementsProbe:
             capture_output=True,
             timeout=60,
             check=False,
-            creationflags=(subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0),
+            creationflags=creation_flags(),
         )
         if result.returncode != 0:
             detail = " ".join(

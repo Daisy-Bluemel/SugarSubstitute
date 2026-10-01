@@ -21,7 +21,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 import json
-import os
 from pathlib import Path
 import subprocess
 from typing import Final, cast
@@ -35,6 +34,7 @@ from substitute.infrastructure.comfy.manager_environment import (
 from substitute.infrastructure.comfy.workspace_python_resolver import (
     resolve_workspace_python,
 )
+from substitute.infrastructure.process.hidden_process_runner import creation_flags
 from substitute.shared.logging.logger import get_logger, log_info, log_warning
 from sugarsubstitute_shared.windows_long_paths import (
     subprocess_path,
@@ -223,7 +223,7 @@ class ComfyManagerRuntimeProbe:
             capture_output=True,
             timeout=60,
             check=False,
-            creationflags=(subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0),
+            creationflags=creation_flags(),
         )
 
 

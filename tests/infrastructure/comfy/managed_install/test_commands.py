@@ -20,16 +20,168 @@ from __future__ import annotations
 
 from __future__ import annotations
 from collections.abc import Callable
+from dataclasses import dataclass
+from io import StringIO
 from pathlib import Path
+import subprocess
 import sys
 import pytest
 from substitute.infrastructure.comfy import managed_install_commands
 from substitute.infrastructure.comfy import managed_install_failures
+from substitute.infrastructure.process import hidden_process_runner
 from substitute.infrastructure.comfy.managed_validation import (
     workspace_python_path,
 )
 from sugarsubstitute_shared.windows_long_paths import subprocess_path
 from sugarsubstitute_shared.startup_remote_access import StartupConnectivityError
+
+
+@dataclass(frozen=True)
+class _Platform:
+    """Control console policy without changing Python's actual platform."""
+
+    platform: str
+
+
+@pytest.fixture(params=("linux", "win32"))
+def captured_flags(
+    request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
+) -> int:
+    """Expose the chosen Windows flag only to calls whose host supports it."""
+
+    platform = str(request.param)
+    host = _Platform(platform)
+    monkeypatch.setattr(hidden_process_runner, "sys", host)
+    if platform == "win32":
+        monkeypatch.setattr(subprocess, "CREATE_NO_WINDOW", 0x12340000, raising=False)
+        return 0x12340000
+    monkeypatch.delattr(subprocess, "CREATE_NO_WINDOW", raising=False)
+    return 0
+
+
+class _PipProcess:
+    """Expose only pip's merged output and its externally observed lifecycle."""
+
+    def __init__(self, output: str, returncode: int) -> None:
+        """Retain output records until the real streaming owner closes them."""
+
+        self.stdout = StringIO(output)
+        self.returncode = returncode
+        self.waited = False
+
+    def wait(self) -> int:
+        """Record the caller's completion barrier without starting a process."""
+
+        self.waited = True
+        return self.returncode
+
+
+@pytest.mark.parametrize("streamed", [False, True], ids=("captured", "streamed"))
+@pytest.mark.parametrize(
+    "diagnostic, failure",
+    [
+        ("installed", None),
+        (
+            "NewConnectionError: getaddrinfo failed; no space left on device",
+            StartupConnectivityError,
+        ),
+        (
+            "OSError: [Errno 28] No space left on device",
+            managed_install_failures.ManagedInstallStorageError,
+        ),
+        ("dependency resolver failed", RuntimeError),
+    ],
+    ids=("success", "connectivity-before-storage", "storage", "generic"),
+)
+def test_pip_preserves_captured_and_streamed_launch_contracts(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    captured_flags: int,
+    streamed: bool,
+    diagnostic: str,
+    failure: type[RuntimeError] | None,
+) -> None:
+    """Keep flags, callbacks and error classification at the actual subprocess seam."""
+
+    python = tmp_path / "python"
+    environment = {"TEMP": str(tmp_path / "scratch")}
+    output = f"progress\n\n{diagnostic}\n"
+    process = _PipProcess(output, 7 if failure is not None else 0)
+    expected_command = [
+        subprocess_path(python),
+        "-m",
+        "pip",
+        "install",
+        "fixture-package",
+    ]
+    commands: list[list[str]] = []
+    callbacks: list[str] = []
+
+    def capture(
+        command: list[str], **options: object
+    ) -> subprocess.CompletedProcess[str]:
+        """Require captured pip's exact redirection, flag and environment contract."""
+
+        assert not streamed
+        commands.append(command)
+        assert options == {
+            "text": True,
+            "encoding": "utf-8",
+            "errors": "replace",
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "stdin": subprocess.DEVNULL,
+            "shell": False,
+            "env": environment,
+            "check": False,
+            "creationflags": captured_flags,
+        }
+        assert options["env"] is environment
+        return subprocess.CompletedProcess(command, process.returncode, stdout=output)
+
+    def stream(command: list[str], **options: object) -> _PipProcess:
+        """Keep the existing streaming defaults, including unsuppressed console flags."""
+
+        assert streamed
+        commands.append(command)
+        assert options == {
+            "cwd": None,
+            "env": environment,
+            "stdout": subprocess.PIPE,
+            "stderr": subprocess.STDOUT,
+            "text": True,
+            "encoding": "utf-8",
+            "errors": "replace",
+            "bufsize": 1,
+            "universal_newlines": True,
+            "creationflags": 0,
+        }
+        assert options["env"] is environment
+        return process
+
+    monkeypatch.setattr(subprocess, "run", capture)
+    monkeypatch.setattr(subprocess, "Popen", stream)
+
+    def install() -> None:
+        """Exercise the production pip owner and its real local streaming wrapper."""
+
+        managed_install_commands.pip_install(
+            python,
+            "fixture-package",
+            on_log=callbacks.append if streamed else None,
+            env=environment,
+        )
+
+    if failure is None:
+        install()
+    else:
+        with pytest.raises(failure) as caught:
+            install()
+        assert type(caught.value) is failure
+    assert commands == [expected_command]
+    assert callbacks == (output.splitlines() if streamed else [])
+    assert process.waited is streamed
+    assert process.stdout.closed is streamed
 
 
 def test_ensure_workspace_virtualenv_creates_workspace_python(

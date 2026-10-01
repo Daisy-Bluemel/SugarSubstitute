@@ -33,6 +33,7 @@ from substitute.infrastructure.comfy.managed_validation import (
     workspace_python_path,
     workspace_venv_dir,
 )
+from substitute.infrastructure.process.hidden_process_runner import creation_flags
 from substitute.infrastructure.process.pip_failure import (
     raise_pip_path_compatibility_error,
 )
@@ -171,7 +172,7 @@ def pip_install(
         shell=False,
         env=env,
         check=False,
-        creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+        creationflags=creation_flags(),
     )
     if result.returncode != 0:
         output = result.stdout or ""

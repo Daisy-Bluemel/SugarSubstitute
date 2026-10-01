@@ -20,10 +20,10 @@ from __future__ import annotations
 
 import ast
 from collections.abc import Callable, Iterator, Sequence
+from dataclasses import dataclass
 from pathlib import Path
 import subprocess
 import sys
-from typing import Any
 
 import pytest
 
@@ -38,6 +38,34 @@ _FORBIDDEN_IMPORT_PREFIXES = (
     "substitute.presentation",
     "substitute.infrastructure.comfy",
 )
+
+
+@dataclass(frozen=True)
+class _Platform:
+    """Select the runner's platform without changing Python's real host."""
+
+    platform: str
+
+
+@pytest.fixture(params=("linux", "darwin", "win32"))
+def process_flags(
+    request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch
+) -> int:
+    """Supply an independent flag expectation and only the selected host's symbol."""
+
+    platform = str(request.param)
+    monkeypatch.setattr(hidden_process_runner, "sys", _Platform(platform))
+    if platform == "win32":
+        monkeypatch.setattr(subprocess, "CREATE_NO_WINDOW", 0x12340000, raising=False)
+        return 0x12340000
+    monkeypatch.delattr(subprocess, "CREATE_NO_WINDOW", raising=False)
+    return 0
+
+
+def test_creation_flags_preserve_supported_platform_policy(process_flags: int) -> None:
+    """Forward the Windows constant exactly and avoid unavailable symbols elsewhere."""
+
+    assert hidden_process_runner.creation_flags() == process_flags
 
 
 def test_hidden_process_runner_imports_no_ui_or_nodepack_boundaries() -> None:
@@ -60,6 +88,7 @@ def test_hidden_process_runner_imports_no_ui_or_nodepack_boundaries() -> None:
 def test_run_command_uses_hidden_argument_list_options(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
+    process_flags: int,
 ) -> None:
     """Captured commands should use argument lists and hidden process options."""
 
@@ -92,7 +121,7 @@ def test_run_command_uses_hidden_argument_list_options(
     assert observed["text"] is True
     assert observed["encoding"] == "utf-8"
     assert observed["errors"] == "replace"
-    assert observed["creationflags"] == hidden_process_runner.creation_flags()
+    assert observed["creationflags"] == process_flags
     assert observed["env"] == {"EXAMPLE": "1"}
     assert observed["check"] is False
 
@@ -100,12 +129,15 @@ def test_run_command_uses_hidden_argument_list_options(
 def test_stream_command_streams_only_nonblank_lines(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
+    process_flags: int,
 ) -> None:
     """Streaming commands should forward nonblank merged output lines."""
 
     monkeypatch.setattr(
         "substitute.infrastructure.process.hidden_process_runner.subprocess.Popen",
-        _fake_popen_factory(returncode=3, lines=("first\n", "\n", "second\n")),
+        _fake_popen_factory(
+            returncode=3, lines=("first\n", "\n", "second\n"), flags=process_flags
+        ),
     )
     emitted: list[str] = []
 
@@ -123,12 +155,15 @@ def test_stream_command_streams_only_nonblank_lines(
 def test_stream_command_collecting_output_retains_blank_lines(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
+    process_flags: int,
 ) -> None:
     """Collecting commands should keep exact line records while streaming text."""
 
     monkeypatch.setattr(
         "substitute.infrastructure.process.hidden_process_runner.subprocess.Popen",
-        _fake_popen_factory(returncode=4, lines=("first\n", "\n", "second\n")),
+        _fake_popen_factory(
+            returncode=4, lines=("first\n", "\n", "second\n"), flags=process_flags
+        ),
     )
     emitted: list[str] = []
 
@@ -296,12 +331,13 @@ def _fake_popen_factory(
     *,
     returncode: int,
     lines: Sequence[str],
+    flags: int,
 ) -> Callable[..., _FakeProcess]:
     """Build a Popen replacement that verifies hidden process options."""
 
     def fake_popen(
         command: list[str],
-        **kwargs: Any,
+        **kwargs: object,
     ) -> _FakeProcess:
         assert command
         assert kwargs["stdout"] == subprocess.PIPE
@@ -309,7 +345,7 @@ def _fake_popen_factory(
         assert kwargs["text"] is True
         assert kwargs["encoding"] == "utf-8"
         assert kwargs["errors"] == "replace"
-        assert kwargs["creationflags"] == hidden_process_runner.creation_flags()
+        assert kwargs["creationflags"] == flags
         return _FakeProcess(returncode=returncode, lines=lines)
 
     return fake_popen

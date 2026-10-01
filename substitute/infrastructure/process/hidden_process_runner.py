@@ -211,7 +211,9 @@ def stream_command_collecting_output(
 def creation_flags() -> int:
     """Return subprocess flags that avoid visible console windows on Windows."""
 
-    return subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+    if sys.platform == "win32":
+        return subprocess.CREATE_NO_WINDOW
+    return 0
 
 
 def _consume_output_lines(

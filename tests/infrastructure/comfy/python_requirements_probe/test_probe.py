@@ -18,14 +18,101 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import os
 from pathlib import Path
+import subprocess
 import sys
 import venv
+
+import pytest
 
 from substitute.infrastructure.comfy.python_requirements_probe import (
     PythonRequirementsProbe,
 )
+from substitute.infrastructure.process import hidden_process_runner
+
+
+@dataclass(frozen=True)
+class _Platform:
+    """Select subprocess policy without changing the filesystem's real host."""
+
+    platform: str
+
+
+@pytest.mark.parametrize("platform, flags", [("linux", 0), ("win32", 0x12340000)])
+@pytest.mark.parametrize("failed", [False, True])
+def test_probe_preserves_subprocess_options_and_failure_evidence(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    platform: str,
+    flags: int,
+    failed: bool,
+) -> None:
+    """Keep target-interpreter capture, timeout and diagnostics on each platform."""
+
+    host = _Platform(platform)
+    monkeypatch.setattr(hidden_process_runner, "sys", host)
+    if platform == "win32":
+        monkeypatch.setattr(subprocess, "CREATE_NO_WINDOW", flags, raising=False)
+    else:
+        monkeypatch.delattr(subprocess, "CREATE_NO_WINDOW", raising=False)
+    python = tmp_path / "target-python"
+    requirements = tmp_path / "requirements.txt"
+    environment = {"PROBE_CONTEXT": "target"}
+    commands: list[list[str]] = []
+
+    def run(command: list[str], **options: object) -> subprocess.CompletedProcess[str]:
+        """Inspect the real probe's launch boundary without starting a child."""
+
+        commands.append(command)
+        assert command[0] == str(python)
+        assert command[1] == "-c"
+        assert command[3] == str(requirements.resolve())
+        assert options == {
+            "cwd": str(tmp_path),
+            "env": environment,
+            "text": True,
+            "encoding": "utf-8",
+            "errors": "replace",
+            "capture_output": True,
+            "timeout": 60,
+            "check": False,
+            "creationflags": flags,
+        }
+        assert options["env"] is not environment
+        return subprocess.CompletedProcess(
+            command,
+            7 if failed else 0,
+            stdout=(
+                "probe stdout"
+                if failed
+                else 'SUGARSUBSTITUTE_REQUIREMENTS_PROBE={"issues": []}\n'
+            ),
+            stderr="probe stderr" if failed else "",
+        )
+
+    monkeypatch.setattr(subprocess, "run", run)
+    if failed:
+        with pytest.raises(RuntimeError, match="probe stdout probe stderr"):
+            PythonRequirementsProbe().assess(
+                requirements_path=requirements,
+                python_executable=python,
+                workspace=tmp_path,
+                env=environment,
+            )
+    else:
+        assert (
+            PythonRequirementsProbe()
+            .assess(
+                requirements_path=requirements,
+                python_executable=python,
+                workspace=tmp_path,
+                env=environment,
+            )
+            .satisfied
+        )
+    assert len(commands) == 1
 
 
 def test_probe_preserves_virtualenv_executable_identity(tmp_path: Path) -> None:
