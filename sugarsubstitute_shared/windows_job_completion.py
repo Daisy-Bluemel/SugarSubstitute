@@ -24,6 +24,11 @@ import math
 import time
 import weakref
 
+from sugarsubstitute_shared.windows_ctypes import (
+    windows_last_error,
+    windows_error,
+)
+
 from sugarsubstitute_shared.windows_process_handle_api import NativeProcessHandleApi
 from sugarsubstitute_shared.windows_process_job_api import ExtendedLimits, load_kernel
 
@@ -54,17 +59,17 @@ class WindowsJobCompletion:
             if not self._kernel.QueryInformationJobObject(
                 self._job, 9, ctypes.byref(limits), ctypes.sizeof(limits), None
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             limits.basic.flags |= 0x8
             limits.basic.active_process_limit = 0
             if not self._kernel.SetInformationJobObject(
                 self._job, 9, ctypes.byref(limits), ctypes.sizeof(limits)
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             self._retain_members()
             self._sealed = True
         if not self._kernel.TerminateJobObject(self._job, 1):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
 
     def wait(self, timeout: float) -> None:
         """Require native exit for every retained member within one shared deadline."""
@@ -90,9 +95,9 @@ class WindowsJobCompletion:
                 self._job, 3, buffer, ctypes.sizeof(buffer), None
             ):
                 break
-            error = ctypes.get_last_error()
+            error = windows_last_error()
             if error != 234:
-                raise ctypes.WinError(error)
+                raise windows_error(error)
             capacity = max(capacity * 2, wintypes.DWORD.from_buffer(buffer).value)
         count = wintypes.DWORD.from_buffer(buffer, 4).value
         for index in range(count):
@@ -108,7 +113,7 @@ class WindowsJobCompletion:
                 if not self._kernel.IsProcessInJob(
                     handle, self._job, ctypes.byref(member)
                 ):
-                    raise ctypes.WinError(ctypes.get_last_error())
+                    raise windows_error(windows_last_error())
                 if member.value:
                     self._members.append(handle)
                     retained = True

@@ -20,6 +20,12 @@ from __future__ import annotations
 
 import ctypes
 
+from sugarsubstitute_shared.windows_ctypes import (
+    load_windows_library,
+    windows_last_error,
+    windows_error,
+)
+
 _PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
 _TOKEN_QUERY = 0x0008
 _TOKEN_USER = 1
@@ -30,8 +36,8 @@ def process_user_sid(process_id: int | None) -> str:
 
     from ctypes import wintypes
 
-    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
-    advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
+    kernel32 = load_windows_library("kernel32", use_last_error=True)
+    advapi32 = load_windows_library("advapi32", use_last_error=True)
     kernel32.GetCurrentProcess.argtypes = []
     kernel32.GetCurrentProcess.restype = wintypes.HANDLE
     kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
@@ -65,11 +71,11 @@ def process_user_sid(process_id: int | None) -> str:
         else kernel32.OpenProcess(_PROCESS_QUERY_LIMITED_INFORMATION, False, process_id)
     )
     if not process:
-        raise ctypes.WinError(ctypes.get_last_error())
+        raise windows_error(windows_last_error())
     token = wintypes.HANDLE()
     try:
         if not advapi32.OpenProcessToken(process, _TOKEN_QUERY, ctypes.byref(token)):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
         required = wintypes.DWORD()
         advapi32.GetTokenInformation(
             token, _TOKEN_USER, None, 0, ctypes.byref(required)
@@ -82,11 +88,11 @@ def process_user_sid(process_id: int | None) -> str:
             required.value,
             ctypes.byref(required),
         ):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
         sid_pointer = ctypes.cast(buffer, ctypes.POINTER(ctypes.c_void_p)).contents
         sid_text = wintypes.LPWSTR()
         if not advapi32.ConvertSidToStringSidW(sid_pointer, ctypes.byref(sid_text)):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
         try:
             return str(sid_text.value)
         finally:
@@ -102,11 +108,11 @@ def process_session_id(process_id: int) -> int:
     """Read the Windows session assigned to a live kernel process."""
     from ctypes import wintypes
 
-    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32 = load_windows_library("kernel32", use_last_error=True)
     query = kernel32.ProcessIdToSessionId
     query.argtypes = [wintypes.DWORD, ctypes.POINTER(wintypes.DWORD)]
     query.restype = wintypes.BOOL
     session = wintypes.DWORD()
     if not query(process_id, ctypes.byref(session)):
-        raise ctypes.WinError(ctypes.get_last_error())
+        raise windows_error(windows_last_error())
     return int(session.value)

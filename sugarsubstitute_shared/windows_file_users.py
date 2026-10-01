@@ -27,6 +27,11 @@ from ctypes import wintypes
 import logging
 from pathlib import Path
 
+from sugarsubstitute_shared.windows_ctypes import (
+    load_windows_library,
+    windows_error,
+)
+
 from sugarsubstitute_shared.process_identity import ProcessIdentity
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,7 +64,7 @@ class WindowsFileUsers:
 
     def __init__(self) -> None:
         """Declare the native ABI without registering or stopping any application."""
-        self._api = ctypes.WinDLL("Rstrtmgr.dll")
+        self._api = load_windows_library("Rstrtmgr.dll")
         self._api.RmStartSession.argtypes = [
             ctypes.POINTER(wintypes.DWORD),
             wintypes.DWORD,
@@ -155,4 +160,4 @@ class WindowsFileUsers:
 def _require_success(error: int) -> None:
     """Preserve the native failure code for the recovery controller's diagnostics."""
     if error:
-        raise ctypes.WinError(error)
+        raise windows_error(error)

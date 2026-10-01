@@ -21,6 +21,8 @@ from __future__ import annotations
 import ctypes
 from ctypes import wintypes
 
+from sugarsubstitute_shared.windows_ctypes import load_windows_library
+
 APPLICATION_PROCESS_FAMILY_ENV = "SUGAR_SUBSTITUTE_WINDOWS_PROCESS_FAMILY"
 
 
@@ -126,9 +128,9 @@ class ProcessInformation(ctypes.Structure):
     ]
 
 
-def load_kernel() -> ctypes.WinDLL:
+def load_kernel() -> ctypes.CDLL:
     """Configure pointer-safe signatures before calling process-management APIs."""
-    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel = load_windows_library("kernel32", use_last_error=True)
     kernel.CreateJobObjectW.argtypes = [ctypes.c_void_p, wintypes.LPCWSTR]
     kernel.CreateJobObjectW.restype = wintypes.HANDLE
     kernel.OpenJobObjectW.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.LPCWSTR]

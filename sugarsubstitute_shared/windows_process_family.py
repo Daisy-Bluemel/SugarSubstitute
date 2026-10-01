@@ -30,6 +30,11 @@ import time
 import uuid
 import weakref
 
+from sugarsubstitute_shared.windows_ctypes import (
+    windows_last_error,
+    windows_error,
+)
+
 from sugarsubstitute_shared.windows_process_job_api import (
     APPLICATION_PROCESS_FAMILY_ENV,
     ExtendedLimits,
@@ -81,7 +86,7 @@ class WindowsProcessFamily:
         job_name = f"Local\\SugarSubstitute-family-{uuid.uuid4()}"
         job = kernel.CreateJobObjectW(None, job_name)
         if not job:
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
         limits = ExtendedLimits()
         limits.basic.flags = _KILL_ON_JOB_CLOSE
         if allow_breakaway:
@@ -90,7 +95,7 @@ class WindowsProcessFamily:
             if not kernel.SetInformationJobObject(
                 job, 9, ctypes.byref(limits), ctypes.sizeof(limits)
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             child_environment = dict(environment)
             child_environment[APPLICATION_PROCESS_FAMILY_ENV] = job_name
             process_info = create_windows_process(
@@ -127,7 +132,7 @@ class WindowsProcessFamily:
             if result == _WAIT_TIMEOUT:
                 return None
             if result != 0:
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             return self._finish()
 
     def wait(self, timeout: float | None = None) -> int:
@@ -146,7 +151,7 @@ class WindowsProcessFamily:
                 False,
                 2,
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             handle = duplicate.value
         milliseconds = (
             0xFFFFFFFF
@@ -155,14 +160,14 @@ class WindowsProcessFamily:
         )
         try:
             result = self._kernel.WaitForSingleObject(handle, milliseconds)
-            error = ctypes.get_last_error()
+            error = windows_last_error()
         finally:
             self._kernel.CloseHandle(handle)
         if result == _WAIT_TIMEOUT:
             assert timeout is not None
             raise subprocess.TimeoutExpired(self.args, timeout)
         if result != 0:
-            raise ctypes.WinError(error)
+            raise windows_error(error)
         with self._lock:
             return self._finish()
 
@@ -183,7 +188,7 @@ class WindowsProcessFamily:
             return self.returncode
         code = wintypes.DWORD()
         if not self._kernel.GetExitCodeProcess(self._process, ctypes.byref(code)):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
         self._completion.terminate()
         self._completion.wait(5.0)
         deadline = time.monotonic() + 5.0
@@ -197,7 +202,7 @@ class WindowsProcessFamily:
                 ctypes.sizeof(accounting),
                 None,
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             if accounting.active_processes == 0:
                 break
             if time.monotonic() >= deadline:
@@ -217,7 +222,7 @@ class WindowsProcessFamily:
         return self.returncode
 
 
-def _release_handles(kernel: ctypes.WinDLL, job: int, process: int) -> None:
+def _release_handles(kernel: ctypes.CDLL, job: int, process: int) -> None:
     """Keep the kill-on-close guarantee when an exceptional caller abandons control."""
     kernel.CloseHandle(job)
     kernel.CloseHandle(process)

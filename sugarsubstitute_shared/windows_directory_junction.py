@@ -24,6 +24,12 @@ from pathlib import Path
 import struct
 import sys
 
+from sugarsubstitute_shared.windows_ctypes import (
+    load_windows_library,
+    windows_last_error,
+    windows_error,
+)
+
 from sugarsubstitute_shared.windows_long_paths import logical_path, operational_path
 
 _GENERIC_WRITE = 0x40000000
@@ -54,7 +60,7 @@ def create_windows_directory_junction(*, junction: Path, target: Path) -> None:
 def _set_mount_point_reparse_data(junction: Path, target: Path) -> None:
     """Attach native mount-point reparse data to an empty directory."""
 
-    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel32 = load_windows_library("kernel32", use_last_error=True)
     create_file = kernel32.CreateFileW
     create_file.argtypes = (
         wintypes.LPCWSTR,
@@ -92,7 +98,7 @@ def _set_mount_point_reparse_data(junction: Path, target: Path) -> None:
         None,
     )
     if handle == wintypes.HANDLE(-1).value:
-        raise ctypes.WinError(ctypes.get_last_error())
+        raise windows_error(windows_last_error())
     try:
         reparse_data = _mount_point_reparse_data(target)
         input_buffer = ctypes.create_string_buffer(reparse_data)
@@ -108,7 +114,7 @@ def _set_mount_point_reparse_data(junction: Path, target: Path) -> None:
             None,
         )
         if not succeeded:
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
     finally:
         close_handle(handle)
 
