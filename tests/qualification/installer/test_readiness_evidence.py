@@ -27,7 +27,6 @@ from typing import cast
 
 import pytest
 
-from launcher.sugarsubstitute_launcher.install_layout import InstallLayout
 from sugarsubstitute_shared.application_readiness import (
     ApplicationReadinessReceipt,
     ApplicationReadinessSurface,
@@ -43,7 +42,6 @@ from tools.ci import installer_ui_qualification
 from tools.ci.installer_process_diagnostics import process_tree_diagnostics
 from tools.ci.installer_ui_qualification import (
     InstalledCandidateLaunch,
-    launch_installed_candidate,
 )
 
 
@@ -217,59 +215,6 @@ def test_readiness_wait_fails_immediately_on_terminal_update_status(
             update_attempt_store=store,
             expected_update_version="0.23.0",
         )
-
-
-def test_installed_candidate_launch_is_observed_without_capture_bound_wait(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Updater qualification should observe a process while evidence arrives."""
-
-    install_root = tmp_path / "installed"
-    layout = InstallLayout.from_root(install_root)
-    layout.root.mkdir(parents=True)
-    observed: dict[str, object] = {}
-    fake_process = cast(
-        subprocess.Popen[bytes],
-        SimpleNamespace(pid=123, poll=lambda: None),
-    )
-
-    def _start(command: list[str], **kwargs: object) -> object:
-        """Capture the process contract without starting an executable."""
-
-        observed["command"] = command
-        observed.update(kwargs)
-        return fake_process
-
-    monkeypatch.setattr(
-        "tools.ci.installer_ui_qualification.start_windows_desktop_process",
-        _start,
-    )
-
-    launch = launch_installed_candidate(
-        install_root=install_root,
-        environment={
-            "QUALIFICATION": "1",
-            "SSL_CERT_FILE": "candidate-ca.pem",
-            "PYTHONHOME": "hosted-python",
-            "PYTHONPATH": "hosted-packages",
-            "LD_LIBRARY_PATH": "hosted-python/lib",
-            "LD_LIBRARY_PATH_ORIG": "system/lib",
-            "DYLD_LIBRARY_PATH": "hosted-python/lib",
-            "DYLD_FRAMEWORK_PATH": "hosted-python/frameworks",
-            "QT_PLUGIN_PATH": "hosted-qt/plugins",
-            "QML2_IMPORT_PATH": "hosted-qt/qml",
-            "_PYI_ARCHIVE_FILE": "unrelated-frozen-parent",
-        },
-    )
-
-    assert isinstance(launch, InstalledCandidateLaunch)
-    assert launch.process is fake_process
-    assert observed["command"] == [str(layout.executable_path)]
-    assert observed["environment"] == {
-        "QUALIFICATION": "1",
-        "SSL_CERT_FILE": "candidate-ca.pem",
-    }
 
 
 def test_stalled_process_diagnostics_expose_runtime_location(

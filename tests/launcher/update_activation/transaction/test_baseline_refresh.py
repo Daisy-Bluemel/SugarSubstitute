@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Qualify the two-step published update of a retained launcher root."""
+"""Qualify the two-step published update of a retained Windows launcher root."""
 
 from __future__ import annotations
 
@@ -26,6 +26,7 @@ import pytest
 
 from launcher.sugarsubstitute_launcher import launcher_baseline_refresh
 from launcher.sugarsubstitute_launcher.install_layout import InstallLayout
+from launcher.sugarsubstitute_launcher.platforms import WINDOWS_X64
 from launcher.sugarsubstitute_launcher.launcher_baseline_refresh import (
     LauncherBaselineRefresh,
 )
@@ -119,7 +120,8 @@ def test_normal_update_refreshes_retained_root_before_application_launch(
     image = selected.root / "SugarSubstitute.exe"
 
     assert LauncherBaselineRefresh().start_if_required(
-        layout=InstallLayout.from_root(root), running_executable=image
+        layout=InstallLayout.from_root(root, target=WINDOWS_X64),
+        running_executable=image,
     )
     assert len(scheduled) == 1
     request_path, helper_executable, _wait_pid = scheduled[0]
@@ -143,7 +145,8 @@ def test_normal_update_refreshes_retained_root_before_application_launch(
     assert status.phase is LauncherUpdateAttemptPhase.COMPLETED
     assert status.route == "required_baseline_refresh"
     assert not LauncherBaselineRefresh().start_if_required(
-        layout=InstallLayout.from_root(root), running_executable=image
+        layout=InstallLayout.from_root(root, target=WINDOWS_X64),
+        running_executable=image,
     )
 
 
@@ -167,7 +170,7 @@ def test_baseline_refresh_rejects_modified_staging_without_replacing_root(
         launcher_baseline_refresh, "schedule_required_baseline_refresh", schedule
     )
     LauncherBaselineRefresh().start_if_required(
-        layout=InstallLayout.from_root(root),
+        layout=InstallLayout.from_root(root, target=WINDOWS_X64),
         running_executable=selected.root / "SugarSubstitute.exe",
     )
     request = LauncherUpdateRequest.load(requests[0])
