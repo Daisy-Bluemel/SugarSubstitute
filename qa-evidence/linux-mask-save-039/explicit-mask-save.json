@@ -1,0 +1,28 @@
+{
+  "purpose": "Record actual Linux reproduction and acceptance of painted-mask Sugar Script persistence",
+  "reproduced_before_fix": {
+    "source": "37dcc88ae6495e36eb40645eac13fe4882a156a3",
+    "result": "A completed painted mask had 3447 nonzero pixels in the editable archive, but explicit Save left the recipe mask image blank and reopening produced 0 mask pixels"
+  },
+  "verified_fixed_source": "5e6b62116e593d086f5610727888062bc2678eba",
+  "environment": "Normal Linux main.py, saved test profile, automatic Dark/Mica, CPU backend; no observer hook or capture harness",
+  "checks": {
+    "inactive_mask_save": "Saved with another Input image active; reopening in a distinct tab retained all 3447 painted pixels byte-identically",
+    "external_save_as": "Saved outside the managed projects directory and reopened in another tab; all 3447 pixels matched exactly",
+    "second_changed_save": "A second completed stroke produced 6053 pixels; the emitted PNG matched the current editable archive",
+    "existing_data": "Earlier saved PNGs stayed byte-identical; the prior recipe existed byte-identically in version history; all 30 unrelated preexisting project/output files stayed unchanged"
+  },
+  "focused_verification": {
+    "independent_owner_cases_passed": 166,
+    "independent_real_canvas_cases_passed": 4,
+    "failures": 0,
+    "skips": 0,
+    "strict_scoped_typing": "Linux and win32 targets passed 27 changed files",
+    "static": "Full lint/format, architecture, governance and license checks passed"
+  },
+  "limits": [
+    "No model/GPU inference",
+    "Large-mask latency and project relocation were not qualified",
+    "The distinct dirty-state defect observed here was repaired and verified in 039"
+  ]
+}

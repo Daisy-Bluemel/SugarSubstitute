@@ -1,0 +1,14 @@
+{
+  "purpose": "Keep the limits of the focused Linux results explicit",
+  "measured_source": "f01381090f26e4a3c020a170a187f27946626a9b",
+  "open": [
+    "Full aggregate test gates have not passed; the historical full-run worker exit remains unexplained",
+    "Restricted AF_UNIX diagnostics remain blocked; they were not converted to passing skips",
+    "Native fatal Crashpad capture produced no verified minidump because ptrace is restricted",
+    "The held-brush clear/reopen regression remains failed; ordinary completed-stroke checks do not qualify that case",
+    "Whole-tree strict typing at039 still fails with 193 Linux errors and 8 win32-target errors",
+    "Native Windows/macOS, GPU/model inference, large-mask save latency and project relocation remain unqualified",
+    "Save acknowledgment remains synchronous and sequential; no asynchronous or reentrant-save race qualification is claimed"
+  ],
+  "evidence_scope": "These JSON files contain reviewed summaries and numeric/hash evidence only; no screenshots, raw logs, profile/session contents, project paths, credentials or generated image bytes are included"
+}

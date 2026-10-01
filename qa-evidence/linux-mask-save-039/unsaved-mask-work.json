@@ -1,0 +1,39 @@
+{
+  "purpose": "Record exact document ownership, close warning and Save behavior for authored mask edits",
+  "verified_source": "f01381090f26e4a3c020a170a187f27946626a9b",
+  "reproduced_before_fix": {
+    "source": "5e6b62116e593d086f5610727888062bc2678eba",
+    "result": "Completed brush editing changed mask coverage from 3447 to 6053 pixels but the fresh session still reported document_dirty=false"
+  },
+  "environment": "Normal Linux main.py, saved profile, automatic Dark/Mica, CPU backend, no hooks or capture harness",
+  "checks": {
+    "clean_restore": "All 11 restored workflows clean after fresh tab-switch recovery snapshot",
+    "brush": "6053 to 8831 nonzero mask pixels; only owning workflow dirty",
+    "undo": "Ctrl+Z restored exact baseline tile bytes; dirty retained",
+    "redo": "Ctrl+Shift+Z restored exact edited tile bytes; dirty retained",
+    "close_cancel": "Actual Unsaved work dialog names Mask Save QA; Cancel retains tab, dirty state and exact edited mask",
+    "save": "Explicit Save then fresh recovery snapshot clears dirty, preserving pixels",
+    "clean_close": "Saved workflow closes without an unsaved prompt",
+    "reopen": "Saved file reopens clean with new workflow/mask IDs and exact 8831-pixel tile bytes",
+    "unrelated_workflows": "All ten other workflow records and mask bytes unchanged"
+  },
+  "focused_verification": {
+    "independent_cases_passed": 66,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "workers": 2,
+    "strict_scoped_typing": "Linux and win32 targets passed 10 changed files",
+    "static": "Full lint/format, architecture, governance and license checks passed",
+    "fault_injections_detected": [
+      "Disabled dirty routing",
+      "Disabled editable archive revision advancement"
+    ]
+  },
+  "limits": [
+    "Failed save and inactive mask ownership are verified by focused real-canvas/owner tests, not native fault injection",
+    "No GPU/model inference or native Windows/macOS execution",
+    "Full aggregate gates, restricted IPC/fatal minidump and held-brush dependency regression remain open",
+    "Synchronous sequential save contract retained; no background or reentrant-save race qualification"
+  ]
+}

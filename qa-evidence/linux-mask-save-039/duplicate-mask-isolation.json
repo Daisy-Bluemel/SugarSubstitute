@@ -1,0 +1,17 @@
+{
+  "purpose": "Record a bounded native tab-duplication and independent-mask-edit check",
+  "verified_source": "f01381090f26e4a3c020a170a187f27946626a9b",
+  "environment": "Normal Linux main.py with native tab context menu, automatic Dark/Mica, CPU backend idle",
+  "checks": {
+    "duplicate": "Native Duplicate copied all 3447 mask pixels exactly into a new workflow and mask identity",
+    "independent_edit": "Completed stroke in clone increased its mask to6185 pixels; source stayed3447 bytes-identically",
+    "save": "Clone saved to its own managed project, clears its dirty state, source recipe path unchanged",
+    "tab_return": "Native source/clone switching displays distinct original and edited masks",
+    "other_state": "All eleven other workflow records and mask bytes unchanged"
+  },
+  "limits": [
+    "No close/reopen or model execution was attempted for the duplicated recipe in this bounded check",
+    "This does not qualify every Cube, mask or duplication path",
+    "No GPU inference; full aggregate and native crash limitations remain open"
+  ]
+}

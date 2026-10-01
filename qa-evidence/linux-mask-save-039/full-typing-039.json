@@ -1,0 +1,49 @@
+{
+  "purpose": "Preserve measured full strict typing failures after the reconstructed mask repairs",
+  "verified_source": "f01381090f26e4a3c020a170a187f27946626a9b",
+  "source_tree": "46e54577ee766b103ef89fc92681576208773b3e",
+  "command_template": "python -m mypy --strict --platform <linux|win32> substitute tests",
+  "scope": "Full substitute and tests targets, sequential platform runs with warm caches; native Windows execution is not claimed",
+  "results": [
+    {
+      "platform": "linux",
+      "exit_code": 1,
+      "errors": 193,
+      "error_files": 55,
+      "checked_source_files": 6755,
+      "elapsed_seconds": 5.568151797997416,
+      "summary": [
+        "Found 193 errors in 55 files (checked 6755 source files)"
+      ],
+      "log_sha256": "1062dd8f15449e8f01b677ee36ebb8626d73f9d2507883a3921c904d8b270577"
+    },
+    {
+      "platform": "win32",
+      "exit_code": 1,
+      "errors": 8,
+      "error_files": 4,
+      "checked_source_files": 6755,
+      "elapsed_seconds": 5.216068075998919,
+      "summary": [
+        "Found 8 errors in 4 files (checked 6755 source files)"
+      ],
+      "log_sha256": "5ef1f1f60eb0b4e09af4cc92d8de9023fe3db6fa0883b4b6188ccbea5d594aba"
+    }
+  ],
+  "comparison_to_full033": {
+    "linux": {
+      "before_errors": 207,
+      "before_files": 58,
+      "after_errors": 193,
+      "after_files": 55
+    },
+    "win32": {
+      "before_errors": 11,
+      "before_files": 6,
+      "after_errors": 8,
+      "after_files": 4
+    },
+    "new_diagnostic_signatures": 0
+  },
+  "qualification": "FAIL. Later scoped repairs must not be treated as a fresh whole-tree pass."
+}
