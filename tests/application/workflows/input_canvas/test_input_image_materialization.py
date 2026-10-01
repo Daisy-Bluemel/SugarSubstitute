@@ -182,6 +182,7 @@ def test_materialize_input_image_ignores_stale_previous_mask_path(
         image=_FakeImage(),
         expected_mask_path=expected_dog_mask,
         created_destinations=created_destinations,
+        dimensions_by_path={stale_mask: (640, 480)},
     )
     service = _image_materialization_service(
         input_canvas_state_service, canvas_io_service

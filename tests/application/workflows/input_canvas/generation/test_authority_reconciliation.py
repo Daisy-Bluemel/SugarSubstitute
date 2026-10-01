@@ -34,8 +34,8 @@ from substitute.application.workflows.input_canvas_plan_service import (
     InputCanvasPlanService,
 )
 from substitute.domain.workflow import WorkflowState
-from substitute.presentation.canvas.input.input_generation_capture import (
-    InputGenerationCapture,
+from substitute.presentation.canvas.input.input_document_capture import (
+    InputDocumentCapture,
 )
 from substitute.presentation.canvas.input.input_generation_snapshot_service import (
     InputGenerationSnapshotService,
@@ -148,11 +148,11 @@ def test_stale_surface_in_workflow_without_input_canvas_recovers_before_capture(
         *,
         image_ids: tuple[UUID, ...],
         mask_ids: tuple[UUID, ...],
-    ) -> InputGenerationCapture:
+    ) -> InputDocumentCapture:
         """Record the post-recovery capture identities."""
 
         capture_requests.append((image_ids, mask_ids))
-        return InputGenerationCapture(images={}, masks={})
+        return InputDocumentCapture(images={}, masks={})
 
     copy_materializer = SimpleNamespace(
         prepare_workflow=lambda **kwargs: copy.deepcopy(kwargs["workflow"])

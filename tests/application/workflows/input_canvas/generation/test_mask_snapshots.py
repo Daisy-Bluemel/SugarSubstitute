@@ -22,6 +22,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import cast
 from uuid import UUID, uuid4
+import pytest
 
 from cutecanvas import MaskExportSnapshot
 from PySide6.QtGui import QColor, QImage
@@ -34,6 +35,30 @@ from substitute.domain.workflow import (
 from substitute.presentation.canvas.input.input_generation_mask_materializer import (
     InputGenerationMaskMaterializer,
 )
+
+
+@pytest.mark.parametrize("workflow", (WorkflowState(), {"non_workflow": True}))
+def test_mask_free_generation_never_resolves_persistence_context(
+    workflow: object,
+) -> None:
+    """Empty generation inputs must not consult name, directory, or IO providers."""
+
+    def reject_context(*_args: object) -> str:
+        """Reject an unnecessary persistence-context lookup."""
+
+        raise AssertionError("Mask-free generation requested persistence context")
+
+    service = InputGenerationMaskMaterializer(
+        canvas_io_service=_Io(Path("unused"), reject_context),
+        input_assets=_Associations(),
+        workflow_name_provider=reject_context,
+        projects_dir_provider=lambda: Path(reject_context()),
+    )
+    prepared = service.prepare_workflow(
+        workflow_id="unused", workflow=workflow, snapshots={}
+    )
+    assert prepared == workflow
+    assert prepared is not workflow
 
 
 def test_generation_snapshot_is_execution_only_and_revision_addressed(
@@ -80,6 +105,42 @@ def test_generation_snapshot_is_execution_only_and_revision_addressed(
     assert execution_value == expected_relative
     assert persisted[0][0] == tmp_path / "Recipe" / "masks" / Path(expected_relative)
     assert persisted[0][1].pixelColor(0, 0) == QColor("black")
+
+
+def test_generation_resolves_one_project_root_for_every_mask(tmp_path: Path) -> None:
+    """A changing provider must not split one generation request across projects."""
+
+    first_mask, second_mask = uuid4(), uuid4()
+    workflow = _workflow(first_mask)
+    _nodes(workflow)["OtherMask"] = {"inputs": {"image": "other-authoring.png"}}
+    workflow.canvas.bind_mask(
+        ("CubeA", "OtherMask"), second_mask, workflow.canvas.image_ids()[0]
+    )
+    roots: list[Path] = []
+
+    def project_root() -> Path:
+        """Change roots after the first lookup to expose repeated resolution."""
+
+        root = tmp_path if not roots else tmp_path / "unexpected"
+        roots.append(root)
+        return root
+
+    service = InputGenerationMaskMaterializer(
+        canvas_io_service=_Io(tmp_path, lambda **_kwargs: True),
+        input_assets=_Associations(),
+        workflow_name_provider=lambda _workflow_id: "Recipe",
+        projects_dir_provider=project_root,
+    )
+    prepared = service.prepare_workflow(
+        workflow_id="workflow",
+        workflow=workflow,
+        snapshots={
+            mask_id: MaskExportSnapshot(mask_id, uuid4(), 1, _mask_image(40))
+            for mask_id in (first_mask, second_mask)
+        },
+    )
+    assert isinstance(prepared, WorkflowState)
+    assert roots == [tmp_path]
 
 
 def test_generation_snapshot_fails_closed_on_write_or_stale_identity(

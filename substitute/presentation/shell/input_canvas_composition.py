@@ -22,6 +22,18 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from substitute.application.recipes.recipe_mask_reference_restoration import (
+    RecipeMaskReferenceRestoration,
+)
+from substitute.infrastructure.persistence.recipe_mask_product_store import (
+    RecipeMaskProductStore,
+)
+from substitute.presentation.canvas.input.input_mask_product_materializer import (
+    InputMaskProductMaterializer,
+)
+from substitute.presentation.canvas.input.input_recipe_save_preparation import (
+    InputRecipeSavePreparation,
+)
 from substitute.application.workflows.generation_input_image_association_service import (
     GenerationInputImageAssociationService,
 )
@@ -157,6 +169,8 @@ class MainWindowInputCanvasComposition:
     input_document_change_observer: Any
     input_editable_document_change_tracker: InputEditableDocumentChangeTracker
     input_generation_snapshot_service: Any
+    input_recipe_save_preparation: InputRecipeSavePreparation
+    recipe_mask_reference_restoration: RecipeMaskReferenceRestoration
     input_editable_document_lifecycle: Any
     input_canvas_capability_service: Any
     regional_interaction_coordinator: Any
@@ -377,10 +391,24 @@ def compose_input_canvas_controllers(shell: Any) -> MainWindowInputCanvasComposi
         projects_dir_provider=lambda: Path(shell.path_bundle.projects_dir),
     )
     input_generation_snapshot_service = InputGenerationSnapshotService(
-        capture_inputs=input_canvas.document.generation_capture.capture,
+        capture_inputs=input_canvas.document.export_capture.capture,
         select_generation_images=image_selection_service.select,
         image_materializer=input_generation_image_materializer,
         mask_materializer=input_generation_mask_materializer,
+    )
+    input_recipe_save_preparation = InputRecipeSavePreparation(
+        capture_inputs=input_canvas.document.export_capture.capture,
+        materializer=InputMaskProductMaterializer(
+            canvas_io_service=shell.canvas_io_service,
+            input_assets=input_asset_associations,
+        ),
+        products=RecipeMaskProductStore(),
+        workflow_name_provider=input_canvas_shell_adapter.resolve_workflow_name,
+    )
+    recipe_mask_reference_restoration = RecipeMaskReferenceRestoration(
+        bindings=input_canvas_bindings,
+        graphs=shell.graph_section_service,
+        assets=shell.workflow_asset_service,
     )
     input_canvas_capability_service = InputCanvasCapabilityService(
         shell.input_canvas_plan_service,
@@ -437,6 +465,8 @@ def compose_input_canvas_controllers(shell: Any) -> MainWindowInputCanvasComposi
         input_document_change_observer=input_document_change_observer,
         input_editable_document_change_tracker=(input_editable_document_change_tracker),
         input_generation_snapshot_service=input_generation_snapshot_service,
+        input_recipe_save_preparation=input_recipe_save_preparation,
+        recipe_mask_reference_restoration=recipe_mask_reference_restoration,
         input_editable_document_lifecycle=input_editable_document_lifecycle,
         input_canvas_capability_service=input_canvas_capability_service,
         regional_interaction_coordinator=regional_interaction_coordinator,

@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Capture one coherent Input document revision for generation."""
+"""Capture detached Input products from one coherent document revision."""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ from cutecanvas import (
 
 
 @dataclass(frozen=True, slots=True)
-class InputGenerationCapture:
+class InputDocumentCapture:
     """Carry detached image and mask products from one coherent document state."""
 
     images: Mapping[UUID, EmbeddedImageExportSnapshot]
@@ -43,7 +43,7 @@ class InputGenerationCapture:
         object.__setattr__(self, "masks", MappingProxyType(dict(self.masks)))
 
 
-class InputDocumentGenerationCapture:
+class InputDocumentExportCapture:
     """Retry a multi-resource capture until its composition revisions agree."""
 
     def __init__(
@@ -70,7 +70,7 @@ class InputDocumentGenerationCapture:
         *,
         image_ids: Iterable[UUID],
         mask_ids: Iterable[UUID],
-    ) -> InputGenerationCapture | None:
+    ) -> InputDocumentCapture | None:
         """Return products only when all addressed compositions stay unchanged."""
         ordered_images = tuple(dict.fromkeys(image_ids))
         ordered_masks = tuple(dict.fromkeys(mask_ids))
@@ -90,7 +90,7 @@ class InputDocumentGenerationCapture:
                 and after is not None
                 and before == after
             ):
-                return InputGenerationCapture(images=images, masks=masks)
+                return InputDocumentCapture(images=images, masks=masks)
         return None
 
     def _resolve_compositions(
@@ -162,4 +162,4 @@ class InputDocumentGenerationCapture:
         return captured
 
 
-__all__ = ["InputDocumentGenerationCapture", "InputGenerationCapture"]
+__all__ = ["InputDocumentExportCapture", "InputDocumentCapture"]

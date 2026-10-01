@@ -29,6 +29,9 @@ from substitute.application.errors import (
     build_substitute_exception_report,
 )
 from substitute.application.recipes import RecipeIoService
+from substitute.application.recipes.workflow_recipe_save_service import (
+    RecipeInputPreparationPort,
+)
 from substitute.application.workflows.unsaved_work_service import UnsavedWorkService
 from substitute.application.workflows.workflow_session_service import (
     WorkflowSessionService,
@@ -166,6 +169,8 @@ class _FileActions:
 
 class SaveView:
     """Retain authoritative workflow/session/document state for the save actions."""
+
+    input_recipe_save_preparation: RecipeInputPreparationPort
 
     def __init__(self, root: Path, workflow: WorkflowState) -> None:
         """Prepare real persistence, session identity and a dirty source baseline."""

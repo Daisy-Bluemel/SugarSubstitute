@@ -36,8 +36,8 @@ from substitute.application.workflows.regional_prompt_validation_service import 
     RegionalPromptValidationService,
 )
 from substitute.domain.workflow import WorkflowState
-from substitute.presentation.canvas.input.input_generation_capture import (
-    InputGenerationCapture,
+from substitute.presentation.canvas.input.input_document_capture import (
+    InputDocumentCapture,
 )
 from substitute.presentation.canvas.input.input_mask_identity import (
     resolve_input_mask_id,
@@ -55,7 +55,7 @@ class InputCapturePort(Protocol):
         *,
         image_ids: tuple[UUID, ...],
         mask_ids: tuple[UUID, ...],
-    ) -> InputGenerationCapture | None:
+    ) -> InputDocumentCapture | None:
         """Capture one coherent set of detached Input products."""
 
 

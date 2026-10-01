@@ -274,7 +274,7 @@ class _InputDocument:
         self.set_canvas_operation = object()
         self.current_canvas_operation = object()
         self.export_mask_image = object()
-        self.generation_capture = _GenerationCapture()
+        self.export_capture = _GenerationCapture()
         self.editable_persistence = object()
         self.tool_options = _ToolOptions()
         self.preview_bindings = object()

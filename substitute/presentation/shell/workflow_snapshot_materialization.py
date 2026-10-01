@@ -31,6 +31,7 @@ from typing import Protocol
 from qfluentwidgets import FluentIcon as FIF  # type: ignore[import-untyped]
 
 from substitute.domain.generation.seed_control import SeedControlState
+from substitute.domain.workflow import WorkflowState
 from substitute.domain.comfy_workflow import (
     CanonicalCubeGraphAnalysis,
     DirectWorkflowState,
@@ -146,6 +147,13 @@ class CubeLoaderProtocol(Protocol):
         """Queue one cube for async load."""
 
 
+class RecipeMaskReferenceRestorationPort(Protocol):
+    """Restore scalar mask provenance before canonical recipe surfaces publish."""
+
+    def restore(self, workflow: WorkflowState) -> None:
+        """Register explicit recipe mask sources without changing authored values."""
+
+
 class SnapshotMaterializationView(Protocol):
     """Describe the shell surface consumed by snapshot materialization."""
 
@@ -156,6 +164,7 @@ class SnapshotMaterializationView(Protocol):
     active_override_manager: OverrideManagerProtocol | None
     editor_busy: EditorBusyControllerProtocol
     _pending_cubes: dict[str, int]
+    recipe_mask_reference_restoration: RecipeMaskReferenceRestorationPort
 
 
 class WorkflowSnapshotMaterializer:
@@ -280,6 +289,11 @@ class WorkflowSnapshotMaterializer:
                     cube_analysis=cube_graph_analysis,
                 )
             )
+            if not isinstance(target_workflow, WorkflowState):
+                raise TypeError(
+                    "Canonical recipe materialization requires WorkflowState"
+                )
+            view.recipe_mask_reference_restoration.restore(target_workflow)
             graph_installed = True
             log_debug(
                 _LOGGER,

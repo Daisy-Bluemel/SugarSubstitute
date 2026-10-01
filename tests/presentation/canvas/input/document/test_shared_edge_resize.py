@@ -140,7 +140,7 @@ def test_mounted_input_masks_resize_one_shared_edge_and_export_aligned(
     assert pixel_changes == []
     first = document.canvas.captureMaskExport(first_mask_id)
     second = document.canvas.captureMaskExport(second_mask_id)
-    source = document.generation_capture.capture(image_ids=(image_id,), mask_ids=())
+    source = document.export_capture.capture(image_ids=(image_id,), mask_ids=())
     assert first is not None and second is not None and source is not None
     assert source.images[image_id].image.size() == QSize(200, 100)
     assert first.image.size() == second.image.size() == QSize(200, 100)

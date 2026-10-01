@@ -70,6 +70,10 @@ def publish_input_canvas_composition(
     shell.input_generation_snapshot_service = (
         composition.input_generation_snapshot_service
     )
+    shell.input_recipe_save_preparation = composition.input_recipe_save_preparation
+    shell.recipe_mask_reference_restoration = (
+        composition.recipe_mask_reference_restoration
+    )
     shell.input_editable_document_lifecycle = (
         composition.input_editable_document_lifecycle
     )

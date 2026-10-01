@@ -26,8 +26,8 @@ from cutecanvas import (
 )
 from PySide6.QtGui import QImage
 
-from substitute.presentation.canvas.input.input_generation_capture import (
-    InputDocumentGenerationCapture,
+from substitute.presentation.canvas.input.input_document_capture import (
+    InputDocumentExportCapture,
 )
 
 
@@ -76,7 +76,7 @@ def test_capture_retries_when_edit_lands_between_image_and_mask_products() -> No
             revision["value"] += 1
         return snapshot
 
-    capture = InputDocumentGenerationCapture(
+    capture = InputDocumentExportCapture(
         composition_for_image=lambda requested: requested,
         composition_for_mask=lambda _requested: image_id,
         content_reference=stable_reference,
@@ -126,7 +126,7 @@ def test_capture_fails_closed_under_continuous_hostile_mutation() -> None:
             _image(),
         )
 
-    capture = InputDocumentGenerationCapture(
+    capture = InputDocumentExportCapture(
         composition_for_image=lambda requested: requested,
         composition_for_mask=lambda _requested: image_id,
         content_reference=reference,

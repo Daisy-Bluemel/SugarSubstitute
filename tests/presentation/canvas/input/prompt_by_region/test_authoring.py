@@ -365,7 +365,7 @@ def test_prompt_by_region_load_author_restore_and_stage(
         field_key="image",
     ) == [before_paths[1]]
     assert (
-        canvas.document.generation_capture.capture(
+        canvas.document.export_capture.capture(
             image_ids=(image_id,),
             mask_ids=workflow.canvas.mask_ids(),
         )

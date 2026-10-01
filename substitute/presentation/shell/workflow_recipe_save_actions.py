@@ -34,6 +34,10 @@ from substitute.application.errors import (
     SubstituteOperationContext,
 )
 from substitute.application.recipes import RecipeIoService
+from substitute.application.recipes.workflow_recipe_save_service import (
+    RecipeInputPreparationPort,
+    WorkflowRecipeSaveService,
+)
 from substitute.application.recipes.sugarscript_graph_projection import (
     UnsupportedSugarScriptGraphError,
     explicit_sugarscript_connections,
@@ -45,6 +49,7 @@ from substitute.domain.workflow import WorkflowState
 from substitute.presentation.errors import ErrorPresenter, ErrorReportPresenterProtocol
 from substitute.presentation.shell.workflow_file_context import WorkflowFileContext
 from substitute.shared.logging.logger import get_logger, log_exception
+from substitute.shared.util.path_safety import validate_top_level_name
 
 _LOGGER = get_logger("presentation.shell.workflow_recipe_save_actions")
 
@@ -89,6 +94,10 @@ class WorkflowRecipeSaveView(Protocol):
     @property
     def recipe_io_service(self) -> RecipeIoService:
         """Return the recipe persistence use-case owner."""
+
+    @property
+    def input_recipe_save_preparation(self) -> RecipeInputPreparationPort:
+        """Return the live Input mask capture and immutable-product owner."""
 
     def get_active_workflow(self) -> WorkflowState:
         """Return the authoritative active workflow."""
@@ -162,22 +171,20 @@ class WorkflowRecipeSaveActions:
                     Path(selected).resolve()
                 )
             scopes = self._context.global_override_scopes()
-            if file_dialog is None:
-                destination = (
-                    view.recipe_io_service.save_workflow_recipe_to_default_path(
-                        workflow_name,
-                        workflow=workflow,
-                        sugar_scripts_dir=root,
-                        global_override_scopes=scopes,
-                    )
-                )
-            else:
-                view.recipe_io_service.save_workflow_recipe(
-                    destination,
-                    workflow_name=workflow_name,
-                    workflow=workflow,
-                    global_override_scopes=scopes,
-                )
+            WorkflowRecipeSaveService(
+                recipes=view.recipe_io_service,
+                input_preparation=lambda: view.input_recipe_save_preparation,
+            ).save(
+                destination=destination,
+                workflow_id=workflow_id,
+                workflow_name=(
+                    validate_top_level_name(workflow_name, subject="Workflow")
+                    if file_dialog is None
+                    else workflow_name
+                ),
+                workflow=workflow,
+                global_override_scopes=scopes,
+            )
             self._context.mark_saved(workflow_id, destination)
             return True
         except UnsupportedSugarScriptGraphError:

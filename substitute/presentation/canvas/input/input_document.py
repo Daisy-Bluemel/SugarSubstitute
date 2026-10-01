@@ -60,8 +60,8 @@ from substitute.presentation.canvas.input.input_document_mask_opacity_history im
 from substitute.presentation.canvas.input.input_document_tool_options import (
     InputDocumentToolOptions,
 )
-from substitute.presentation.canvas.input.input_generation_capture import (
-    InputDocumentGenerationCapture,
+from substitute.presentation.canvas.input.input_document_capture import (
+    InputDocumentExportCapture,
 )
 from substitute.shared.logging.logger import get_logger, log_debug, log_warning
 
@@ -155,7 +155,7 @@ class InputCanvasDocument(QObject):
             mask_layer_for_image=self._catalog.mask_layer_for_image,
             view_lifetime=self._view_lifetime,
         )
-        self._generation_capture = InputDocumentGenerationCapture(
+        self._export_capture = InputDocumentExportCapture(
             composition_for_image=self._catalog.composition_for_image,
             composition_for_mask=self._catalog.composition_for_mask,
             content_reference=self._document.content_reference,
@@ -211,9 +211,9 @@ class InputCanvasDocument(QObject):
         return self._preview_bindings
 
     @property
-    def generation_capture(self) -> InputDocumentGenerationCapture:
-        """Return coherent Input generation capture without materialization policy."""
-        return self._generation_capture
+    def export_capture(self) -> InputDocumentExportCapture:
+        """Return coherent Input export capture without materialization policy."""
+        return self._export_capture
 
     @property
     def editable_persistence(self) -> InputDocumentPersistence:

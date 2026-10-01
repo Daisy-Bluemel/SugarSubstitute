@@ -30,8 +30,8 @@ from substitute.application.workflows.generation_input_image_selection_service i
     GenerationInputImageSelection,
 )
 from substitute.domain.workflow import WorkflowState
-from substitute.presentation.canvas.input.input_generation_capture import (
-    InputGenerationCapture,
+from substitute.presentation.canvas.input.input_document_capture import (
+    InputDocumentCapture,
 )
 from substitute.presentation.canvas.input.input_generation_image_materializer import (
     InputGenerationImageMaterializer,
@@ -68,11 +68,11 @@ def test_generation_without_input_canvas_captures_an_empty_document_bundle() -> 
         *,
         image_ids: tuple[UUID, ...],
         mask_ids: tuple[UUID, ...],
-    ) -> InputGenerationCapture:
+    ) -> InputDocumentCapture:
         """Record the empty capture boundary used by a text-only workflow."""
 
         captured_requests.append((image_ids, mask_ids))
-        return InputGenerationCapture(images={}, masks={})
+        return InputDocumentCapture(images={}, masks={})
 
     copy_materializer = SimpleNamespace(
         prepare_workflow=lambda **kwargs: copy.deepcopy(kwargs["workflow"])
@@ -100,7 +100,7 @@ def test_generation_materializes_one_coherent_bundle_without_mutating_authoring(
     mask_id = uuid4()
     image_pixels = _image(QColor("red"))
     mask_pixels = _mask(0)
-    capture = InputGenerationCapture(
+    capture = InputDocumentCapture(
         images={
             image_id: EmbeddedImageExportSnapshot(
                 image_id,
@@ -170,7 +170,7 @@ def test_generation_blocks_before_any_mask_write_when_image_product_fails(
     image_id = uuid4()
     mask_id = uuid4()
     workflow = _workflow(image_id, mask_id)
-    capture = InputGenerationCapture(
+    capture = InputDocumentCapture(
         images={
             image_id: EmbeddedImageExportSnapshot(
                 image_id,
@@ -222,7 +222,7 @@ def test_generation_materializes_synthetic_canvas_masks_without_backing_image(
     image_id = uuid4()
     mask_id = uuid4()
     workflow = _synthetic_workflow(image_id, mask_id)
-    capture = InputGenerationCapture(
+    capture = InputDocumentCapture(
         images={},
         masks={
             mask_id: MaskExportSnapshot(
@@ -238,7 +238,7 @@ def test_generation_materializes_synthetic_canvas_masks_without_backing_image(
         *,
         image_ids: tuple[UUID, ...],
         mask_ids: tuple[UUID, ...],
-    ) -> InputGenerationCapture:
+    ) -> InputDocumentCapture:
         """Require generation to request only the graph-owned mask product."""
 
         assert image_ids == ()
@@ -289,7 +289,7 @@ def test_generation_fails_before_capture_when_canvas_surface_is_stale(
     io = _Io(tmp_path)
     associations = _Associations()
 
-    def unexpected_capture(**_kwargs: object) -> InputGenerationCapture:
+    def unexpected_capture(**_kwargs: object) -> InputDocumentCapture:
         """Reject capture after graph authority resolution has failed."""
 
         raise AssertionError("capture must not run")

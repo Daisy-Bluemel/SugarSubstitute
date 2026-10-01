@@ -39,6 +39,7 @@ from tests.presentation.shell.file_actions.support import (
     _EditorPanel,
 )
 from tests.support.canonical_cube_graph import graph_backed_cube_workflow
+from substitute.domain.workflow import WorkflowState
 
 
 def test_canonical_graph_precedes_editor_and_mask_projection() -> None:
@@ -135,6 +136,17 @@ def test_recipe_materializer_projects_masks_from_installed_graph(
     events: list[tuple[str, str]] = []
     queued: list[tuple[CubeLoadUiCallbacks, dict[str, object]]] = []
 
+    class _MaskReferences:
+        """Observe the required provenance boundary before any surface appears."""
+
+        def restore(self, workflow: WorkflowState) -> None:
+            """Require the complete canonical graph before restoring mask sources."""
+
+            assert workflow is target
+            assert workflow.direct_workflow is not None
+            assert workflow.stack_order == ["Region", "Upscale"]
+            events.append(("restore", "masks"))
+
     def refresh_async(
         _workflow_id: str,
         alias: str,
@@ -181,6 +193,7 @@ def test_recipe_materializer_projects_masks_from_installed_graph(
         active_override_manager=None,
         editor_busy=_EditorBusyRecorder(),
         _pending_cubes={},
+        recipe_mask_reference_restoration=_MaskReferences(),
     )
 
     class _IconProvider:
@@ -257,6 +270,7 @@ def test_recipe_materializer_projects_masks_from_installed_graph(
     assert target.direct_workflow is not None
     assert target.stack_order == ["Region", "Upscale"]
     assert events == [
+        ("restore", "masks"),
         ("refresh", "Region"),
         ("materialize", "Region"),
         ("refresh", "Upscale"),
