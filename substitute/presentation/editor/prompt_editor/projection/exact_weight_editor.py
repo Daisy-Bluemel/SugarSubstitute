@@ -202,7 +202,7 @@ class PromptExactWeightEditor(QLineEdit):
         )
 
     def refresh_geometry(self) -> None:
-        """Fit the native input to current prepared token geometry."""
+        """Snap text horizontally without trimming padded glyph and caret bounds."""
 
         if not self.active:
             self.hide()
@@ -212,7 +212,9 @@ class PromptExactWeightEditor(QLineEdit):
         if rect is None:
             self.hide()
             return
-        self.setGeometry(rect.adjusted(-2, -1, 2, 1).toAlignedRect())
+        geometry = rect.adjusted(-2, -1, 2, 1).toAlignedRect()
+        geometry.moveLeft(round(rect.left()) - 2)
+        self.setGeometry(geometry)
         self.raise_()
 
     def handle_key(self, event: QKeyEvent) -> bool:
