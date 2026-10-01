@@ -21,6 +21,9 @@ from __future__ import annotations
 import locale
 import sys
 import ctypes
+from typing import TypeGuard
+
+from sugarsubstitute_shared.windows_ctypes import load_windows_library
 
 from substitute.application.ports import SpellCheckGateway
 from substitute.shared.logging.logger import get_logger, log_info, log_warning
@@ -49,7 +52,9 @@ def _windows_default_language_tag() -> str:
 
     buffer = ctypes.create_unicode_buffer(85)
     try:
-        length = ctypes.windll.kernel32.GetUserDefaultLocaleName(buffer, len(buffer))
+        length = load_windows_library("kernel32").GetUserDefaultLocaleName(
+            buffer, len(buffer)
+        )
     except Exception:
         length = 0
     if length > 0 and buffer.value.strip():
@@ -57,7 +62,7 @@ def _windows_default_language_tag() -> str:
     return "en-US"
 
 
-def _language_tag_looks_portable(language: object) -> bool:
+def _language_tag_looks_portable(language: object) -> TypeGuard[str]:
     """Return whether a locale string resembles a language-region tag."""
 
     if not isinstance(language, str):

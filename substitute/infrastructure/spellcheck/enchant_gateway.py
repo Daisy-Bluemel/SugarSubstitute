@@ -18,12 +18,57 @@
 
 from __future__ import annotations
 
+import importlib
 import sys
-from typing import Any
+from typing import Protocol, runtime_checkable
 
 from substitute.shared.logging.logger import get_logger, log_warning
 
 _LOGGER = get_logger("infrastructure.spellcheck.enchant")
+
+
+@runtime_checkable
+class _EnchantDictionary(Protocol):
+    """Describe the PyEnchant word operations consumed by this adapter."""
+
+    def check(self, word: str) -> bool:
+        """Report whether the dictionary accepts a word."""
+
+    def suggest(self, word: str) -> list[str]:
+        """Return provider-ordered corrections for a word."""
+
+    def add_to_session(self, word: str) -> None:
+        """Accept a word in the current dictionary session."""
+
+    def add(self, word: str) -> None:
+        """Persist a word in the provider's personal dictionary."""
+
+
+@runtime_checkable
+class _EnchantBroker(Protocol):
+    """Describe dictionary discovery before validating the returned provider."""
+
+    def dict_exists(self, tag: str) -> bool:
+        """Report whether a language dictionary is installed."""
+
+    def request_dict(self, tag: str) -> object:
+        """Return an external dictionary whose callable surface needs validation."""
+
+
+@runtime_checkable
+class _EnchantProviderOrdering(Protocol):
+    """Describe advisory ordering independently of required dictionary operations."""
+
+    def set_ordering(self, tag: str, ordering: str) -> None:
+        """Set provider precedence for the requested language pattern."""
+
+
+@runtime_checkable
+class _EnchantModule(Protocol):
+    """Describe the lazy optional import before validating its broker."""
+
+    def Broker(self) -> object:
+        """Construct an external broker whose callable surface needs validation."""
 
 
 class EnchantSpellCheckGateway:
@@ -33,13 +78,24 @@ class EnchantSpellCheckGateway:
         """Load the requested Enchant dictionary when available."""
 
         self._language_tag = language_tag
-        self._dictionary: Any | None = None
+        self._dictionary: _EnchantDictionary | None = None
         self._reason: str | None = None
         try:
-            import enchant  # type: ignore[import-not-found]
-
+            enchant = importlib.import_module("enchant")
+            if not isinstance(enchant, _EnchantModule) or not callable(enchant.Broker):
+                raise TypeError("PyEnchant module does not expose a callable Broker.")
             broker = enchant.Broker()
+            if not isinstance(broker, _EnchantBroker) or not all(
+                callable(method) for method in (broker.dict_exists, broker.request_dict)
+            ):
+                raise TypeError(
+                    "Enchant broker does not expose the required dictionary methods."
+                )
             try:
+                if not isinstance(broker, _EnchantProviderOrdering) or not callable(
+                    broker.set_ordering
+                ):
+                    raise TypeError("Enchant provider ordering is unavailable.")
                 broker.set_ordering("*", "nuspell,hunspell,aspell")
             except Exception:
                 log_warning(
@@ -51,7 +107,20 @@ class EnchantSpellCheckGateway:
             if not broker.dict_exists(language_tag):
                 self._reason = f"No Enchant dictionary is installed for {language_tag}."
                 return
-            self._dictionary = broker.request_dict(language_tag)
+            dictionary = broker.request_dict(language_tag)
+            if not isinstance(dictionary, _EnchantDictionary) or not all(
+                callable(method)
+                for method in (
+                    dictionary.check,
+                    dictionary.suggest,
+                    dictionary.add_to_session,
+                    dictionary.add,
+                )
+            ):
+                raise TypeError(
+                    "Enchant dictionary does not expose the required word methods."
+                )
+            self._dictionary = dictionary
         except ImportError:
             self._reason = "PyEnchant is not installed."
         except Exception as error:
