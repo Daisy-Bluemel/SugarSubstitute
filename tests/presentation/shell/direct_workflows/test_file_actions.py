@@ -354,6 +354,7 @@ def test_async_model_resolution_keeps_its_original_tab_target(tmp_path: Path) ->
     view.workflow_session_service.workflows["wf-2"] = other_workflow
     view.workflow_tabbar.itemMap["wf-2"] = other_tab
     refreshes: list[str] = []
+    materializations: list[tuple[str, str]] = []
     controller = _DeferredModelResolutionController()
     actions = DirectWorkflowFileActions(
         view=view,
@@ -363,6 +364,9 @@ def test_async_model_resolution_keeps_its_original_tab_target(tmp_path: Path) ->
         ),
         add_workflow_tab=lambda: None,
         refresh_active_workflow=lambda: refreshes.append("refresh"),
+        materialize_loaded_section=lambda workflow_id, section_key: (
+            materializations.append((workflow_id, section_key))
+        ),
         model_resolution_controller_provider=lambda: cast(
             DirectWorkflowModelResolutionController, controller
         ),
@@ -377,6 +381,7 @@ def test_async_model_resolution_keeps_its_original_tab_target(tmp_path: Path) ->
     assert target_tab.text() == "portable-workflow"
     assert other_tab.text() == "Other Workflow"
     assert refreshes == []
+    assert materializations == []
 
 
 class _FailingModelResolutionController:

@@ -35,7 +35,7 @@ from substitute.domain.comfy_workflow import DirectWorkflowState
 from substitute.domain.common import JsonObject
 from substitute.application.errors import SubstituteOperationContext
 from substitute.application.workflows.editor_projection_service import (
-    DIRECT_WORKFLOW_SECTION_KEY,
+    WorkflowEditorProjectionService,
 )
 from substitute.presentation.errors import ErrorReportPresenterProtocol
 from substitute.shared.logging.logger import get_logger, log_exception, log_info
@@ -102,6 +102,7 @@ class DirectWorkflowFileActions:
         self._add_workflow_tab = add_workflow_tab
         self._refresh_active_workflow = refresh_active_workflow
         self._materialize_loaded_section = materialize_loaded_section
+        self._editor_projection_service = WorkflowEditorProjectionService()
         self._error_presenter = error_presenter
         self._target_resolver = target_resolver or WorkflowDocumentTargetResolver()
         self._model_resolution_controller_provider = (
@@ -196,7 +197,7 @@ class DirectWorkflowFileActions:
         start_nodepack_recovery: bool = True,
         mark_saved: bool = True,
     ) -> str:
-        """Mount one fully resolved direct workflow into its document target."""
+        """Mount the canonical document and materialize its projected input sections."""
 
         session = self._view.workflow_session_service
         workflows = getattr(session, "workflows", None)
@@ -216,10 +217,10 @@ class DirectWorkflowFileActions:
         if target_workflow_id == session.active_workflow_id:
             self._refresh_active_workflow()
             if self._materialize_loaded_section is not None:
-                self._materialize_loaded_section(
-                    target_workflow_id,
-                    DIRECT_WORKFLOW_SECTION_KEY,
-                )
+                for section_key in self._editor_projection_service.project(
+                    workflow
+                ).order:
+                    self._materialize_loaded_section(target_workflow_id, section_key)
         nodes = document.buffer.get("nodes")
         log_info(
             _LOGGER,
