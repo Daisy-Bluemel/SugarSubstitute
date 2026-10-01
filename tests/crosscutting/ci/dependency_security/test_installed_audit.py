@@ -29,10 +29,10 @@ import pytest
 from tools.ci.audit_installed_dependencies import InstalledDependencyAudit, main
 
 _ARCHIVE = (
-    "https://github.com/Artificial-Sweetener/CuteMica/archive/"
-    "5cbf43d201526e004f28f86785714c56f37067bc.tar.gz"
+    "https://github.com/Daisy-Bluemel/CuteMica/archive/"
+    "831ec759d867ddd566bf2ec44154d4577ea8b8ee.tar.gz"
 )
-_DIGEST = "46f6e27b8dd9df7969d279778ab66e4595432b4394c42e097e9ae58d9e21d617"
+_DIGEST = "d11cbb7a4c42d0a1078daf7ce374c4a242986603dbd8cce4d74b516aeb0e1d2b"
 
 
 def _source_json(
