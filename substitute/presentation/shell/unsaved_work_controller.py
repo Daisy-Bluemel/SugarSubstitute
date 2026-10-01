@@ -20,14 +20,12 @@ from __future__ import annotations
 
 from typing import Any, Protocol, cast
 
-from PySide6.QtWidgets import QMessageBox, QWidget
+from PySide6.QtWidgets import QWidget
 
 from substitute.application.workflows.unsaved_work_service import (
     UnsavedWorkDecision,
 )
-from sugarsubstitute_shared.presentation.localization import (
-    translate_application_message,
-)
+from substitute.presentation.dialogs.unsaved_work_dialog import UnsavedWorkDialog
 
 
 class UnsavedWorkPrompt(Protocol):
@@ -43,7 +41,7 @@ class UnsavedWorkPrompt(Protocol):
 
 
 class QtUnsavedWorkPrompt:
-    """Render the localized native dirty-document decision dialog."""
+    """Render dirty-document decisions with the application's shared Fluent modal."""
 
     def decide(
         self,
@@ -51,43 +49,14 @@ class QtUnsavedWorkPrompt:
         parent: QWidget,
         workflow_name: str,
     ) -> UnsavedWorkDecision:
-        """Ask whether to save, discard, or cancel the destructive action."""
+        """Return one explicit decision and release this prompt's dialog owner."""
 
-        dialog = QMessageBox(parent)
-        dialog.setIcon(QMessageBox.Icon.Warning)
-        dialog.setWindowTitle(translate_application_message("Unsaved work"))
-        dialog.setText(
-            translate_application_message(
-                "Save changes to “%1” before continuing?",
-                workflow_name,
-            )
-        )
-        dialog.setInformativeText(
-            translate_application_message(
-                "A recovery copy is kept, but explicit saves are the durable project file."
-            )
-        )
-        save_button = dialog.addButton(
-            translate_application_message("Save"),
-            QMessageBox.ButtonRole.AcceptRole,
-        )
-        discard_button = dialog.addButton(
-            translate_application_message("Don't Save"),
-            QMessageBox.ButtonRole.DestructiveRole,
-        )
-        cancel_button = dialog.addButton(
-            translate_application_message("Cancel"),
-            QMessageBox.ButtonRole.RejectRole,
-        )
-        dialog.setDefaultButton(cast(Any, save_button))
-        dialog.setEscapeButton(cast(Any, cancel_button))
-        dialog.exec()
-        clicked = dialog.clickedButton()
-        if clicked is save_button:
-            return UnsavedWorkDecision.SAVE
-        if clicked is discard_button:
-            return UnsavedWorkDecision.DISCARD
-        return UnsavedWorkDecision.CANCEL
+        dialog = UnsavedWorkDialog(parent=parent, workflow_name=workflow_name)
+        try:
+            dialog.exec()
+            return dialog.decision
+        finally:
+            dialog.deleteLater()
 
 
 class UnsavedWorkController:
