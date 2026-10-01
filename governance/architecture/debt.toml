@@ -590,11 +590,11 @@ next_extraction = "Extract catalog refresh and cube loading from picker draft an
 id = "SS-ARCH-088"
 owner = "workspace file workflows"
 paths = ["substitute/presentation/shell/workspace_file_actions.py"]
-fingerprint = "sha256:ea79068143e215fe6d17e5d7c52a08f9a899538ce1b60a06e1690b926ebe3a26"
+fingerprint = "sha256:1c1b489b7eaba733a16b9a3bf6bd695b0e093ae4228e0b03d8a63ea288a7b715"
 issue = "chore:SS-ARCH-088"
 review_by = 2026-12-15
 responsibilities = [
-  "workflow save, load, and export dialogs",
+  "workflow load/export dialogs and explicit-save collaborator composition",
   "recipe parsing and workspace materialization",
   "recipe model resolution and download coordination",
   "model refresh after acquisition",

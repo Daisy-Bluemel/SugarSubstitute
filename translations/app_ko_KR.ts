@@ -120,7 +120,7 @@ Prompt preview:
       <translation>확장 프로그램 요청자 %1개 | %2 | 요약: %3</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="169"></location>
+      <location filename="../substitute/application/errors.py" line="170"></location>
       <source>%1 failed</source>
       <translation>%1 실패</translation>
     </message>
@@ -899,7 +899,7 @@ This is taking much longer than expected</source>
       <translation>작업 취소</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="439"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="436"></location>
       <source>Cancel loading</source>
       <translation>불러오기 취소</translation>
     </message>
@@ -922,6 +922,11 @@ This is taking much longer than expected</source>
       <location filename="../substitute/presentation/shell/model_download_progress.py" line="40"></location>
       <source>Cancelling the model download.</source>
       <translation>모델 다운로드를 취소하는 중입니다.</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="188"></location>
+      <source>Cannot save as Sugar Script</source>
+      <translation>Sugar 스크립트로 저장할 수 없음</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/workflows/cube_item.py" line="315"></location>
@@ -1644,7 +1649,7 @@ This is taking much longer than expected</source>
       <translation>Comfy 환경 상태를 사용할 수 없습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="171"></location>
+      <location filename="../substitute/application/errors.py" line="172"></location>
       <source>Comfy failed</source>
       <translation>Comfy 실패</translation>
     </message>
@@ -2269,7 +2274,7 @@ This is taking much longer than expected</source>
       <translation>큐브 라이브러리</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="309"></location>
+      <location filename="../substitute/application/errors.py" line="310"></location>
       <source>Cube Library Notice</source>
       <translation>큐브 라이브러리 알림</translation>
     </message>
@@ -2947,7 +2952,7 @@ Install these nodes now?</source>
       <translation>Comfy 워크플로로 내보내기...</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="776"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="614"></location>
       <source>Export workflow failed</source>
       <translation>워크플로 내보내기 실패</translation>
     </message>
@@ -2998,7 +3003,7 @@ Install these nodes now?</source>
       <translation>생성 리스너 세션에 연결하지 못했습니다</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="777"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="615"></location>
       <source>Failed to export workflow: %1</source>
       <translation>워크플로를 내보내지 못했습니다: %1</translation>
     </message>
@@ -3018,7 +3023,7 @@ Install these nodes now?</source>
       <translation>생성된 이미지를 불러오지 못했습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1363"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1203"></location>
       <source>Failed to load recipe: %1</source>
       <translation>레시피를 불러오지 못했습니다: %1</translation>
     </message>
@@ -3195,7 +3200,7 @@ Install these nodes now?</source>
       <translation>차세대 GPU</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/main_window_signal_binder.py" line="451"></location>
+      <location filename="../substitute/presentation/shell/main_window_signal_binder.py" line="453"></location>
       <source>GUI restart is not available in this session.</source>
       <translation>이 세션에서는 GUI를 다시 시작할 수 없습니다.</translation>
     </message>
@@ -3395,7 +3400,7 @@ Install these nodes now?</source>
       <translation>콘텐츠 환경 설정에 의해 숨겨짐</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="455"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="452"></location>
       <source>Hide Comfy output</source>
       <translation>Comfy 출력 숨기기</translation>
     </message>
@@ -3890,7 +3895,7 @@ Install these nodes now?</source>
       <translation>불러오기 오류</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1362"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1202"></location>
       <source>Load recipe failed</source>
       <translation>레시피 불러오기 실패</translation>
     </message>
@@ -5332,7 +5337,7 @@ I’ll bring my own</source>
       <translation>프롬프트 검증 오류</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="226"></location>
+      <location filename="../substitute/application/errors.py" line="227"></location>
       <source>Prompt validation failed</source>
       <translation>프롬프트 검증 실패</translation>
     </message>
@@ -6061,7 +6066,7 @@ No known extension claimant.</source>
       <translation>Sugar Substitute 실행 시작 화면을 실행합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/shared_splash_host.py" line="424"></location>
+      <location filename="../substitute/app/bootstrap/shared_splash_host.py" line="446"></location>
       <source>Run SugarSubstitute splash host.</source>
       <translation>SugarSubstitute 시작 화면 호스트를 실행합니다.</translation>
     </message>
@@ -6154,6 +6159,11 @@ No known extension claimant.</source>
       <location filename="../substitute/presentation/shell/app_orb_menu.py" line="49"></location>
       <source>Save Sugar Script As...</source>
       <translation>다른 이름으로 Sugar 스크립트 저장...</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="211"></location>
+      <source>Save Sugar Script failed</source>
+      <translation>Sugar 스크립트 저장 실패</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/model_discovery/credential_prompt.py" line="141"></location>
@@ -6551,7 +6561,7 @@ No known extension claimant.</source>
       <translation>%1의 파일 또는 폴더 이름을 줄인 다음 다시 시도하세요.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="455"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="452"></location>
       <source>Show Comfy output</source>
       <translation>Comfy 출력 표시</translation>
     </message>
@@ -6808,7 +6818,7 @@ Then create an API key in Account Settings and paste it here.</source>
       <translation>평소 사용하는 바로 가기, 스크립트 또는 실행기로 이 ComfyUI 설치를 시작하세요. 이 설치 프로그램은 열어 두세요. Substitute가 자동으로 감지합니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/early_launch_splash.py" line="111"></location>
+      <location filename="../substitute/app/bootstrap/early_launch_splash.py" line="125"></location>
       <source>Starting SugarSubstitute.</source>
       <translation>SugarSubstitute를 시작하는 중입니다.</translation>
     </message>
@@ -7271,6 +7281,11 @@ Then create an API key in Account Settings and paste it here.</source>
       <location filename="../substitute/presentation/onboarding/readiness_issue_presenter.py" line="66"></location>
       <source>Substitute's saved folder settings need to be fixed</source>
       <translation>Substitute에 저장된 폴더 설정을 수정해야 합니다</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="157"></location>
+      <source>Sugar Script (%1)</source>
+      <translation>Sugar 스크립트 (%1)</translation>
     </message>
     <message>
       <location filename="../substitute/app/bootstrap/composition.py" line="2658"></location>
@@ -7862,7 +7877,7 @@ Diagnostic evidence:
       <translation>준비 상태 엔드포인트가 제시간에 응답하지 않았습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="310"></location>
+      <location filename="../substitute/application/errors.py" line="311"></location>
       <source>The recipe loaded with Cube Library warnings.</source>
       <translation>큐브 라이브러리 경고와 함께 레시피를 불러왔습니다.</translation>
     </message>
@@ -7982,14 +7997,19 @@ Diagnostic evidence:
       <translation>종료 명령이 완료되기 전에 제한 시간이 초과되었습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="412"></location>
+      <location filename="../substitute/application/errors.py" line="413"></location>
       <source>The workflow could not be queued because Comfy rejected the prompt.</source>
       <translation>Comfy에서 프롬프트를 거부하여 워크플로를 대기열에 추가하지 못했습니다.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="411"></location>
+      <location filename="../substitute/application/errors.py" line="412"></location>
       <source>The workflow could not be queued.</source>
       <translation>워크플로를 대기열에 추가하지 못했습니다.</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="212"></location>
+      <source>The workflow could not be saved. Your changes remain open.</source>
+      <translation>워크플로를 저장하지 못했습니다. 변경 내용은 열린 워크플로에 그대로 남아 있습니다.</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/shell/synthetic_canvas_resolution_controller.py" line="412"></location>
@@ -8075,6 +8095,11 @@ Diagnostic evidence:
       <location filename="../substitute/presentation/onboarding/comfy_environment_pages.py" line="223"></location>
       <source>This screen updates as soon as the matching ComfyUI process appears.</source>
       <translation>일치하는 ComfyUI 프로세스가 나타나는 즉시 이 화면이 업데이트됩니다.</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="189"></location>
+      <source>This workflow contains nodes that Sugar Script cannot preserve. Choose “Export to Comfy Workflow...” to save the complete workflow.</source>
+      <translation>이 워크플로에는 Sugar 스크립트로 보존할 수 없는 노드가 포함되어 있습니다. 전체 워크플로를 저장하려면 “Comfy 워크플로로 내보내기...”를 선택하세요.</translation>
     </message>
     <message>
       <location filename="../substitute/application/model_metadata/output_thumbnail_service.py" line="174"></location>

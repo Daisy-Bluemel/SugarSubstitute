@@ -14,22 +14,4 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from __future__ import annotations
-
-from pathlib import Path
-from typing import Any, Protocol
-from substitute.presentation.shell.workflow_recipe_save_actions import (
-    WorkflowRecipeSaveActions,
-)
-
-class WorkspaceFileActionView(Protocol): ...
-
-class WorkspaceFileActions:
-    recipe_save_actions: WorkflowRecipeSaveActions
-    def __init__(self, *args: Any, **kwargs: Any) -> None: ...
-    def __getattr__(self, name: str) -> Any: ...
-    def on_export_comfy_workflow_clicked(self, *args: Any, **kwargs: Any) -> None: ...
-    def on_load_clicked(self, *args: Any, **kwargs: Any) -> None: ...
-    def load_recipe_document(
-        self, source_path: Path, *args: Any, **kwargs: Any
-    ) -> str | None: ...
+"""Verify explicit Sugar Script save outcomes and preserved document state."""

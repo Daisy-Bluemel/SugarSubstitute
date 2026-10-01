@@ -742,6 +742,10 @@ Thïs ïs tàkïng müch löngër thàn ëxpëctëd ···⟧</translation>
       <translation>⟦Càncëllïng thë mödël döwnlöàd. ···⟧</translation>
     </message>
     <message>
+      <source>Cannot save as Sugar Script</source>
+      <translation>⟦Cànnöt sàvë às Sügàr Scrïpt ···⟧</translation>
+    </message>
+    <message>
       <source>Capture Cube</source>
       <translation>⟦Càptürë Cübë ···⟧</translation>
     </message>
@@ -4928,6 +4932,10 @@ Nö knöwn ëxtënsïön clàïmànt. ···⟧</translation>
       <translation>⟦Sàvë Sügàr Scrïpt Ås... ···⟧</translation>
     </message>
     <message>
+      <source>Save Sugar Script failed</source>
+      <translation>⟦Sàvë Sügàr Scrïpt fàïlëd ···⟧</translation>
+    </message>
+    <message>
       <source>Save and continue</source>
       <translation>⟦Sàvë ànd cöntïnüë ···⟧</translation>
     </message>
@@ -5822,6 +5830,10 @@ Thën crëàtë àn ÅPÏ këy ïn Åccöünt Sëttïngs ànd pàstë ït hërë
       <translation>⟦Sübstïtütë's sàvëd földër sëttïngs nëëd tö bë fïxëd ···⟧</translation>
     </message>
     <message>
+      <source>Sugar Script (%1)</source>
+      <translation>⟦Sügàr Scrïpt (%1) ···⟧</translation>
+    </message>
+    <message>
       <source>Sugar Substitute</source>
       <translation>⟦Sügàr Sübstïtütë ···⟧</translation>
     </message>
@@ -6408,6 +6420,10 @@ Dïàgnöstïc ëvïdëncë:
       <translation>⟦Thë wörkflöw cöüld nöt bë qüëüëd. ···⟧</translation>
     </message>
     <message>
+      <source>The workflow could not be saved. Your changes remain open.</source>
+      <translation>⟦Thë wörkflöw cöüld nöt bë sàvëd. Yöür chàngës rëmàïn öpën. ···⟧</translation>
+    </message>
+    <message>
       <source>The workflow dimensions could not be updated, so the canvas change was undone.</source>
       <translation>⟦Thë wörkflöw dïmënsïöns cöüld nöt bë üpdàtëd, sö thë cànvàs chàngë wàs ündönë. ···⟧</translation>
     </message>
@@ -6474,6 +6490,10 @@ Dïàgnöstïc ëvïdëncë:
     <message>
       <source>This screen updates as soon as the matching ComfyUI process appears.</source>
       <translation>⟦Thïs scrëën üpdàtës às söön às thë màtchïng CömfyÜÏ pröcëss àppëàrs. ···⟧</translation>
+    </message>
+    <message>
+      <source>This workflow contains nodes that Sugar Script cannot preserve. Choose “Export to Comfy Workflow...” to save the complete workflow.</source>
+      <translation>⟦Thïs wörkflöw cöntàïns nödës thàt Sügàr Scrïpt cànnöt prësërvë. Chöösë “Ëxpört tö Cömfy Wörkflöw...” tö sàvë thë cömplëtë wörkflöw. ···⟧</translation>
     </message>
     <message>
       <source>Thumbnail assignment failed; existing metadata was kept.</source>

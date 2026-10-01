@@ -138,7 +138,9 @@ class UnsavedWorkController:
                 workflow_id,
                 source="unsaved_work_save",
             )
-        return bool(self._shell.workspace_file_actions.on_save_clicked())
+        return bool(
+            self._shell.workspace_file_actions.recipe_save_actions.on_save_clicked()
+        )
 
 
 __all__ = [

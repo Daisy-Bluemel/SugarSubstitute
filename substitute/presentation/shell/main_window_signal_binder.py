@@ -100,9 +100,11 @@ class MainWindowSignalBinder:
                 ),
             )
         )
-        app_orb_menu.saveRequested.connect(file_actions.on_save_clicked)
+        app_orb_menu.saveRequested.connect(
+            file_actions.recipe_save_actions.on_save_clicked
+        )
         app_orb_menu.saveAsRequested.connect(
-            lambda: file_actions.on_save_as_clicked(
+            lambda: file_actions.recipe_save_actions.on_save_as_clicked(
                 file_dialog=QFileDialog,
             )
         )

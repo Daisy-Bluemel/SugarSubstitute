@@ -175,7 +175,7 @@ Prompt preview:
       <translation>%1 个扩展依赖方 | %2 | 摘要来源：%3</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="169"></location>
+      <location filename="../substitute/application/errors.py" line="170"></location>
       <source>%1 failed</source>
       <translation>%1 失败</translation>
     </message>
@@ -954,7 +954,7 @@ This is taking much longer than expected</source>
       <translation>取消任务</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="439"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="436"></location>
       <source>Cancel loading</source>
       <translation>取消加载</translation>
     </message>
@@ -977,6 +977,11 @@ This is taking much longer than expected</source>
       <location filename="../substitute/presentation/shell/model_download_progress.py" line="40"></location>
       <source>Cancelling the model download.</source>
       <translation>正在取消模型下载。</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="188"></location>
+      <source>Cannot save as Sugar Script</source>
+      <translation>无法另存为 Sugar Script</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/workflows/cube_item.py" line="315"></location>
@@ -1699,7 +1704,7 @@ This is taking much longer than expected</source>
       <translation>无法获取 Comfy 环境状态。</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="171"></location>
+      <location filename="../substitute/application/errors.py" line="172"></location>
       <source>Comfy failed</source>
       <translation>Comfy 运行失败</translation>
     </message>
@@ -2324,7 +2329,7 @@ This is taking much longer than expected</source>
       <translation>立方体库</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="309"></location>
+      <location filename="../substitute/application/errors.py" line="310"></location>
       <source>Cube Library Notice</source>
       <translation>立方体库通知</translation>
     </message>
@@ -3002,7 +3007,7 @@ Install these nodes now?</source>
       <translation>导出为 ComfyUI 工作流...</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="776"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="614"></location>
       <source>Export workflow failed</source>
       <translation>导出工作流失败</translation>
     </message>
@@ -3053,7 +3058,7 @@ Install these nodes now?</source>
       <translation>无法连接生成监听会话</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="777"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="615"></location>
       <source>Failed to export workflow: %1</source>
       <translation>无法导出工作流：%1</translation>
     </message>
@@ -3073,7 +3078,7 @@ Install these nodes now?</source>
       <translation>无法加载生成的图像。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1363"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1203"></location>
       <source>Failed to load recipe: %1</source>
       <translation>无法加载配方：%1</translation>
     </message>
@@ -3250,7 +3255,7 @@ Install these nodes now?</source>
       <translation>新一代 GPU</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/main_window_signal_binder.py" line="451"></location>
+      <location filename="../substitute/presentation/shell/main_window_signal_binder.py" line="453"></location>
       <source>GUI restart is not available in this session.</source>
       <translation>此会话中无法重启 GUI。</translation>
     </message>
@@ -3450,7 +3455,7 @@ Install these nodes now?</source>
       <translation>已根据内容偏好隐藏</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="455"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="452"></location>
       <source>Hide Comfy output</source>
       <translation>隐藏 Comfy 输出</translation>
     </message>
@@ -3945,7 +3950,7 @@ Install these nodes now?</source>
       <translation>加载错误</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1362"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1202"></location>
       <source>Load recipe failed</source>
       <translation>加载配方失败</translation>
     </message>
@@ -5387,7 +5392,7 @@ I’ll bring my own</source>
       <translation>提示验证错误</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="226"></location>
+      <location filename="../substitute/application/errors.py" line="227"></location>
       <source>Prompt validation failed</source>
       <translation>提示词验证失败</translation>
     </message>
@@ -6116,7 +6121,7 @@ No known extension claimant.</source>
       <translation>运行 Sugar Substitute 启动画面。</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/shared_splash_host.py" line="424"></location>
+      <location filename="../substitute/app/bootstrap/shared_splash_host.py" line="446"></location>
       <source>Run SugarSubstitute splash host.</source>
       <translation>运行 SugarSubstitute 启动画面宿主。</translation>
     </message>
@@ -6209,6 +6214,11 @@ No known extension claimant.</source>
       <location filename="../substitute/presentation/shell/app_orb_menu.py" line="49"></location>
       <source>Save Sugar Script As...</source>
       <translation>将 Sugar Script 另存为...</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="211"></location>
+      <source>Save Sugar Script failed</source>
+      <translation>保存 Sugar Script 失败</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/model_discovery/credential_prompt.py" line="141"></location>
@@ -6606,7 +6616,7 @@ No known extension claimant.</source>
       <translation>请缩短 %1 中的文件或文件夹名称，然后重试。</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="455"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="452"></location>
       <source>Show Comfy output</source>
       <translation>显示 Comfy 输出</translation>
     </message>
@@ -6863,7 +6873,7 @@ Then create an API key in Account Settings and paste it here.</source>
       <translation>使用您常用的快捷方式、脚本或启动器启动此 ComfyUI 安装。请保持此安装程序打开；Substitute 会自动检测它。</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/early_launch_splash.py" line="111"></location>
+      <location filename="../substitute/app/bootstrap/early_launch_splash.py" line="125"></location>
       <source>Starting SugarSubstitute.</source>
       <translation>正在启动 SugarSubstitute。</translation>
     </message>
@@ -7326,6 +7336,11 @@ Then create an API key in Account Settings and paste it here.</source>
       <location filename="../substitute/presentation/onboarding/readiness_issue_presenter.py" line="66"></location>
       <source>Substitute's saved folder settings need to be fixed</source>
       <translation>Substitute 已保存的文件夹设置需要修复</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="157"></location>
+      <source>Sugar Script (%1)</source>
+      <translation>Sugar Script 文件 (%1)</translation>
     </message>
     <message>
       <location filename="../substitute/app/bootstrap/composition.py" line="2658"></location>
@@ -7917,7 +7932,7 @@ Diagnostic evidence:
       <translation>就绪端点未能及时响应。</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="310"></location>
+      <location filename="../substitute/application/errors.py" line="311"></location>
       <source>The recipe loaded with Cube Library warnings.</source>
       <translation>配方已加载，但立方体库报告了警告。</translation>
     </message>
@@ -8037,14 +8052,19 @@ Diagnostic evidence:
       <translation>终止命令在完成前已超时。</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="412"></location>
+      <location filename="../substitute/application/errors.py" line="413"></location>
       <source>The workflow could not be queued because Comfy rejected the prompt.</source>
       <translation>无法将工作流加入队列，因为 Comfy 拒绝了该提示。</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="411"></location>
+      <location filename="../substitute/application/errors.py" line="412"></location>
       <source>The workflow could not be queued.</source>
       <translation>无法将工作流加入队列。</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="212"></location>
+      <source>The workflow could not be saved. Your changes remain open.</source>
+      <translation>无法保存工作流。工作流仍保持打开，您的更改已保留。</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/shell/synthetic_canvas_resolution_controller.py" line="412"></location>
@@ -8130,6 +8150,11 @@ Diagnostic evidence:
       <location filename="../substitute/presentation/onboarding/comfy_environment_pages.py" line="223"></location>
       <source>This screen updates as soon as the matching ComfyUI process appears.</source>
       <translation>匹配的 ComfyUI 进程出现后，此页面会立即更新。</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="189"></location>
+      <source>This workflow contains nodes that Sugar Script cannot preserve. Choose “Export to Comfy Workflow...” to save the complete workflow.</source>
+      <translation>此工作流包含 Sugar Script 无法保留的节点。请选择“导出为 ComfyUI 工作流...”以保存完整的工作流。</translation>
     </message>
     <message>
       <location filename="../substitute/application/model_metadata/output_thumbnail_service.py" line="174"></location>

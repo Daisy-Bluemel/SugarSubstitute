@@ -175,7 +175,7 @@ Vista previa del prompt:
       <translation>%1 extensiones solicitantes | %2 | resumen: %3</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="169"></location>
+      <location filename="../substitute/application/errors.py" line="170"></location>
       <source>%1 failed</source>
       <translation>%1 fallidos</translation>
     </message>
@@ -954,7 +954,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Cancelar tarea</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="439"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="436"></location>
       <source>Cancel loading</source>
       <translation>Cancelar la carga</translation>
     </message>
@@ -977,6 +977,11 @@ Está tardando mucho más de lo esperado</translation>
       <location filename="../substitute/presentation/shell/model_download_progress.py" line="40"></location>
       <source>Cancelling the model download.</source>
       <translation>Cancelando la descarga del modelo.</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="188"></location>
+      <source>Cannot save as Sugar Script</source>
+      <translation>No se puede guardar como Sugar Script</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/workflows/cube_item.py" line="315"></location>
@@ -1699,7 +1704,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>El estado del entorno de Comfy no está disponible.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="171"></location>
+      <location filename="../substitute/application/errors.py" line="172"></location>
       <source>Comfy failed</source>
       <translation>Comfy ha fallado</translation>
     </message>
@@ -2324,7 +2329,7 @@ Está tardando mucho más de lo esperado</translation>
       <translation>Biblioteca de cubos</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="309"></location>
+      <location filename="../substitute/application/errors.py" line="310"></location>
       <source>Cube Library Notice</source>
       <translation>Aviso de la biblioteca de cubos</translation>
     </message>
@@ -3002,7 +3007,7 @@ Install these nodes now?</source>
       <translation>Exportar como flujo de trabajo de Comfy...</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="776"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="614"></location>
       <source>Export workflow failed</source>
       <translation>No se pudo exportar el flujo de trabajo</translation>
     </message>
@@ -3053,7 +3058,7 @@ Install these nodes now?</source>
       <translation>No se pudo conectar la sesión de escucha de generación</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="777"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="615"></location>
       <source>Failed to export workflow: %1</source>
       <translation>No se pudo exportar el flujo de trabajo: %1</translation>
     </message>
@@ -3073,7 +3078,7 @@ Install these nodes now?</source>
       <translation>No se pudo cargar la imagen generada.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1363"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1203"></location>
       <source>Failed to load recipe: %1</source>
       <translation>No se pudo cargar la receta: %1</translation>
     </message>
@@ -3250,7 +3255,7 @@ Install these nodes now?</source>
       <translation>GPU de nueva generación</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/main_window_signal_binder.py" line="451"></location>
+      <location filename="../substitute/presentation/shell/main_window_signal_binder.py" line="453"></location>
       <source>GUI restart is not available in this session.</source>
       <translation>El reinicio de la interfaz no está disponible en esta sesión.</translation>
     </message>
@@ -3450,7 +3455,7 @@ Install these nodes now?</source>
       <translation>Oculto por las preferencias de contenido</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="455"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="452"></location>
       <source>Hide Comfy output</source>
       <translation>Ocultar la salida de Comfy</translation>
     </message>
@@ -3945,7 +3950,7 @@ Install these nodes now?</source>
       <translation>Error de carga</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1362"></location>
+      <location filename="../substitute/presentation/shell/workspace_file_actions.py" line="1202"></location>
       <source>Load recipe failed</source>
       <translation>No se pudo cargar la receta</translation>
     </message>
@@ -5387,7 +5392,7 @@ Usaré el mío.</translation>
       <translation>Errores de validación del prompt</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="226"></location>
+      <location filename="../substitute/application/errors.py" line="227"></location>
       <source>Prompt validation failed</source>
       <translation>No se pudo validar el prompt</translation>
     </message>
@@ -6116,7 +6121,7 @@ No se conoce ninguna extensión solicitante.</translation>
       <translation>Ejecutar la pantalla de inicio de Sugar Substitute.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/shared_splash_host.py" line="424"></location>
+      <location filename="../substitute/app/bootstrap/shared_splash_host.py" line="446"></location>
       <source>Run SugarSubstitute splash host.</source>
       <translation>Ejecutar el host de la pantalla de inicio de SugarSubstitute.</translation>
     </message>
@@ -6209,6 +6214,11 @@ No se conoce ninguna extensión solicitante.</translation>
       <location filename="../substitute/presentation/shell/app_orb_menu.py" line="49"></location>
       <source>Save Sugar Script As...</source>
       <translation>Guardar Sugar Script como...</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="211"></location>
+      <source>Save Sugar Script failed</source>
+      <translation>No se pudo guardar Sugar Script</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/model_discovery/credential_prompt.py" line="141"></location>
@@ -6606,7 +6616,7 @@ No se conoce ninguna extensión solicitante.</translation>
       <translation>Acorta el nombre de archivo o carpeta en %1 y vuelve a intentarlo.</translation>
     </message>
     <message>
-      <location filename="../substitute/presentation/shell/splash_window.py" line="455"></location>
+      <location filename="../substitute/presentation/shell/splash_window.py" line="452"></location>
       <source>Show Comfy output</source>
       <translation>Mostrar la salida de Comfy</translation>
     </message>
@@ -6863,7 +6873,7 @@ Después, crea una clave API en Configuración de la cuenta y pégala aquí.</tr
       <translation>Inicia esta instalación de ComfyUI con el acceso directo, script o iniciador que uses habitualmente. Mantén abierto este instalador; Substitute la detectará automáticamente.</translation>
     </message>
     <message>
-      <location filename="../substitute/app/bootstrap/early_launch_splash.py" line="111"></location>
+      <location filename="../substitute/app/bootstrap/early_launch_splash.py" line="125"></location>
       <source>Starting SugarSubstitute.</source>
       <translation>Iniciando SugarSubstitute.</translation>
     </message>
@@ -7326,6 +7336,11 @@ Después, crea una clave API en Configuración de la cuenta y pégala aquí.</tr
       <location filename="../substitute/presentation/onboarding/readiness_issue_presenter.py" line="66"></location>
       <source>Substitute's saved folder settings need to be fixed</source>
       <translation>La configuración de carpetas guardada de Substitute necesita corrección</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="157"></location>
+      <source>Sugar Script (%1)</source>
+      <translation>Archivo Sugar Script (%1)</translation>
     </message>
     <message>
       <location filename="../substitute/app/bootstrap/composition.py" line="2658"></location>
@@ -7917,7 +7932,7 @@ Evidencia de diagnóstico:
       <translation>El punto de comprobación de disponibilidad no respondió a tiempo.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="310"></location>
+      <location filename="../substitute/application/errors.py" line="311"></location>
       <source>The recipe loaded with Cube Library warnings.</source>
       <translation>La receta se cargó con advertencias de la biblioteca de cubos.</translation>
     </message>
@@ -8037,14 +8052,19 @@ Evidencia de diagnóstico:
       <translation>El comando de finalización no terminó antes de agotarse el tiempo de espera.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="412"></location>
+      <location filename="../substitute/application/errors.py" line="413"></location>
       <source>The workflow could not be queued because Comfy rejected the prompt.</source>
       <translation>No se pudo añadir el flujo de trabajo a la cola porque Comfy rechazó el prompt.</translation>
     </message>
     <message>
-      <location filename="../substitute/application/errors.py" line="411"></location>
+      <location filename="../substitute/application/errors.py" line="412"></location>
       <source>The workflow could not be queued.</source>
       <translation>No se pudo añadir el flujo de trabajo a la cola.</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="212"></location>
+      <source>The workflow could not be saved. Your changes remain open.</source>
+      <translation>No se pudo guardar el flujo de trabajo. Sigue abierto con tus cambios.</translation>
     </message>
     <message>
       <location filename="../substitute/presentation/shell/synthetic_canvas_resolution_controller.py" line="412"></location>
@@ -8130,6 +8150,11 @@ Evidencia de diagnóstico:
       <location filename="../substitute/presentation/onboarding/comfy_environment_pages.py" line="223"></location>
       <source>This screen updates as soon as the matching ComfyUI process appears.</source>
       <translation>Esta pantalla se actualizará en cuanto aparezca el proceso de ComfyUI correspondiente.</translation>
+    </message>
+    <message>
+      <location filename="../substitute/presentation/shell/workflow_recipe_save_actions.py" line="189"></location>
+      <source>This workflow contains nodes that Sugar Script cannot preserve. Choose “Export to Comfy Workflow...” to save the complete workflow.</source>
+      <translation>Este flujo de trabajo contiene nodos que Sugar Script no puede conservar. Elige «Exportar como flujo de trabajo de Comfy...» para guardar el flujo completo.</translation>
     </message>
     <message>
       <location filename="../substitute/application/model_metadata/output_thumbnail_service.py" line="174"></location>

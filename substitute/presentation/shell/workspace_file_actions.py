@@ -14,7 +14,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""Handle workspace save, load, and export flows in the shell layer."""
+"""Handle workspace load and export flows in the shell layer."""
 
 from __future__ import annotations
 
@@ -55,6 +55,11 @@ from substitute.application.generation import (
 )
 from substitute.application.workflows import (
     normalize_default_workflow_tab_label,
+)
+from substitute.presentation.shell.workflow_file_context import WorkflowFileContext
+from substitute.presentation.shell.workflow_recipe_save_actions import (
+    WorkflowRecipeSaveActions,
+    WorkflowRecipeSaveView,
 )
 from substitute.presentation.shell.workflow_document_target import (
     WorkflowDocumentTargetResolver,
@@ -150,37 +155,6 @@ class WorkflowTabBarProtocol(Protocol):
 
 class RecipeIoServiceProtocol(Protocol):
     """Describe recipe IO operations used by workspace file actions."""
-
-    def build_default_recipe_path(
-        self, workflow_name: str, sugar_scripts_dir: Path
-    ) -> Path:
-        """Build the canonical recipe path for one workflow name."""
-
-    def validate_recipe_destination(
-        self,
-        destination_path: Path,
-    ) -> Path:
-        """Validate a user-selected recipe destination."""
-
-    def save_workflow_recipe_to_default_path(
-        self,
-        workflow_name: str,
-        workflow: object,
-        sugar_scripts_dir: Path,
-        *,
-        global_override_scopes: Mapping[str, object] | None = None,
-    ) -> Path:
-        """Persist the active workflow to its canonical script path."""
-
-    def save_workflow_recipe(
-        self,
-        destination_path: Path,
-        *,
-        workflow_name: str,
-        workflow: object,
-        global_override_scopes: Mapping[str, object] | None = None,
-    ) -> None:
-        """Persist the active workflow recipe."""
 
     def serialize_workflow_to_sugar_script(
         self,
@@ -522,7 +496,7 @@ class WorkspaceFileActionView(Protocol):
 
 
 class WorkspaceFileActions:
-    """Own workspace save, load, and export orchestration."""
+    """Own workspace load and export orchestration and compose explicit-save actions."""
 
     def __init__(
         self,
@@ -550,6 +524,12 @@ class WorkspaceFileActions:
         """Store shell view and collaborator callbacks."""
 
         self._view = view
+        self._file_context = WorkflowFileContext(view)
+        self.recipe_save_actions = WorkflowRecipeSaveActions(
+            cast(WorkflowRecipeSaveView, view),
+            context=self._file_context,
+            error_presenter=error_presenter,
+        )
         self._add_workflow_tab_requested = add_workflow_tab_requested
         self._build_cube_load_ui_callbacks = build_cube_load_ui_callbacks
         self._output_image_registrar = output_image_registrar
@@ -571,148 +551,6 @@ class WorkspaceFileActions:
             build_cube_load_ui_callbacks=build_cube_load_ui_callbacks,
         )
 
-    def _projects_dir(self, projects_dir: Path | None) -> Path:
-        """Resolve the projects root from explicit input or the shell path bundle."""
-
-        if projects_dir is not None:
-            return Path(projects_dir)
-        path_bundle = getattr(self._view, "path_bundle", None)
-        if path_bundle is not None:
-            return Path(path_bundle.projects_dir)
-        return Path(".")
-
-    def _sugar_scripts_dir(self, sugar_scripts_dir: Path | None) -> Path:
-        """Resolve the Sugar script root from explicit input or the path bundle."""
-
-        if sugar_scripts_dir is not None:
-            return Path(sugar_scripts_dir)
-        path_bundle = getattr(self._view, "path_bundle", None)
-        if path_bundle is not None:
-            return Path(path_bundle.sugar_scripts_dir)
-        return Path(".")
-
-    def _active_global_override_scopes(self) -> Mapping[str, object] | None:
-        """Return active override serialization scopes from the current manager."""
-
-        manager = getattr(self._view, "active_override_manager", None)
-        if manager is None:
-            log_info(
-                _LOGGER,
-                "Workspace file action using legacy global override scope",
-                reason="missing_active_override_manager",
-            )
-            return None
-        scope_getter = getattr(manager, "current_serialization_scopes", None)
-        if not callable(scope_getter):
-            log_info(
-                _LOGGER,
-                "Workspace file action using legacy global override scope",
-                reason="missing_scope_getter",
-            )
-            return None
-        scopes = scope_getter()
-        return cast(Mapping[str, object] | None, scopes)
-
-    def on_save_clicked(self, *, sugar_scripts_dir: Path | None = None) -> bool:
-        """Save the active workflow into its workflow-named script directory."""
-
-        view = self._view
-        workflow_name = "untitled_workflow"
-        recipe_path: Path | None = None
-        resolved_sugar_scripts_dir = self._sugar_scripts_dir(sugar_scripts_dir)
-        try:
-            workflow_tab_index = view.workflow_tabbar.currentIndex()
-            if workflow_tab_index >= 0:
-                workflow_name = view.workflow_tabbar.tabItem(workflow_tab_index).text()
-
-            recipe_path = view.recipe_io_service.build_default_recipe_path(
-                workflow_name,
-                resolved_sugar_scripts_dir,
-            )
-            active_workflow = view.get_active_workflow()
-            global_override_scopes = self._active_global_override_scopes()
-            view.recipe_io_service.save_workflow_recipe_to_default_path(
-                workflow_name,
-                workflow=active_workflow,
-                sugar_scripts_dir=resolved_sugar_scripts_dir,
-                global_override_scopes=global_override_scopes,
-            )
-            workflow_id = view.workflow_session_service.active_workflow_id
-            self._mark_workflow_saved(workflow_id, recipe_path)
-            return True
-        except (AttributeError, OSError, RuntimeError, TypeError, ValueError):
-            log_context: dict[str, str] = {
-                "workflow_name": workflow_name,
-                "sugar_scripts_dir": str(resolved_sugar_scripts_dir.resolve()),
-            }
-            if recipe_path is not None:
-                log_context["destination_path"] = str(recipe_path)
-            self._log_exception(_LOGGER, "Failed to save recipe", **log_context)
-            return False
-
-    def on_save_as_clicked(
-        self,
-        *,
-        sugar_scripts_dir: Path | None = None,
-        file_dialog: FileDialogProtocol = _DEFAULT_FILE_DIALOG,
-    ) -> bool:
-        """Save the active workflow to a user-selected destination path."""
-
-        view = self._view
-        workflow_name = "untitled_workflow"
-        destination_path: Path | None = None
-        resolved_sugar_scripts_dir = self._sugar_scripts_dir(sugar_scripts_dir)
-        try:
-            workflow_tab_index = view.workflow_tabbar.currentIndex()
-            if workflow_tab_index >= 0:
-                workflow_name = view.workflow_tabbar.tabItem(workflow_tab_index).text()
-
-            default_path = view.recipe_io_service.build_default_recipe_path(
-                workflow_name,
-                resolved_sugar_scripts_dir,
-            )
-            file_path_str, _ = file_dialog.getSaveFileName(
-                view,
-                "Save Sugar Script As...",
-                str(default_path),
-                "Sugar Script (*.sugar)",
-            )
-            if not file_path_str:
-                return False
-
-            destination_path = Path(file_path_str).resolve()
-            validated_destination_path = (
-                view.recipe_io_service.validate_recipe_destination(destination_path)
-            )
-            active_workflow = view.get_active_workflow()
-            global_override_scopes = self._active_global_override_scopes()
-            view.recipe_io_service.save_workflow_recipe(
-                validated_destination_path,
-                workflow_name=workflow_name,
-                workflow=active_workflow,
-                global_override_scopes=global_override_scopes,
-            )
-            workflow_id = view.workflow_session_service.active_workflow_id
-            self._mark_workflow_saved(workflow_id, validated_destination_path)
-            return True
-        except (AttributeError, OSError, RuntimeError, TypeError, ValueError):
-            log_context: dict[str, str] = {
-                "workflow_name": workflow_name,
-                "sugar_scripts_dir": str(resolved_sugar_scripts_dir.resolve()),
-            }
-            if destination_path is not None:
-                log_context["destination_path"] = str(destination_path)
-            self._log_exception(_LOGGER, "Failed to save recipe as", **log_context)
-            return False
-
-    def _mark_workflow_saved(self, workflow_id: str, source_path: Path) -> None:
-        """Clear explicit-save dirty state after persistence succeeds."""
-
-        service = getattr(self._view, "unsaved_work_service", None)
-        mark_saved = getattr(service, "mark_saved", None)
-        if callable(mark_saved):
-            mark_saved(workflow_id, source_path)
-
     def on_export_comfy_workflow_clicked(
         self,
         *,
@@ -725,14 +563,14 @@ class WorkspaceFileActions:
         view = self._view
         workflow_name = "untitled_workflow"
         destination_path: Path | None = None
-        resolved_output_dir = self._projects_dir(output_dir)
+        resolved_output_dir = self._file_context.projects_dir(output_dir)
         try:
             workflow_tab_index = view.workflow_tabbar.currentIndex()
             if workflow_tab_index >= 0:
                 workflow_name = view.workflow_tabbar.tabItem(workflow_tab_index).text()
 
             active_workflow = view.get_active_workflow()
-            global_override_scopes = self._active_global_override_scopes()
+            global_override_scopes = self._file_context.global_override_scopes()
             sugar_script: str | None = None
             if getattr(active_workflow, "direct_workflow", None) is None:
                 serialize = view.recipe_io_service.serialize_workflow_to_sugar_script
@@ -811,8 +649,10 @@ class WorkspaceFileActions:
     ) -> None:
         """Select one workflow document and route it through a single loader."""
 
-        resolved_projects_dir = self._projects_dir(projects_dir)
-        resolved_sugar_scripts_dir = self._sugar_scripts_dir(sugar_scripts_dir)
+        resolved_projects_dir = self._file_context.projects_dir(projects_dir)
+        resolved_sugar_scripts_dir = self._file_context.sugar_scripts_dir(
+            sugar_scripts_dir
+        )
         selected_path_str, _ = file_dialog.getOpenFileName(
             self._view,
             "Open Workflow",
@@ -868,7 +708,7 @@ class WorkspaceFileActions:
         """Load one recipe document path into a target workflow tab."""
 
         view = self._view
-        resolved_projects_dir = self._projects_dir(projects_dir)
+        resolved_projects_dir = self._file_context.projects_dir(projects_dir)
         current_index = view.workflow_tabbar.currentIndex()
         current_tab_item = view.workflow_tabbar.tabItem(current_index)
         current_id = current_tab_item.routeKey()
@@ -1315,7 +1155,7 @@ class WorkspaceFileActions:
             source_path=source_path,
         )
         _mark_recipe_surfaces_dirty(self._view, target_workflow_id)
-        self._mark_workflow_saved(target_workflow_id, source_path)
+        self._file_context.mark_saved(target_workflow_id, source_path)
 
         if loaded_document.source_kind == "png":
             self._restore_loaded_recipe_png_outputs(
@@ -1928,7 +1768,7 @@ class WorkspaceFileActions:
         """Open one Sugar snapshot in a newly created active workflow tab."""
 
         view = self._view
-        resolved_projects_dir = self._projects_dir(projects_dir)
+        resolved_projects_dir = self._file_context.projects_dir(projects_dir)
         try:
             parsed_script = view.recipe_io_service.parse_recipe_script(
                 sugar_script_text

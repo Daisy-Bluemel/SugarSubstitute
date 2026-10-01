@@ -27,6 +27,10 @@ from substitute.domain.recipes.sugar_script_serializer import (
 )
 
 
+class UnsupportedSugarScriptGraphError(ValueError):
+    """Refuse a valid workflow whose ordinary root nodes would be lost in SugarScript."""
+
+
 def explicit_sugarscript_connections(
     direct: DirectWorkflowState | None,
 ) -> tuple[SugarScriptCubeConnection, ...]:
@@ -53,8 +57,12 @@ def explicit_sugarscript_connections(
         and not isinstance(node["id"], bool)
         and isinstance(node["id"], str | int)
     }
-    if root_node_ids != cube_node_ids:
+    if not cube_node_ids <= root_node_ids:
         raise ValueError(
+            "Canonical Cube analysis references unavailable workflow nodes."
+        )
+    if root_node_ids != cube_node_ids:
+        raise UnsupportedSugarScriptGraphError(
             "SugarScript cannot losslessly save a workflow with non-Cube graph segments."
         )
     aliases_by_instance = {
@@ -79,4 +87,4 @@ def explicit_sugarscript_connections(
     return tuple(result)
 
 
-__all__ = ["explicit_sugarscript_connections"]
+__all__ = ["UnsupportedSugarScriptGraphError", "explicit_sugarscript_connections"]

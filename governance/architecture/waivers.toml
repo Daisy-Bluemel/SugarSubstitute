@@ -510,10 +510,10 @@ owner = "workspace file workflows"
 rule = "STRUCT003"
 path = "substitute/presentation/shell/workspace_file_actions.py"
 kind = "remediation"
-justification = "The assessed file mixes workflow save, load, and export dialogs, recipe parsing and workspace materialization, recipe model resolution and download coordination, model refresh after acquisition, recipe output-sibling restoration, user feedback and active-surface invalidation. Extract recipe model acquisition orchestration and output restoration from file-dialog and workspace persistence presentation."
+justification = "The assessed file mixes workflow load/export dialogs and explicit-save collaborator composition, recipe parsing and workspace materialization, recipe model resolution and download coordination, model refresh after acquisition, recipe output-sibling restoration, user feedback and active-surface invalidation. Extract recipe model acquisition orchestration and output restoration from file-dialog and workspace persistence presentation."
 issue = "chore:SS-ARCH-088"
 review_by = 2026-12-15
-max_lines = 1803
+max_lines = 1662
 next_limit = 1518
 debt = "SS-ARCH-088"
 

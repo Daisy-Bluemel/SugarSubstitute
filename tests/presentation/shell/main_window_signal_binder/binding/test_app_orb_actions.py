@@ -69,8 +69,10 @@ def test_app_orb_menu_routes_file_actions_and_runtime_requests() -> None:
         ),
         workspace_file_actions=SimpleNamespace(
             on_load_clicked=lambda **kwargs: load_calls.append(kwargs),
-            on_save_clicked=lambda: save_calls.append("save"),
-            on_save_as_clicked=lambda **kwargs: save_as_calls.append(kwargs),
+            recipe_save_actions=SimpleNamespace(
+                on_save_clicked=lambda: save_calls.append("save"),
+                on_save_as_clicked=lambda **kwargs: save_as_calls.append(kwargs),
+            ),
             on_export_comfy_workflow_clicked=lambda **kwargs: export_calls.append(
                 kwargs
             ),

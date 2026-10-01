@@ -97,7 +97,9 @@ def _shell(*, save_result: bool = True) -> SimpleNamespace:
         workflow_tabbar=_TabBar(),
         workflow_session_service=session,
         workflow_workspace=SimpleNamespace(activate_workflow=activate),
-        workspace_file_actions=SimpleNamespace(on_save_clicked=save),
+        workspace_file_actions=SimpleNamespace(
+            recipe_save_actions=SimpleNamespace(on_save_clicked=save)
+        ),
         activations=activations,
         saves=saves,
     )
