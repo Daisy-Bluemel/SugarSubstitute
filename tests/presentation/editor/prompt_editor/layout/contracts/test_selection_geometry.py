@@ -21,6 +21,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import QRectF
 from PySide6.QtGui import QColor
+import pytest
 
 from substitute.presentation.editor.prompt_editor.core.projection.caret import (
     PromptProjectionSelection,
@@ -85,6 +86,61 @@ def test_projection_layout_selection_rects_show_selected_line_break() -> None:
         if abs(rect.top() - first_line.top) < 1.0
     )
     assert first_line_right > first_fragment.rect.right() + 4.0
+
+
+@pytest.mark.parametrize("selection_start", (0, 5))
+@pytest.mark.parametrize("right_padding", (5.0, 20.0))
+@pytest.mark.parametrize("reverse", (False, True))
+def test_projection_layout_selected_line_break_stays_within_layout(
+    selection_start: int, right_padding: float, reverse: bool
+) -> None:
+    """Keep newline-only and full-line feedback visible within the layout width."""
+
+    layout, _ = _layout_for("alpha\nbeta")
+    content_right = layout.frame.output.snapshot.lines[0].rect.right()
+    text_width = content_right + right_padding
+    layout.set_text_width(text_width)
+    first_line = layout.frame.output.snapshot.lines[0]
+    assert first_line.source_content_end == 5
+    assert first_line.line_break_start == 5
+    assert first_line.rect.right() == pytest.approx(content_right)
+
+    anchor, cursor = (6, selection_start) if reverse else (selection_start, 6)
+    rects = layout.frame.geometry.selection.selection_rects(
+        PromptProjectionSelection(anchor, cursor)
+    )
+
+    assert len(rects) == 1
+    assert rects[0].height() == first_line.height
+    assert rects[0].right() > content_right
+    assert rects[0].right() <= text_width
+    if selection_start == 5:
+        assert rects[0].left() == pytest.approx(content_right)
+    if right_padding >= 8.0:
+        assert rects[0].right() >= content_right + 8.0
+    assert not layout.frame.geometry.selection.selection_rects(
+        PromptProjectionSelection(6, 6)
+    )
+
+
+@pytest.mark.parametrize("text_width", (1.0, 4.0, 8.0, 12.0, 24.0))
+def test_projection_layout_selected_empty_line_stays_within_layout(
+    text_width: float,
+) -> None:
+    """Keep blank-row feedback visible even when the layout cannot fit its inset."""
+
+    layout, _ = _layout_for("\n", text_width=text_width)
+    rects = layout.frame.geometry.selection.selection_rects(
+        PromptProjectionSelection(0, 1)
+    )
+
+    assert len(rects) == 1
+    assert rects[0].left() >= 0.0
+    assert rects[0].right() <= text_width
+    assert rects[0].width() > 0.0
+    assert rects[0].height() > 0.0
+    if text_width >= 12.0:
+        assert rects[0].width() >= 8.0
 
 
 def test_projection_layout_selection_rects_do_not_invent_soft_wrap_breaks() -> None:

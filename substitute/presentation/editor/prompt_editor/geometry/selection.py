@@ -411,11 +411,6 @@ class PromptSelectionGeometry:
     ) -> tuple[QRectF, ...]:
         """Return synthetic selection rects for empty wrapped lines in one source range."""
 
-        selection_start = selection.start
-        selection_end = selection.end
-        if selection_end <= selection_start:
-            return ()
-
         empty_line_highlight_width = self._selection_affordance_width()
         empty_line_rects: list[QRectF] = []
         for line in self._snapshot.lines:
@@ -434,11 +429,8 @@ class PromptSelectionGeometry:
                 else self._document_margin
             )
             empty_line_rects.append(
-                QRectF(
-                    line_left,
-                    line.top,
-                    empty_line_highlight_width,
-                    line.height,
+                self._selection_affordance_rect(
+                    line, left=line_left, width=empty_line_highlight_width
                 )
             )
         return tuple(empty_line_rects)
@@ -450,11 +442,6 @@ class PromptSelectionGeometry:
     ) -> tuple[QRectF, ...]:
         """Return explicit selection rects for selected hard line breaks."""
 
-        selection_start = selection.start
-        selection_end = selection.end
-        if selection_end <= selection_start:
-            return ()
-
         line_break_rects: list[QRectF] = []
         line_break_width = self._selection_affordance_width()
         for line in self._snapshot.lines:
@@ -463,8 +450,8 @@ class PromptSelectionGeometry:
             if line.line_break_start is None or line.line_break_end is None:
                 continue
             if (
-                selection_end <= line.line_break_start
-                or line.line_break_end <= selection_start
+                selection.end <= line.line_break_start
+                or line.line_break_end <= selection.start
             ):
                 continue
             content_end_stop = self._line_caret_stop_for_source_position(
@@ -477,14 +464,20 @@ class PromptSelectionGeometry:
                 else line.rect.right()
             )
             line_break_rects.append(
-                QRectF(
-                    line_break_left,
-                    line.top,
-                    line_break_width,
-                    line.height,
+                self._selection_affordance_rect(
+                    line, left=line_break_left, width=line_break_width
                 )
             )
         return tuple(line_break_rects)
+
+    def _selection_affordance_rect(
+        self, line: PromptProjectionLineSnapshot, *, left: float, width: float
+    ) -> QRectF:
+        """Bound synthetic feedback while retaining a visible sliver in tiny layouts."""
+
+        left = min(max(0.0, left), self.input.text_width - 1.0)
+        width = min(width, self.input.text_width - left)
+        return QRectF(left, line.top, width, line.height)
 
     def _line_caret_stop_for_source_position(
         self,

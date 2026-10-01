@@ -115,15 +115,19 @@ def test_real_shell_shift_selection_keeps_selection_and_caret_sane(
     assert not collapse_violations
 
 
+@pytest.mark.parametrize("line_repeats", (1, 3), ids=("near-edge", "soft-wrapped"))
 def test_real_shell_wrapped_multiline_selection_geometry_clears_on_collapse(
     real_shell_scenario: PromptEditorRealShellScenario,
+    line_repeats: int,
 ) -> None:
-    """Expose bounded wrapped selection geometry and clear it on collapse."""
+    """Bound near-edge and genuinely soft-wrapped selections, then clear both."""
 
-    prompt = (
-        "masterpiece, best quality, official art, backpack basket,\n"
-        "empty eyes, pointy ears, sharp teeth, too many rabbits,\n"
-        "glowing red eyes, long white hair, swept bangs"
+    prompt = "\n".join(
+        (
+            "masterpiece, best quality, official art, backpack basket," * line_repeats,
+            "empty eyes, pointy ears, sharp teeth, too many rabbits," * line_repeats,
+            "glowing red eyes, long white hair, swept bangs",
+        )
     )
     field = real_shell_scenario.workflows.add_prompt_workflow(initial_text=prompt)
     real_shell_scenario.shell.resize(520, 620)
@@ -164,6 +168,9 @@ def test_real_shell_wrapped_multiline_selection_geometry_clears_on_collapse(
         pytest.fail(f"prompt editor invariant failed; artifacts: {artifact}")
     assert selected.selection_range == (start, end)
     assert selected.selection_rects
+    if line_repeats > 1:
+        assert selected.layout_line_count > prompt.count("\n") + 1
+        assert len(selected.selection_rects) > 2
     assert collapsed.selection_range[0] == collapsed.selection_range[1]
     assert not collapsed.selection_rects
     assert not violations

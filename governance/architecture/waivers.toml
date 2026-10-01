@@ -970,7 +970,7 @@ kind = "structural"
 justification = "PromptSelectionGeometry owns one read-only mapping from source ranges to painted selection fragments over an immutable layout snapshot. Empty lines, line breaks, hidden escape boundaries, inline objects, merging, and paint-change comparison share the same source-to-geometry invariant. Moving fragment boundary resolution would divide that geometric selection contract."
 issue = "chore:SS-WAIVER-S045"
 review_by = 2026-12-15
-max_lines = 570
+max_lines = 563
 
 [[waivers]]
 id = "SS-WAIVER-S046"

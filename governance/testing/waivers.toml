@@ -768,7 +768,7 @@ candidates = [
 ]
 paths = ["tests/qualification/prompt_editor/real_shell/selection_rendering/test_selection_interactions.py"]
 fingerprint = "sha256:294a5c133dbd5bd88f2809d987a3623dedac633a9e928a2a83ba74106ffd7b8e"
-rationale = "This five-test real-shell owner mounts the production prompt workspace to prove multiline paste, keyboard and wrapped selection geometry, replacement projection, and autocomplete-surface clearing. A complete ordinary run aborts while selecting an active autocomplete only after prior native Qt work in a reused xdist worker. Its shell, clipboard state, snapshots, and artifacts are test-local with no shared file, port, environment, subprocess, or cross-process resource; fresh-process isolation is therefore sufficient, and global serialization would be inappropriate."
+rationale = "This six-case real-shell owner mounts the production prompt workspace to prove multiline paste, keyboard, near-edge and soft-wrapped selection geometry, replacement projection, and autocomplete-surface clearing. A complete ordinary run aborts while selecting an active autocomplete only after prior native Qt work in a reused xdist worker. Its shell, clipboard state, snapshots, and artifacts are test-local with no shared file, port, environment, subprocess, or cross-process resource; fresh-process isolation is therefore sufficient, and global serialization would be inappropriate."
 issue = "chore:SS-TEST-WAIVER-C0235"
 review_by = 2026-12-15
 
