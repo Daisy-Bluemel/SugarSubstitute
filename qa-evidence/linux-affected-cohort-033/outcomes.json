@@ -1,0 +1,15 @@
+{
+  "outcomes": [
+    {
+      "nodeid": "tests/launcher/repair/test_controller.py::test_close_cancels_frozen_native_repair_before_window_retires",
+      "kind": "skipped",
+      "message": "Test applies only to: windows; current platform: linux."
+    }
+  ],
+  "expected_platform_skips": [
+    "tests/launcher/repair/test_controller.py::test_close_cancels_frozen_native_repair_before_window_retires"
+  ],
+  "interpretation": "The Windows native repair case is skipped on Linux and excluded from passes. Any other selected skip would fail reconciliation.",
+  "all_selected_case_failures": [],
+  "coverage_errors": []
+}

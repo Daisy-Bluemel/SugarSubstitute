@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "scope": "Focused Linux failure/regression cohort, not full aggregate qualification",
+  "source_commit": "0898beb48ef7460738bb6101c2980caff5950104",
+  "source_tree": "690a57fb6e12f83891950f497b17a44201a94cc7",
+  "source_url": "https://github.com/Daisy-Bluemel/SugarSubstitute/commit/0898beb48ef7460738bb6101c2980caff5950104",
+  "started_utc": "2026-10-01T09:35:53.279850+00:00",
+  "counts": {
+    "selected": 364,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 363
+  },
+  "lanes": [
+    {
+      "lane": "ordinary",
+      "exit_code": 0,
+      "coordinator_seconds": 26.924798785003077,
+      "workers": 2
+    },
+    {
+      "lane": "isolated",
+      "exit_code": 0,
+      "coordinator_seconds": 74.23770251899987,
+      "workers": 2
+    }
+  ],
+  "lane_counts": {
+    "ordinary": {
+      "selected": 300,
+      "passed": 299,
+      "skipped": 1,
+      "failed": 0,
+      "errors": 0
+    },
+    "isolated": {
+      "selected": 64,
+      "passed": 64,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0
+    }
+  },
+  "all_previous_cases_retained": 272,
+  "additional_cases": 92,
+  "previous_025_results": {
+    "passed": 264,
+    "failed": 7,
+    "skipped": 1
+  },
+  "seven_previous_cohort_failures_now_pass": true,
+  "no_coverage_errors": true,
+  "tracked_source_unchanged": true,
+  "configuration": {
+    "ordinary_workers": 2,
+    "isolated_max_workers": 2,
+    "lane_order": [
+      "ordinary",
+      "isolated"
+    ],
+    "QT_QPA_PLATFORM": "offscreen",
+    "QT_OPENGL": "software",
+    "serial_modules_selected": 0,
+    "official_classification_preserved": true,
+    "separate_run_cache": true
+  },
+  "versions": {
+    "PySide6": "6.11.2",
+    "pytest": "9.1.1",
+    "pytest-xdist": "3.8.0",
+    "CuteMica": "0.1.0",
+    "QPane": "3.0.5",
+    "torch": "2.14.1+cpu"
+  },
+  "resources": {
+    "ordinary": {
+      "summed_rss_peak_bytes": 1462153216,
+      "minimum_disk_free_bytes": 4974923776,
+      "sampling_count": 6,
+      "interpretation": "Summed RSS can double-count shared pages; this does not establish an OOM or historical worker-loss cause."
+    },
+    "isolated": {
+      "summed_rss_peak_bytes": 581939200,
+      "minimum_disk_free_bytes": 4974792704,
+      "sampling_count": 15,
+      "interpretation": "Summed RSS can double-count shared pages; this does not establish an OOM or historical worker-loss cause."
+    }
+  }
+}

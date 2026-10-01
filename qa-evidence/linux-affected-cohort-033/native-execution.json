@@ -1,0 +1,72 @@
+{
+  "source_commit": "0898beb48ef7460738bb6101c2980caff5950104",
+  "source_tree": "690a57fb6e12f83891950f497b17a44201a94cc7",
+  "provenance": "Normal main.py ran the reviewed frozen candidate bytes now present in canonical033; no observer hooks or harness.",
+  "verified": [
+    "Imported two-Cube graph completed real local authorization and CPU Load Image execution",
+    "Both distinct 320x240 output images match their input fixture pixels exactly",
+    "All seven test tabs and both selectable output tabs restore after clean restart",
+    "Authored canonical graph remains exactly equal to imported JSON",
+    "All 26 pre-existing project/output files and six fixture files remain byte-identical",
+    "All nine old embedded editable-image payloads and old document records remain unchanged",
+    "Old resource fields are preserved apart from restoration revision counters"
+  ],
+  "outputs": [
+    {
+      "output": "003_01_cubes032_load_image.png",
+      "size": [
+        320,
+        240
+      ],
+      "pixel_equal_fixture": "linux-duplicate-test-pattern.png",
+      "sha256": "6e1689ec815048927637a6ab718abffd28b8a11fb0fd0ba3474fecdb4717101a"
+    },
+    {
+      "output": "003_02_cubes032_load_image_2.png",
+      "size": [
+        320,
+        240
+      ],
+      "pixel_equal_fixture": "linux-cpu-test-pattern.png",
+      "sha256": "a0459c3d9e6281360bdffb14d5fb84ae7f028db07afa69238f2d049e3442c0d2"
+    }
+  ],
+  "queue_after_run": "Completed; 0 pending;Stop disabled",
+  "clean_restart_outputs": true,
+  "authored_source_equal": true,
+  "immediate_snapshot_note": "The immediate snapshot preceded generation completion. Clean shutdown flushed both output records; a fresh normal-app restart restored both output tabs and each was selected visually.",
+  "normalization_proof": {
+    "fixture_sha256": "28ed52ee5c8d70cd097976a39a0a1e42b1cef56b00a8dbba64e75837712d93e5",
+    "staged_assets": 2,
+    "staging_failures": 0,
+    "required_definition_calls": [
+      "SubstituteBackendLoadImage"
+    ],
+    "normalized_values_preserved": true,
+    "lowered_nodes": [
+      {
+        "instance_alias": "Load Image",
+        "class_type": "SubstituteBackendLoadImage",
+        "inert_value_preserved": true
+      },
+      {
+        "instance_alias": "Load Image 2",
+        "class_type": "SubstituteBackendLoadImage",
+        "inert_value_preserved": true
+      }
+    ],
+    "schema_removal_negative_control_detected": true,
+    "missing_authority_fails_staging": true,
+    "authored_presets_source_object_and_bytes_unchanged": true,
+    "network_calls": 0,
+    "authorization_calls": 0,
+    "metadata_origin": "literal installed backend declarations, represented as Comfy object_info; no live HTTP claim"
+  },
+  "screenshot_sha256": "fc369d34e0477fa55d45335f08666795f6ffcd0b6095282350fd73844a94db51",
+  "screenshot_disposition": "App-only screenshot was captured and inspected; image bytes are excluded from this public text evidence.",
+  "limits": [
+    "CPU Load Image execution only, not GPU or model inference",
+    "Synthetic mixed fixture lacks ordinary-node widget identities and is not claimed executable",
+    "Real native Windows/macOS and fatal crash capture remain unqualified"
+  ]
+}

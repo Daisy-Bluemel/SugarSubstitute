@@ -1,0 +1,17 @@
+{
+  "full_aggregate_gates": "Not rerun by this cohort; a focused success is not a full pass.",
+  "full_strict_typing": "Fresh Linux and win32 full checks are planned separately; no current whole-tree pass claimed.",
+  "restricted_ipc_diagnostics": {
+    "historical_count": 68,
+    "state": "Not executed here; blocked and unresolved, not passes or collected skips",
+    "restriction": "AF_UNIX EPERM was preserved without alternate transport or permission bypass."
+  },
+  "held_brush_clear_reopen": {
+    "checkpoint": "030",
+    "state": "Meaningful failing regression retained; dependency repair authorization pending, not rerun or cleared by this cohort."
+  },
+  "historical_full_worker_loss": "A previous full ordinary worker terminated unexpectedly. Focused runs and RSS observations do not establish its cause or full-suite order safety.",
+  "native_crash_capture": "Linux native build and startup exist, but fatal minidump qualification remains blocked by ptrace restrictions.",
+  "native_platforms": "Windows/macOS runtime and GPU inference not qualified",
+  "release_readiness": "Not established; checkpoints are explicitly authorized WIP backups."
+}
