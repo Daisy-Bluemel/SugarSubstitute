@@ -96,6 +96,8 @@ def test_external_gateway_export_does_not_load_all_external_clients() -> None:
             name
             for name in sys.modules
             if name in {
+                "photoshop",
+                "photoshop.session",
                 "substitute.infrastructure.external.civitai_client",
                 "substitute.infrastructure.external.comfy_object_info_client",
                 "substitute.infrastructure.external.substitute_backend_cube_library_client",

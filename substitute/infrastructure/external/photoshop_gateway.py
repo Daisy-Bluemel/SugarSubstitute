@@ -21,9 +21,13 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 from tempfile import NamedTemporaryFile
-from typing import Sequence, cast
+from typing import Sequence
 
 from substitute.domain.workflow import ImageMeta
+from substitute.infrastructure.external.photoshop_session import (
+    PhotoshopSessionFactory,
+    load_photoshop_session,
+)
 from substitute.shared.logging.logger import get_logger, log_exception, log_warning
 from sugarsubstitute_shared.windows_long_paths import (
     exceeds_windows_legacy_path_limit,
@@ -155,11 +159,11 @@ class PhotoshopGateway:
             return False
 
     @staticmethod
-    def _import_session() -> type | None:
-        """Resolve Photoshop Session type lazily so app startup stays resilient."""
+    def _import_session() -> PhotoshopSessionFactory | None:
+        """Resolve the optional constructor without accessing native COM objects."""
 
         try:
-            from photoshop import Session  # type: ignore[import-untyped]
+            return load_photoshop_session()
         except Exception as error:
             log_warning(
                 _LOGGER,
@@ -167,7 +171,6 @@ class PhotoshopGateway:
                 error=error,
             )
             return None
-        return cast(type, Session)
 
     def _resolve_image_path(
         self, *, image: object, image_meta: ImageMeta
