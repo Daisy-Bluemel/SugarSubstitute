@@ -63,6 +63,9 @@ from substitute.presentation.canvas.input.input_document_tool_options import (
 from substitute.presentation.canvas.input.input_document_capture import (
     InputDocumentExportCapture,
 )
+from substitute.presentation.canvas.input.input_mask_edit_observer import (
+    InputMaskEditObserver,
+)
 from substitute.shared.logging.logger import get_logger, log_debug, log_warning
 
 _LOGGER = get_logger("presentation.canvas.input.input_document")
@@ -186,12 +189,23 @@ class InputCanvasDocument(QObject):
         )
         self._canvas.maskUndoStackChanged.connect(self._on_mask_undo_stack_changed)
         self._canvas.layerPixelsChanged.connect(self._on_layer_pixels_changed)
+        self._mask_edits = InputMaskEditObserver(
+            canvas=self._canvas,
+            catalog=self._catalog,
+            parent=self,
+        )
 
     @property
     def canvas(self) -> CuteCanvas:
         """Return the single widget presenting this document."""
 
         return self._canvas
+
+    @property
+    def mask_edits(self) -> InputMaskEditObserver:
+        """Return identified authored mask pixel changes for explicit-save state."""
+
+        return self._mask_edits
 
     def _on_selected_layer_changed(self, _selection: object) -> None:
         """Publish the active mask identity after CuteCanvas layer selection."""

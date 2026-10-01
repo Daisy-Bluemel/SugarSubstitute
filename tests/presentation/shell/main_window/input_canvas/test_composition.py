@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import pytest
+from uuid import uuid4
 
 from substitute.presentation.canvas.input.input_canvas_tool_catalog import (
     InputCanvasToolId,
@@ -34,6 +35,9 @@ from substitute.presentation.canvas.input.input_mask_selection_presenter import 
 )
 from substitute.presentation.shell import input_canvas_composition
 from substitute.presentation.shell import input_workflow_composition
+from substitute.presentation.shell.session_autosave_controller import (
+    SessionAutosaveController,
+)
 from tests.presentation.shell.main_window.input_canvas.support import (
     _FakeInputCanvasCapabilityService,
     _FakeInputCanvasInteractionProfileService,
@@ -133,6 +137,7 @@ def test_compose_input_canvas_controllers_assigns_presenter_services(
     input_canvas = shell.input_canvas
     document = input_canvas.document
     tool_context = document.tool_context
+    assert not hasattr(shell, "session_autosave_controller")
 
     composition = input_canvas_composition.compose_input_canvas_controllers(shell)
 
@@ -210,6 +215,10 @@ def test_compose_input_canvas_controllers_assigns_presenter_services(
         is shell.input_document_change_observer
     )
     assert (
+        composition.input_mask_unsaved_work_observer
+        is shell.input_mask_unsaved_work_observer
+    )
+    assert (
         composition.input_generation_snapshot_service
         is shell.input_generation_snapshot_service
     )
@@ -272,10 +281,7 @@ def test_compose_input_canvas_controllers_assigns_presenter_services(
     assert composition.input_canvas_tool_profile_controller.refresh_calls == 1
     assert composition.input_canvas_shell_adapter.shell is shell
     assert composition.input_document_change_observer.kwargs == {
-        "changes": (
-            document.maskContentChanged,
-            composition.input_scene_mapping_changes.changed,
-        ),
+        "changes": (composition.input_scene_mapping_changes.changed,),
         "active_workflow_id": (
             composition.input_document_change_observer.kwargs["active_workflow_id"]
         ),
@@ -289,6 +295,16 @@ def test_compose_input_canvas_controllers_assigns_presenter_services(
     ]
     assert callable(active_workflow_id_provider)
     assert active_workflow_id_provider() == "workflow-a"
+    shell.session_autosave_controller = SessionAutosaveController(shell)
+    edited_image = uuid4()
+    shell.workflow_session_service.active_workflow.canvas.bind_image(
+        "Cube:Image", edited_image
+    )
+    shell.workflow_session_service.active_workflow_id = ""
+    document.mask_edits.imageEdited.emit(edited_image)
+    assert shell.unsaved_work_service.state_for("workflow-a").dirty
+    assert shell.autosave_requests == 1
+    assert composition.input_canvas_shell_adapter.changed_workflows == ["workflow-a"]
     assert (
         composition.input_canvas_capability_service.input_canvas_plan_service
         is shell.input_canvas_plan_service

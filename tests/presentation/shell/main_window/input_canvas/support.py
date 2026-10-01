@@ -20,6 +20,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from substitute.application.workflows.unsaved_work_service import UnsavedWorkService
+from substitute.domain.workflow import WorkflowState
+from substitute.presentation.shell.session_autosave_controller import (
+    SessionAutosaveController,
+)
+
 
 class _Signal:
     """Record connected slots for signal-composition tests."""
@@ -33,6 +39,13 @@ class _Signal:
         """Record one connected slot."""
 
         self.connected.append(slot)
+
+    def emit(self, *args: object) -> None:
+        """Publish a captured document event through production wiring."""
+
+        for slot in self.connected:
+            assert callable(slot)
+            slot(*args)
 
 
 class _FakeSignal(_Signal):
@@ -108,8 +121,13 @@ class _FakeInputCanvasShellAdapter:
 
         self.shell = shell
         self.resolve_workflow_name = object()
-        self.mark_input_canvas_changed = object()
+        self.changed_workflows: list[str] = []
         self.mark_input_canvas_presentation_changed = object()
+
+    def mark_input_canvas_changed(self, workflow_id: str) -> None:
+        """Record the exact workflow invalidated by an identified mask edit."""
+
+        self.changed_workflows.append(workflow_id)
 
 
 class _FakeInputDocumentChangeObserver:
@@ -282,6 +300,16 @@ class _InputDocument:
         self.canvasToolChanged = _FakeSignal()
         self.maskContentChanged = _FakeSignal()
         self.activeMaskChanged = _FakeSignal()
+        self.mask_edits = _MaskEdits()
+
+
+class _MaskEdits:
+    """Expose the identified authored mask event used by explicit-save state."""
+
+    def __init__(self) -> None:
+        """Create one identity-preserving document event boundary."""
+
+        self.imageEdited = _FakeSignal()
 
 
 class _InputCanvasWidget:
@@ -341,7 +369,7 @@ class _WorkflowSession:
         """Initialize the active workflow and its identifier."""
 
         self.active_workflow_id = "workflow-a"
-        self.active_workflow = object()
+        self.active_workflow = WorkflowState()
         self.workflows = {self.active_workflow_id: self.active_workflow}
 
 
@@ -381,7 +409,10 @@ class _InputCompositionShell:
         self.active_workflow = object()
         self.active_editor_panel = object()
         self._error_presenter = object()
-        self.request_session_autosave = object()
+        self.autosave_requests = 0
+        self._shell_restore_lifecycle = "running"
+        self.unsaved_work_service = UnsavedWorkService()
+        self.session_autosave_controller: SessionAutosaveController
         self.input_image_materialization_service: object | None = None
         self.input_section_materialization_service: object | None = None
         self.input_canvas_authority_reconciliation_service: object | None = None
@@ -390,9 +421,15 @@ class _InputCompositionShell:
         self.input_mask_selection_presenter: object | None = None
         self.input_node_interaction_controller: object | None = None
         self.input_document_change_observer: object | None = None
+        self.input_mask_unsaved_work_observer: object | None = None
         self.input_generation_snapshot_service: object | None = None
 
     def get_active_workflow(self) -> object:
         """Return the stable active workflow used by composition callbacks."""
 
         return self.active_workflow
+
+    def request_session_autosave(self) -> None:
+        """Record recovery requests delivered by composed mask-edit ownership."""
+
+        self.autosave_requests += 1

@@ -64,6 +64,9 @@ def publish_input_canvas_composition(
         composition.input_mask_visual_opacity_controller
     )
     shell.input_document_change_observer = composition.input_document_change_observer
+    shell.input_mask_unsaved_work_observer = (
+        composition.input_mask_unsaved_work_observer
+    )
     shell.input_editable_document_change_tracker = (
         composition.input_editable_document_change_tracker
     )

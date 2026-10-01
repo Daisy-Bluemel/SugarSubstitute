@@ -73,6 +73,9 @@ from substitute.presentation.canvas.input.input_contextual_toolbar_installation 
 from substitute.presentation.canvas.input.input_document_change_observer import (
     InputDocumentChangeObserver,
 )
+from substitute.presentation.shell.input_mask_unsaved_work_observer import (
+    InputMaskUnsavedWorkObserver,
+)
 from substitute.presentation.canvas.input.input_editable_document_change_tracker import (
     InputEditableDocumentChangeTracker,
 )
@@ -167,6 +170,7 @@ class MainWindowInputCanvasComposition:
     input_node_interaction_controller: Any
     input_mask_visual_opacity_controller: Any
     input_document_change_observer: Any
+    input_mask_unsaved_work_observer: InputMaskUnsavedWorkObserver
     input_editable_document_change_tracker: InputEditableDocumentChangeTracker
     input_generation_snapshot_service: Any
     input_recipe_save_preparation: InputRecipeSavePreparation
@@ -355,11 +359,16 @@ def compose_input_canvas_controllers(shell: Any) -> MainWindowInputCanvasComposi
         mark_changed=input_editable_document_lifecycle.mark_changed,
     )
     input_document_change_observer = InputDocumentChangeObserver(
-        changes=(
-            input_canvas.document.maskContentChanged,
-            input_scene_mapping_changes.changed,
-        ),
+        changes=(input_scene_mapping_changes.changed,),
         active_workflow_id=lambda: shell.workflow_session_service.active_workflow_id,
+        mark_workflow_changed=input_canvas_shell_adapter.mark_input_canvas_changed,
+        request_autosave=shell.request_session_autosave,
+    )
+    input_mask_unsaved_work_observer = InputMaskUnsavedWorkObserver(
+        edits=input_canvas.document.mask_edits.imageEdited,
+        workflows=lambda: shell.workflow_session_service.workflows,
+        unsaved_work=shell.unsaved_work_service,
+        edits_muted=lambda: shell.session_autosave_controller.session_autosave_muted(),
         mark_workflow_changed=input_canvas_shell_adapter.mark_input_canvas_changed,
         request_autosave=shell.request_session_autosave,
     )
@@ -463,6 +472,7 @@ def compose_input_canvas_controllers(shell: Any) -> MainWindowInputCanvasComposi
         input_node_interaction_controller=input_node_interaction_controller,
         input_mask_visual_opacity_controller=input_mask_visual_opacity_controller,
         input_document_change_observer=input_document_change_observer,
+        input_mask_unsaved_work_observer=input_mask_unsaved_work_observer,
         input_editable_document_change_tracker=(input_editable_document_change_tracker),
         input_generation_snapshot_service=input_generation_snapshot_service,
         input_recipe_save_preparation=input_recipe_save_preparation,
