@@ -55,6 +55,7 @@ class FakeMpvPlayer:
             "duration": None,
             "width": None,
             "height": None,
+            "video-out-params": None,
             "eof-reached": False,
             "seeking": False,
             "core-idle": None,

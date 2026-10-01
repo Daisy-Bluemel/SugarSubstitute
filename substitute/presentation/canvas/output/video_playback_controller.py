@@ -302,17 +302,14 @@ class VideoPlaybackController(QObject):
         """Show source pixels physically 1:1 while retaining an optional anchor."""
 
         snapshot = self._snapshot
-        source_width = snapshot.width
-        source_height = snapshot.height
-        if source_width is None or source_height is None:
-            return
-        physical_width = max(1.0, surface_width * device_pixel_ratio)
-        physical_height = max(1.0, surface_height * device_pixel_ratio)
-        fit_scale = min(
-            physical_width / source_width,
-            physical_height / source_height,
+        geometry = viewport_geometry(
+            (surface_width, surface_height, device_pixel_ratio),
+            source_width=snapshot.width,
+            source_height=snapshot.height,
         )
-        zoom = 1.0 / max(fit_scale, 1.0 / 64.0)
+        if geometry is None:
+            return
+        zoom = 1.0 / max(geometry.fit_scale, 1.0 / 64.0)
         pan_x = 0.0
         pan_y = 0.0
         if anchor_x is not None and anchor_y is not None:
@@ -473,6 +470,18 @@ class VideoPlaybackController(QObject):
         if media_id is None:
             return
         session = self._sessions.setdefault(media_id, VideoMediaSession())
+        if session.viewport_mode is VideoViewportMode.ACTUAL_SIZE:
+            geometry = viewport_geometry(
+                self._surface_metrics,
+                source_width=self._snapshot.width,
+                source_height=self._snapshot.height,
+            )
+            if geometry is not None:
+                session.zoom = 1.0 / max(geometry.fit_scale, 1.0 / 64.0)
+                session.pan_x, session.pan_y = geometry.clamp_panel_pan(
+                    zoom=session.zoom, pan_x=session.pan_x, pan_y=session.pan_y
+                )
+                self.viewportChanged.emit(_viewport_for_session(session))
         self._apply(lambda player: self._apply_session_viewport(player, session))
 
     def _apply_session_viewport(
@@ -505,17 +514,14 @@ class VideoPlaybackController(QObject):
     def _presentation_sampling(self, zoom: float) -> VideoPresentationSampling:
         """Use nearest sampling at QPane's two-physical-pixels-per-source threshold."""
 
-        metrics = self._surface_metrics
-        source_width = self._snapshot.width
-        source_height = self._snapshot.height
-        if metrics is None or source_width is None or source_height is None:
-            return VideoPresentationSampling.BILINEAR
-        surface_width, surface_height, device_pixel_ratio = metrics
-        fit_scale = min(
-            surface_width * device_pixel_ratio / source_width,
-            surface_height * device_pixel_ratio / source_height,
+        geometry = viewport_geometry(
+            self._surface_metrics,
+            source_width=self._snapshot.width,
+            source_height=self._snapshot.height,
         )
-        if fit_scale * zoom < _NEAREST_SOURCE_SCALE:
+        if geometry is None:
+            return VideoPresentationSampling.BILINEAR
+        if geometry.fit_scale * zoom < _NEAREST_SOURCE_SCALE:
             return VideoPresentationSampling.BILINEAR
         return VideoPresentationSampling.NEAREST
 

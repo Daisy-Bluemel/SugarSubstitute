@@ -27,6 +27,7 @@ class VideoViewportGeometry:
 
     fitted_width_ratio: float
     fitted_height_ratio: float
+    fit_scale: float
 
     @classmethod
     def create(
@@ -51,6 +52,7 @@ class VideoViewportGeometry:
         return cls(
             fitted_width_ratio=bounded_source_width * fit_scale / physical_width,
             fitted_height_ratio=(bounded_source_height * fit_scale / physical_height),
+            fit_scale=fit_scale,
         )
 
     def clamp_panel_pan(

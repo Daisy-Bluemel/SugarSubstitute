@@ -93,7 +93,7 @@ class VideoPlaybackDiagnostics:
 
 @dataclass(frozen=True, slots=True)
 class VideoPlaybackSnapshot:
-    """Expose the current player state without leaking libmpv types."""
+    """Expose playback state and display-oriented dimensions without native types."""
 
     media_id: UUID | None
     state: VideoPlaybackState

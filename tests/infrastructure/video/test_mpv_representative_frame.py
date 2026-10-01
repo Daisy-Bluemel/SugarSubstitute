@@ -35,8 +35,7 @@ def test_player_publishes_each_changed_paused_source_frame_once(
     adapter.load(media_id, video)
     adapter.set_output_active(True)
     native.emit("time-pos", 0.5)
-    native.emit("width", 2)
-    native.emit("height", 1)
+    native.emit("video-out-params", {"dw": 2, "dh": 1, "rotate": 0})
     native.emit("core-idle", False)
 
     adapter.poll_playback_state()

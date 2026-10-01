@@ -317,8 +317,7 @@ def test_observations_update_state_and_reject_replaced_path(tmp_path: Path) -> N
     adapter.load(uuid4(), video)
 
     native.emit("duration", 2.5)
-    native.emit("width", 320)
-    native.emit("height", 180)
+    native.emit("video-out-params", {"dw": 320, "dh": 180, "rotate": 0})
     native.emit("time-pos", 0.125)
     adapter.poll_playback_state()
     current_count = len(events)

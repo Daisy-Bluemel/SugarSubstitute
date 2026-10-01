@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import Path
 
 from substitute.application.ports.video import VideoPlaybackState
@@ -27,10 +28,9 @@ MPV_PLAYBACK_OBSERVED_PROPERTIES = (
     "pause",
     "time-pos",
     "duration",
-    "width",
-    "height",
-    "eof-reached",
     "seeking",
+    "video-out-params",
+    "eof-reached",
     "core-idle",
     "current-vo",
     "gpu-api",
@@ -41,6 +41,34 @@ MPV_PLAYBACK_OBSERVED_PROPERTIES = (
 )
 
 
+def display_dimensions(value: object) -> tuple[int, int] | None:
+    """Resolve the output frame's aspect-corrected size and residual rotation.
+
+    libmpv's output dw/dh already incorporate crop and pixel aspect ratio.
+    Its GL renderer retains quarter-turn rotation; other outputs can bake it
+    into dw/dh and report zero rotation. Apply only the remaining rotation.
+    """
+
+    if not isinstance(value, Mapping):
+        return None
+    width = value.get("dw")
+    height = value.get("dh")
+    rotation = value.get("rotate")
+    if (
+        isinstance(width, bool)
+        or not isinstance(width, int)
+        or width <= 0
+        or isinstance(height, bool)
+        or not isinstance(height, int)
+        or height <= 0
+        or isinstance(rotation, bool)
+        or not isinstance(rotation, int)
+        or rotation not in {0, 90, 180, 270}
+    ):
+        return None
+    return (height, width) if rotation in {90, 270} else (width, height)
+
+
 def optional_nonnegative_float(value: object) -> float | None:
     """Return one optional nonnegative numeric observation."""
 
@@ -48,15 +76,6 @@ def optional_nonnegative_float(value: object) -> float | None:
         return None
     converted = float(value)
     return converted if converted >= 0.0 else None
-
-
-def optional_positive_integer(value: object) -> int | None:
-    """Return one optional positive integer observation."""
-
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        return None
-    converted = int(value)
-    return converted if converted > 0 else None
 
 
 def optional_string(value: object) -> str | None:
@@ -84,9 +103,9 @@ def observation_matches_media(
 
 
 __all__ = [
+    "display_dimensions",
     "MPV_PLAYBACK_OBSERVED_PROPERTIES",
     "optional_nonnegative_float",
-    "optional_positive_integer",
     "optional_string",
     "observation_matches_media",
 ]

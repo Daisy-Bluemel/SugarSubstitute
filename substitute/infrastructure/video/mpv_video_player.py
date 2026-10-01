@@ -32,7 +32,7 @@ from substitute.application.ports.video import (
 )
 from substitute.domain.generation import VideoPlaybackSettings
 from substitute.infrastructure.video.mpv_playback_diagnostics import (
-    build_playback_diagnostics,
+    MpvPlaybackDiagnosticsState,
 )
 from substitute.infrastructure.video.mpv_player_factory import (
     MpvPlayerProtocol,
@@ -43,9 +43,9 @@ from substitute.infrastructure.video.mpv_representative_frame import (
 )
 from substitute.infrastructure.video.mpv_observation_values import (
     MPV_PLAYBACK_OBSERVED_PROPERTIES,
+    display_dimensions,
     observation_matches_media,
     optional_nonnegative_float,
-    optional_positive_integer,
     optional_string,
 )
 from substitute.infrastructure.video.mpv_frame_step_coordinator import (
@@ -96,16 +96,9 @@ class MpvVideoPlayer:
         self._height: int | None = None
         self._error: str | None = None
         self._last_polled_snapshot: VideoPlaybackSnapshot | None = None
-        self._settings = settings
-        self._render_api = render_api
-        self._actual_video_output: str | None = None
-        self._gpu_api: str | None = None
-        self._gpu_context: str | None = None
-        self._hardware_decoder: str | None = None
-        self._hardware_decoder_observed = False
-        self._pixel_format: str | None = None
-        self._codec: str | None = None
-        self._presentation_sampling = VideoPresentationSampling.BILINEAR
+        self._diagnostics = MpvPlaybackDiagnosticsState(
+            settings=settings, render_api=render_api
+        )
         self._closed = False
         self._module = runtime.load_module()
         self._player: MpvPlayerProtocol = create_mpv_player(
@@ -154,10 +147,7 @@ class MpvVideoPlayer:
             self._duration_seconds = None
             self._width = None
             self._height = None
-            self._hardware_decoder = None
-            self._hardware_decoder_observed = False
-            self._pixel_format = None
-            self._codec = None
+            self._diagnostics.reset_media()
             self._error = None
             self._apply_audio_state()
             self._player.loop_file = "inf"
@@ -301,11 +291,13 @@ class MpvVideoPlayer:
         with self._lock:
             self._require_media()
             try:
-                self._presentation_sampling = self._viewport.apply(
-                    zoom=zoom,
-                    pan_x=pan_x,
-                    pan_y=pan_y,
-                    sampling=sampling,
+                self._diagnostics.set_sampling(
+                    self._viewport.apply(
+                        zoom=zoom,
+                        pan_x=pan_x,
+                        pan_y=pan_y,
+                        sampling=sampling,
+                    )
                 )
             except Exception as error:
                 self._record_failure("Video viewport could not be changed.", error)
@@ -353,7 +345,14 @@ class MpvVideoPlayer:
                 self._record_failure("Video state could not be read.", error)
                 return
             for name, value in observations.items():
-                self._apply_observation(name, value)
+                self._apply_observation(
+                    name,
+                    value,
+                    current_frame_ready=(
+                        observations["path"] is not None
+                        and observations["seeking"] is False
+                    ),
+                )
             try:
                 self._frame_steps.observe_seeking(observations["seeking"])
             except Exception as error:
@@ -451,7 +450,9 @@ class MpvVideoPlayer:
             event = self._event()
         self._event_callback(event)
 
-    def _apply_observation(self, name: str, value: object) -> None:
+    def _apply_observation(
+        self, name: str, value: object, *, current_frame_ready: bool
+    ) -> None:
         """Fold one synchronously read native property into owned state."""
 
         if self._closed or self._media_id is None:
@@ -481,10 +482,13 @@ class MpvVideoPlayer:
             self._time_seconds = optional_nonnegative_float(value)
         elif name == "duration":
             self._duration_seconds = optional_nonnegative_float(value)
-        elif name == "width":
-            self._width = optional_positive_integer(value)
-        elif name == "height":
-            self._height = optional_positive_integer(value)
+        elif name == "video-out-params":
+            # mpv can retain its previous VO parameters until the next file's
+            # first frame completes initialization (seeking becomes false).
+            if self._observed_path is None or not current_frame_ready:
+                return
+            size = display_dimensions(value)
+            self._width, self._height = (None, None) if size is None else size
         elif name == "eof-reached" and value is True:
             self._state = VideoPlaybackState.ENDED
             self._paused = True
@@ -492,19 +496,8 @@ class MpvVideoPlayer:
             self._state = (
                 VideoPlaybackState.READY if self._paused else VideoPlaybackState.PLAYING
             )
-        elif name == "current-vo":
-            self._actual_video_output = optional_string(value)
-        elif name == "gpu-api":
-            self._gpu_api = optional_string(value)
-        elif name == "gpu-context":
-            self._gpu_context = optional_string(value)
-        elif name == "hwdec-current":
-            self._hardware_decoder_observed = True
-            self._hardware_decoder = optional_string(value)
-        elif name == "video-params/pixelformat":
-            self._pixel_format = optional_string(value)
-        elif name == "video-codec":
-            self._codec = optional_string(value)
+        else:
+            self._diagnostics.observe(name, value)
 
     def _apply_audio_state(self) -> None:
         """Project user mute and visibility into the effective native mute."""
@@ -564,18 +557,7 @@ class MpvVideoPlayer:
             width=self._width,
             height=self._height,
             error=self._error,
-            diagnostics=build_playback_diagnostics(
-                settings=self._settings,
-                render_api=self._render_api,
-                actual_video_output=self._actual_video_output,
-                gpu_api=self._gpu_api,
-                gpu_context=self._gpu_context,
-                hardware_decoder_observed=self._hardware_decoder_observed,
-                hardware_decoder=self._hardware_decoder,
-                pixel_format=self._pixel_format,
-                codec=self._codec,
-                presentation_sampling=self._presentation_sampling,
-            ),
+            diagnostics=self._diagnostics.snapshot(),
         )
 
 
