@@ -23,6 +23,7 @@ import ctypes
 from ctypes import wintypes
 from types import TracebackType
 
+from sugarsubstitute_shared.windows_ctypes import windows_error, windows_last_error
 from sugarsubstitute_shared.windows_job_completion import WindowsJobCompletion
 from sugarsubstitute_shared.windows_process_handle_api import NativeProcessHandleApi
 from sugarsubstitute_shared.windows_process_job_api import BasicAccounting, load_kernel
@@ -31,7 +32,7 @@ from sugarsubstitute_shared.windows_process_job_api import BasicAccounting, load
 class WindowsManagedJob(AbstractContextManager["WindowsManagedJob"]):
     """Retain one kernel family independently of recycled root or listener PIDs."""
 
-    def __init__(self, handle: int, kernel: ctypes.WinDLL) -> None:
+    def __init__(self, handle: int, kernel: ctypes.CDLL) -> None:
         """Own the acquired reference without taking the original launcher's handle."""
         self._handle = handle
         self._kernel = kernel
@@ -47,10 +48,10 @@ class WindowsManagedJob(AbstractContextManager["WindowsManagedJob"]):
         access = 0x0004 | (0x0002 | 0x0008 if for_termination else 0)
         handle = kernel.OpenJobObjectW(access, False, name)
         if not handle:
-            error = ctypes.get_last_error()
+            error = windows_last_error()
             if error == 2:
                 return None
-            raise ctypes.WinError(error)
+            raise windows_error(error)
         return cls(int(handle), kernel)
 
     def contains_process(self, pid: int) -> bool:
@@ -64,7 +65,7 @@ class WindowsManagedJob(AbstractContextManager["WindowsManagedJob"]):
             if not self._kernel.IsProcessInJob(
                 process, self._handle, ctypes.byref(member)
             ):
-                raise ctypes.WinError(ctypes.get_last_error())
+                raise windows_error(windows_last_error())
             return bool(member.value)
         finally:
             native.close(process)
@@ -75,7 +76,7 @@ class WindowsManagedJob(AbstractContextManager["WindowsManagedJob"]):
         if not self._kernel.QueryInformationJobObject(
             self._handle, 1, ctypes.byref(accounting), ctypes.sizeof(accounting), None
         ):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
         return bool(accounting.active_processes)
 
     def terminate_and_wait(self, *, timeout_seconds: float) -> None:
@@ -92,4 +93,4 @@ class WindowsManagedJob(AbstractContextManager["WindowsManagedJob"]):
     ) -> None:
         """Release this reference after observation or verified family termination."""
         if not self._kernel.CloseHandle(self._handle):
-            raise ctypes.WinError(ctypes.get_last_error())
+            raise windows_error(windows_last_error())
