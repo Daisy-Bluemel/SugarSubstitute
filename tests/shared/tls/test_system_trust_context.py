@@ -24,11 +24,16 @@ from pathlib import Path
 import pytest
 import truststore
 
-from sugarsubstitute_shared.tls import SystemTrustTlsContext
+from sugarsubstitute_shared.tls import EXTRA_CA_FILE_ENV, SystemTrustTlsContext
 
 
-def test_system_trust_tls_context_preserves_peer_and_hostname_verification() -> None:
+def test_system_trust_tls_context_preserves_peer_and_hostname_verification(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """System trust must never weaken certificate or hostname verification."""
+
+    monkeypatch.delenv(EXTRA_CA_FILE_ENV, raising=False)
+    monkeypatch.delenv("SSL_CERT_FILE", raising=False)
 
     context = SystemTrustTlsContext.create()
 
@@ -55,6 +60,7 @@ def test_explicit_ca_file_overrides_native_store_on_every_platform(
         recorded.append(cafile)
         return expected_context
 
+    monkeypatch.delenv(EXTRA_CA_FILE_ENV, raising=False)
     monkeypatch.setenv("SSL_CERT_FILE", str(ca_file))
     monkeypatch.setattr(
         ssl,
@@ -68,3 +74,4 @@ def test_explicit_ca_file_overrides_native_store_on_every_platform(
     assert recorded == [str(ca_file)]
     assert context.verify_mode is ssl.CERT_REQUIRED
     assert context.check_hostname is True
+    assert context.minimum_version >= ssl.TLSVersion.TLSv1_2
