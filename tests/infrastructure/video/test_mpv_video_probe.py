@@ -47,6 +47,13 @@ class FakePlayer:
         self.video_params: object = {"pixelformat": "yuv420p"}
         self.pause: object = False
         self.screenshot = screenshot
+        self.raw_screenshot: object = {
+            "format": "bgr0",
+            "w": screenshot.width,
+            "h": screenshot.height,
+            "stride": screenshot.width * 4,
+            "data": screenshot.convert("RGB").tobytes("raw", "BGRX"),
+        }
         self.played: str | None = None
         self.timeout: float | None = None
         self.terminated = False
@@ -65,6 +72,12 @@ class FakePlayer:
         """Return the configured decoded frame."""
 
         return self.screenshot
+
+    def command(self, name: str, *arguments: object) -> object:
+        """Return the native screenshot node at the external command boundary."""
+
+        assert (name, arguments) == ("screenshot-raw", ("subtitles",))
+        return self.raw_screenshot
 
     def terminate(self) -> None:
         """Record deterministic native teardown."""
@@ -124,10 +137,47 @@ def test_probe_decodes_first_frame_and_bounds_poster(tmp_path: Path) -> None:
     with Image.open(BytesIO(result.poster_bytes)) as poster:
         assert poster.size == (1024, 512)
         assert poster.mode == "RGB"
+        assert poster.getpixel((512, 256)) == (10, 20, 30)
     assert player.played == str(video.resolve())
     assert player.timeout == 15.0
     assert player.pause is True
     assert player.terminated
+
+
+@pytest.mark.parametrize(
+    "invalid_field",
+    [
+        {"format": "rgb24"},
+        {"w": True},
+        {"w": 0},
+        {"h": 0},
+        {"stride": 4},
+        {"data": bytes(7)},
+        {"data": "not native bytes"},
+    ],
+)
+def test_probe_rejects_malformed_native_frame_and_releases_player(
+    tmp_path: Path, invalid_field: dict[str, object]
+) -> None:
+    """Reject corrupt screenshot geometry and buffers before publishing a poster."""
+
+    video = tmp_path / "generated.mp4"
+    video.write_bytes(b"unchanged media")
+    player = FakePlayer(screenshot=Image.new("RGB", (2, 1)))
+    player.raw_screenshot = {
+        "format": "bgr0",
+        "w": 2,
+        "h": 1,
+        "stride": 8,
+        "data": bytes(8),
+        **invalid_field,
+    }
+
+    with pytest.raises(VideoProbeError, match="could not be decoded"):
+        MpvVideoProbe(cast(MpvRuntime, FakeRuntime(player))).probe(video)
+
+    assert player.terminated
+    assert video.read_bytes() == b"unchanged media"
 
 
 def test_probe_disables_external_configuration_and_network(tmp_path: Path) -> None:
@@ -180,3 +230,33 @@ def test_probe_rejects_missing_artifact_before_player_creation(tmp_path: Path) -
         probe.probe(tmp_path / "missing.webm")
 
     assert player.played is None
+
+
+def test_probe_excludes_native_row_padding_from_rotated_poster(tmp_path: Path) -> None:
+    """Preserve native display width and row alignment without padding columns."""
+
+    video = tmp_path / "rotated.mp4"
+    video.write_bytes(b"media")
+    pixels = b"".join(
+        bytes((row, 20, 30, 0)) * 90 + bytes((255, 0, 255, 0)) * 6 for row in range(160)
+    )
+    padded_wrapper_image = Image.frombytes("RGB", (96, 160), pixels, "raw", "BGRX")
+    player = FakePlayer(screenshot=padded_wrapper_image)
+    player.width, player.height = 160, 90
+    player.raw_screenshot = {
+        "format": "bgr0",
+        "w": 90,
+        "h": 160,
+        "stride": 384,
+        "data": pixels,
+    }
+
+    result = MpvVideoProbe(cast(MpvRuntime, FakeRuntime(player))).probe(video)
+
+    assert (result.width, result.height) == (160, 90)
+    with Image.open(BytesIO(result.poster_bytes)) as poster:
+        assert poster.size == (90, 160)
+        for row in range(160):
+            assert poster.getpixel((0, row)) == (30, 20, row)
+            assert poster.getpixel((89, row)) == (30, 20, row)
+    assert player.terminated

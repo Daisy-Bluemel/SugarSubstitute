@@ -32,6 +32,7 @@ from substitute.application.ports.video import (
 )
 from substitute.infrastructure.video.mpv_options import local_video_options
 from substitute.infrastructure.video.mpv_runtime import MpvRuntime
+from substitute.infrastructure.video.mpv_screenshot import decode_mpv_screenshot
 
 
 _LOAD_TIMEOUT_SECONDS = 15.0
@@ -57,8 +58,8 @@ class _MpvProbePlayer(Protocol):
     def wait_until_playing(self, timeout: float) -> None:
         """Wait until the first displayable frame has decoded."""
 
-    def screenshot_raw(self) -> Image.Image:
-        """Return the currently displayed frame."""
+    def command(self, name: str, *arguments: object) -> object:
+        """Execute one native screenshot command without binding-side conversion."""
 
     def terminate(self) -> None:
         """Release native probe resources."""
@@ -84,7 +85,17 @@ class MpvVideoProbe:
             player.play(str(resolved))
             player.wait_until_playing(timeout=_LOAD_TIMEOUT_SECONDS)
             player.pause = True
-            poster = player.screenshot_raw()
+            frame = decode_mpv_screenshot(
+                player.command("screenshot-raw", "subtitles"), time_seconds=0.0
+            )
+            poster = Image.frombytes(
+                "RGB",
+                (frame.width, frame.height),
+                frame.pixels,
+                "raw",
+                "BGRX",
+                frame.stride,
+            )
             width = _positive_integer(player.width, "width")
             height = _positive_integer(player.height, "height")
             return VideoProbeResult(

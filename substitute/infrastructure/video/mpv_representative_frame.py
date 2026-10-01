@@ -18,7 +18,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 from uuid import UUID
 
 from substitute.application.ports.video import (
@@ -27,6 +26,7 @@ from substitute.application.ports.video import (
     VideoRepresentativeFrame,
 )
 from substitute.infrastructure.video.mpv_player_factory import MpvPlayerProtocol
+from substitute.infrastructure.video.mpv_screenshot import decode_mpv_screenshot
 from substitute.shared.logging.logger import get_logger, log_warning_exception
 
 _LOGGER = get_logger("infrastructure.video.mpv_representative_frame")
@@ -66,7 +66,7 @@ class MpvRepresentativeFrameCapture:
         if position == self._captured_position:
             return None
         try:
-            frame = _representative_frame(
+            frame = decode_mpv_screenshot(
                 player.command("screenshot-raw", "video"),
                 time_seconds=time_seconds,
             )
@@ -81,41 +81,6 @@ class MpvRepresentativeFrameCapture:
             return None
         self._captured_position = position
         return frame
-
-
-def _representative_frame(
-    value: object,
-    *,
-    time_seconds: float,
-) -> VideoRepresentativeFrame:
-    """Normalize one python-mpv screenshot node into detached BGR0 bytes."""
-
-    if not isinstance(value, Mapping) or value.get("format") != "bgr0":
-        raise ValueError("libmpv returned an unsupported screenshot format")
-    width = _positive_integer(value["w"], "width")
-    height = _positive_integer(value["h"], "height")
-    stride = _positive_integer(value["stride"], "stride")
-    pixels = value["data"]
-    if not isinstance(pixels, (bytes, bytearray, memoryview)):
-        raise TypeError("libmpv screenshot pixels are not bytes")
-    return VideoRepresentativeFrame(
-        time_seconds=time_seconds,
-        width=width,
-        height=height,
-        stride=stride,
-        pixels=bytes(pixels),
-    )
-
-
-def _positive_integer(value: object, label: str) -> int:
-    """Return one required positive integer screenshot field."""
-
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise TypeError(f"libmpv screenshot {label} is not numeric")
-    integer = int(value)
-    if integer <= 0:
-        raise ValueError(f"libmpv screenshot {label} is not positive")
-    return integer
 
 
 __all__ = ["MpvRepresentativeFrameCapture"]
