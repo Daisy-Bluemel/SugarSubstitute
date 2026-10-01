@@ -19,8 +19,11 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import shutil
 from datetime import datetime
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, cast
 
 from PIL import Image
@@ -28,7 +31,12 @@ from PIL import Image
 from substitute.domain.recipes.sugar_ast import (
     LoadedRecipeDocument,
 )
-from substitute.shared.logging.logger import get_logger, log_error, log_debug
+from substitute.shared.logging.logger import (
+    get_logger,
+    log_debug,
+    log_error,
+    log_exception,
+)
 
 _LOGGER = get_logger("infrastructure.persistence.file_recipe_repository")
 
@@ -137,45 +145,73 @@ class FileRecipeRepository:
         project_name: str,
         sugar_script_text: str,
     ) -> None:
-        """Write recipe text with project header and rotate previous version backups."""
+        """Publish a complete recipe while retaining the original until replacement.
+
+        Keep backups byte-for-byte, including documents that cannot be decoded.
+        A failed publication may retain a completed backup, but never moves the
+        original destination or removes existing recovery copies. Diagnose cleanup
+        failures after publication without falsely reporting that the save failed.
+        """
 
         file_path = Path(path)
-        safe_project_name = project_name.strip()
+        document_text = f"# Project: {project_name.strip()}\n\n{sugar_script_text}"
+        published = False
+        try:
+            if file_path.exists():
+                try:
+                    existing = file_path.read_text(encoding="utf-8")
+                except (OSError, UnicodeError) as error:
+                    log_debug(
+                        _LOGGER,
+                        "Could not compare existing recipe before saving",
+                        path=file_path,
+                        error=error,
+                    )
+                else:
+                    if existing in (sugar_script_text, document_text):
+                        return
 
-        write_needed = True
-        if file_path.exists():
-            try:
-                existing = file_path.read_text(encoding="utf-8")
-                if existing == sugar_script_text:
-                    write_needed = False
-            except Exception:
-                pass
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            with TemporaryDirectory(
+                prefix=".recipe-", dir=file_path.parent
+            ) as temporary_directory:
+                staging_directory = Path(temporary_directory)
+                staged_recipe = staging_directory / "recipe.sugar"
+                staged_recipe.write_text(document_text, encoding="utf-8")
+                with staged_recipe.open("r+b") as staged:
+                    os.fsync(staged.fileno())
 
-        if not write_needed:
-            return
+                if file_path.exists():
+                    created_time = file_path.stat().st_ctime
+                    timestamp = datetime.fromtimestamp(created_time).strftime(
+                        "%Y%m%d_%H%M%S"
+                    )
+                    versions_dir = file_path.parent / "versions"
+                    versions_dir.mkdir(exist_ok=True)
+                    backup_path = versions_dir / f"{file_path.stem}_{timestamp}.sugar"
+                    counter = 2
+                    while backup_path.exists():
+                        backup_path = versions_dir / (
+                            f"{file_path.stem}_{timestamp}_{counter}.sugar"
+                        )
+                        counter += 1
+                    staged_backup = staging_directory / "previous.sugar"
+                    shutil.copy2(file_path, staged_backup)
+                    staged_backup.rename(backup_path)
 
-        if file_path.exists():
-            try:
-                created_time = file_path.stat().st_ctime
-            except Exception:
-                created_time = file_path.stat().st_mtime
-            timestamp = datetime.fromtimestamp(created_time).strftime("%Y%m%d_%H%M%S")
-            versions_dir = file_path.parent / "versions"
-            versions_dir.mkdir(exist_ok=True)
-            backup_path = versions_dir / f"{file_path.stem}_{timestamp}.sugar"
-            counter = 2
-            while backup_path.exists():
-                backup_path = (
-                    versions_dir / f"{file_path.stem}_{timestamp}_{counter}.sugar"
-                )
-                counter += 1
-            file_path.rename(backup_path)
-
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_text(
-            f"# Project: {safe_project_name}\n\n{sugar_script_text}",
-            encoding="utf-8",
-        )
+                os.replace(staged_recipe, file_path)
+                published = True
+        except Exception as error:
+            log_exception(
+                _LOGGER,
+                "Saved recipe but failed to clean staging directory"
+                if published
+                else "Failed to save recipe document",
+                path=file_path,
+                error=error,
+            )
+            if not published:
+                raise
 
 
 __all__ = [

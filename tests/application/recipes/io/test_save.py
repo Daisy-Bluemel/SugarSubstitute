@@ -87,8 +87,8 @@ def test_recipe_io_service_save_writes_recipe_and_creates_backups(
     )
     versions_directory = file_path.parent / "versions"
     backups = sorted(versions_directory.glob("recipe*.*"))
-    assert len(backups) == 1
-    assert backups[0].suffix == ".sugar"
+    assert backups == []
+    first_save = file_path.read_bytes()
 
     workflow.global_overrides["seed"]["value"] = 2
     service.save_workflow_recipe(
@@ -97,4 +97,8 @@ def test_recipe_io_service_save_writes_recipe_and_creates_backups(
         workflow=workflow,
     )
 
-    assert all(path.suffix == ".sugar" for path in versions_directory.glob("recipe*.*"))
+    backups = sorted(versions_directory.glob("recipe*.*"))
+    assert len(backups) == 1
+    assert backups[0].suffix == ".sugar"
+    assert backups[0].read_bytes() == first_save
+    assert "set *.*.seed = 2" in file_path.read_text(encoding="utf-8")
