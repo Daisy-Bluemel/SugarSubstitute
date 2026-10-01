@@ -74,6 +74,10 @@ from substitute.application.prompt_editor.lora.catalog_models import (
 from substitute.domain.prompt.features.models import PromptEditorFeatureProfile
 from substitute.application.user_presets import UserPresetService
 from substitute.application.workflows import WorkflowSessionService
+from substitute.application.workflows.unsaved_work_service import UnsavedWorkService
+from substitute.presentation.shell.session_autosave_controller import (
+    SessionAutosaveController,
+)
 from substitute.application.workflows.output_preview_registry import (
     OutputPreviewRegistry,
 )
@@ -391,6 +395,8 @@ class PromptEditorRealShell(QMainWindow):
         self.workflow_workspace = WorkflowWorkspaceCoordinator(
             cast(WorkflowWorkspaceView, self)
         )
+        self.unsaved_work_service = UnsavedWorkService()
+        self.session_autosave_controller = SessionAutosaveController(self)
         self.main_window_signal_binder = MainWindowSignalBinder(self)
         self.main_window_signal_binder.connect_canvas_signals(
             input_canvas=self.canvas_host.canvas_for("Input"),

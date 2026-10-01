@@ -234,6 +234,7 @@ def _initialize_controllers(panel: Any, inputs: EditorPanelCompositionInputs) ->
     panel._field_state_controller = EditorPanelFieldStateController(
         cast(EditorPanelFieldStateHost, panel),
         field_value_changed=panel._field_value_change_coordinator.field_value_changed,
+        section_edited=panel.sectionEdited.emit,
     )
     panel._choice_field_surface_reconciler = ChoiceFieldSurfaceReconciler(
         host=panel,

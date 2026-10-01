@@ -35,9 +35,6 @@ from substitute.presentation.editor.panel.factories.field_build_outcome import (
 from substitute.presentation.editor.panel.factories.field_pipeline import (
     LAYOUT_HANDLED,
 )
-from substitute.presentation.editor.panel.field_state_controller import (
-    EditorPanelFieldStateController,
-)
 from substitute.presentation.editor.panel.model_choice_snapshot_controller import (
     PanelModelChoiceSnapshotController,
 )
@@ -273,6 +270,10 @@ class NodeCardFieldRealizer:
     ) -> None:
         """Bind field state and prompt-layout notifications through their owner."""
 
+        from substitute.presentation.editor.panel.runtime_access import (
+            field_state_controller_for_panel,
+        )
+
         layout_changed = getattr(self._panel, "promptEditorLayoutChanged", None)
         emit_layout_changed = getattr(layout_changed, "emit", None)
 
@@ -282,10 +283,7 @@ class NodeCardFieldRealizer:
             if callable(emit_layout_changed):
                 emit_layout_changed()
 
-        controller = getattr(self._panel, "_field_state_controller", None)
-        if not isinstance(controller, EditorPanelFieldStateController):
-            controller = EditorPanelFieldStateController(self._panel)
-            setattr(self._panel, "_field_state_controller", controller)
+        controller = field_state_controller_for_panel(self._panel)
         controller.bind_node_widget_state(
             widget,
             cube_state,

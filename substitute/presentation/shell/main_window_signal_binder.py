@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from PySide6.QtCore import QObject, QTimer
+from PySide6.QtCore import QObject, Qt, QTimer
 from PySide6.QtWidgets import QFileDialog, QMessageBox
 from qfluentwidgets import FluentIcon as FIF  # type: ignore[import-untyped]
 from sugarsubstitute_shared.localization import app_text
@@ -30,6 +30,10 @@ from substitute.presentation.shell.comfy_runtime_actions import (
     comfy_runtime_actions_for,
 )
 from substitute.presentation.shell.cube_loader import load_cube_async
+from substitute.presentation.shell.editor_section_unsaved_work_observer import (
+    EditorSectionUnsavedWorkObserver,
+    SectionEditSignalPort,
+)
 from substitute.presentation.shell.session_autosave_coordinator import (
     SessionAutosaveRequestCategory,
 )
@@ -227,6 +231,7 @@ class MainWindowSignalBinder:
     def connect_editor_panel_signals(self, editor_panel: Any) -> None:
         """Connect editor-panel signals to controller and presenter handlers."""
 
+        self._connect_section_document_edits(editor_panel, editor_panel.sectionEdited)
         editor_panel.currentCubeVisibleChanged.connect(
             self._shell.workspace_cube_stack_actions.highlight_tab_for_cube
         )
@@ -258,6 +263,28 @@ class MainWindowSignalBinder:
         )
         if prompt_layout_changed is not None:
             prompt_layout_changed.connect(self._request_prompt_layout_autosave)
+
+    def _connect_section_document_edits(
+        self, editor_panel: QObject, edits: SectionEditSignalPort
+    ) -> None:
+        """Own one explicit-save observer for the lifetime of each editor panel."""
+
+        if (
+            editor_panel.findChild(
+                EditorSectionUnsavedWorkObserver,
+                options=Qt.FindChildOption.FindDirectChildrenOnly,
+            )
+            is not None
+        ):
+            return
+        EditorSectionUnsavedWorkObserver(
+            parent=editor_panel,
+            edits=edits,
+            workflows=lambda: self._shell.workflow_session_service.workflows,
+            unsaved_work=self._shell.unsaved_work_service,
+            edits_muted=self._shell.session_autosave_controller.session_autosave_muted,
+            request_autosave=self._shell.request_session_autosave,
+        )
 
     def connect_cube_stack_signals(self, cube_stack: Any) -> None:
         """Connect cube-stack widget signals to cube action orchestration."""

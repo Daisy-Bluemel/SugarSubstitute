@@ -18,6 +18,10 @@
 
 from __future__ import annotations
 
+from substitute.presentation.editor.panel.field_state_controller import (
+    EditorPanelFieldStateController,
+)
+
 from typing import Any, cast
 
 import pytest
@@ -61,6 +65,7 @@ def test_node_action_menu_second_click_closes_without_rebuilding(
         title_row=title,
         title_layout=QHBoxLayout(title),
         preset_context=NodeInputPresetContext(
+            field_writer=EditorPanelFieldStateController(),
             cube_alias="A",
             node_name="sampler",
             node_type="KSampler",

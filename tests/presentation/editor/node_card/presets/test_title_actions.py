@@ -18,6 +18,10 @@
 
 from __future__ import annotations
 
+from substitute.presentation.editor.panel.field_state_controller import (
+    EditorPanelFieldStateController,
+)
+
 from typing import Any, cast
 
 
@@ -515,6 +519,7 @@ def _context(cube_state: CubeState) -> NodeInputPresetContext:
     """Return a standard KSampler preset context."""
 
     return NodeInputPresetContext(
+        field_writer=EditorPanelFieldStateController(),
         cube_alias="A",
         node_name="sampler",
         node_type="KSampler",

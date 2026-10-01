@@ -120,10 +120,13 @@ class EditorPanelFieldStateController:
         host: EditorPanelFieldStateHost | None = None,
         *,
         field_value_changed: Callable[[EditorFieldBinding, object], None] | None = None,
+        section_edited: Callable[[object], None] | None = None,
     ) -> None:
         """Compose value, prompt, and widget-family state owners."""
 
-        self._value_store = EditorFieldValueStore(field_value_changed)
+        self._value_store = EditorFieldValueStore(
+            field_value_changed, section_edited=section_edited
+        )
         self._current_state_resolver = CurrentEditorFieldStateResolver(host)
         self._widget_state = FieldWidgetStateController(
             self._value_store,

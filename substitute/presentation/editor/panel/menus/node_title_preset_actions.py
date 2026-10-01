@@ -31,6 +31,7 @@ from PySide6.QtWidgets import QWidget
 from substitute.application.display_labels import beautify_label
 from substitute.application.node_behavior import ResolvedFieldSpec
 from substitute.presentation.editor.panel.menus.node_input_preset_apply import (
+    NodeInputPresetValueWriter,
     apply_node_input_preset,
 )
 from substitute.presentation.editor.panel.menus.node_input_preset_capture import (
@@ -75,6 +76,7 @@ class NodeInputPresetContext:
     field_specs: Mapping[str, ResolvedFieldSpec]
     cube_state: object
     input_widgets_by_field_key: Mapping[tuple[str, str, str], object]
+    field_writer: NodeInputPresetValueWriter
 
 
 def node_input_preset_menu_entries(
@@ -182,6 +184,7 @@ def _apply_preset_item(
 
         try:
             apply_node_input_preset(
+                field_writer=context.field_writer,
                 cube_state=context.cube_state,
                 cube_alias=context.cube_alias,
                 node_name=context.node_name,

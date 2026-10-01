@@ -121,6 +121,7 @@ class EditorPanel(
 
     CUBE_SPACING = EDITOR_SECTION_GAP
     currentCubeVisibleChanged = Signal(str)
+    sectionEdited = Signal(object)
     inputImageChanged = Signal(str, str, str)
     inputImageClicked = Signal(str, str, str)
     inputMaskChanged = Signal(str, str, str)

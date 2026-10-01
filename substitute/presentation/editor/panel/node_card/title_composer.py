@@ -322,6 +322,10 @@ class NodeCardTitleComposer:
     ) -> None:
         """Bind presets, advanced inputs, and contributed actions to the title."""
 
+        from substitute.presentation.editor.panel.runtime_access import (
+            field_state_controller_for_panel,
+        )
+
         input_widgets = getattr(self._panel, "input_widgets_by_field_key", {})
         if not isinstance(input_widgets, Mapping):
             input_widgets = {}
@@ -330,6 +334,7 @@ class NodeCardTitleComposer:
             title_row=card_title,
             title_layout=title_layout,
             preset_context=NodeInputPresetContext(
+                field_writer=field_state_controller_for_panel(self._panel),
                 cube_alias=snapshot.current_alias,
                 node_name=node_name,
                 node_type=node_type,

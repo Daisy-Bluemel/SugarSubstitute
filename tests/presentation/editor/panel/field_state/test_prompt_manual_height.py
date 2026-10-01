@@ -131,13 +131,16 @@ def test_prompt_editor_manual_height_changes_update_cube_ui_and_autosave(
 
     prompt_editor = _DirectPromptEditor()
     autosaves: list[str] = []
+    authored_edits: list[object] = []
     cube_state = SimpleNamespace(
         buffer={"nodes": {"positive_prompt": {"inputs": {"text": "from-buffer"}}}},
         dirty=False,
         ui=None,
     )
 
-    module.EditorPanelFieldStateController().wire_prompt_editor_state(
+    module.EditorPanelFieldStateController(
+        section_edited=authored_edits.append
+    ).wire_prompt_editor_state(
         _as_prompt_editor(prompt_editor),
         cube_state,
         manual_height_changed=lambda: autosaves.append("autosave"),
@@ -151,6 +154,8 @@ def test_prompt_editor_manual_height_changes_update_cube_ui_and_autosave(
     }
     assert cube_state.dirty is True
     assert autosaves == ["autosave"]
+
+    assert authored_edits == []
 
 
 def test_prompt_editor_manual_height_clearing_removes_cube_ui_entry(

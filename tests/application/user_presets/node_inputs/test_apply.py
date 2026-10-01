@@ -18,6 +18,10 @@
 
 from __future__ import annotations
 
+from substitute.presentation.editor.panel.field_state_controller import (
+    EditorPanelFieldStateController,
+)
+
 from typing import cast
 
 from substitute.application.node_behavior import ResolvedFieldSpec
@@ -49,6 +53,7 @@ def test_apply_node_input_preset_writes_buffer_and_live_widget() -> None:
     widget = _ValueWidget()
 
     report = apply_node_input_preset(
+        field_writer=EditorPanelFieldStateController(),
         cube_state=cube_state,
         cube_alias="A",
         node_name="sampler",
@@ -77,6 +82,7 @@ def test_apply_node_input_preset_skips_missing_connected_and_incompatible_fields
     cube_state = _cube_state({"steps": 20, "cfg": ["other", 0], "name": "old"})
 
     report = apply_node_input_preset(
+        field_writer=EditorPanelFieldStateController(),
         cube_state=cube_state,
         cube_alias="A",
         node_name="sampler",

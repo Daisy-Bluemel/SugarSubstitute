@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from PySide6.QtCore import SignalInstance
 from PySide6.QtWidgets import QWidget
 
 from substitute.application.node_behavior import (
@@ -105,6 +106,7 @@ class EditorPanel(
 ):
     CUBE_SPACING: int
     currentCubeVisibleChanged: Any
+    sectionEdited: SignalInstance
     inputImageChanged: Any
     inputImageClicked: Any
     inputMaskChanged: Any

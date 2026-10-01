@@ -63,7 +63,7 @@ class FieldWidgetStateController:
         self._value_store = value_store
         self._state_resolver = state_resolver
         self._choice_fields = ChoiceFieldStateController(value_store, state_resolver)
-        self._seed_fields = SeedFieldStateController(mark_dirty)
+        self._seed_fields = SeedFieldStateController(value_store.mark_edited_state)
 
     def wire_widget_state(
         self,
@@ -268,13 +268,6 @@ class FieldWidgetStateController:
             )
 
         connect_signal(getattr(mask_picker, "maskSelected"), on_mask_selected)
-
-
-def mark_dirty(cube_state: object) -> None:
-    """Mark seed-owning cube state dirty through its public attribute."""
-
-    if hasattr(cube_state, "dirty"):
-        setattr(cube_state, "dirty", True)
 
 
 __all__ = [

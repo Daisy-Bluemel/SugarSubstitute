@@ -20,13 +20,10 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from typing import TypeAlias
+from typing import Protocol, TypeAlias
 
 from substitute.application.node_behavior import ResolvedFieldSpec
 from substitute.presentation.editor.panel.field_state_binding import EditorFieldBinding
-from substitute.presentation.editor.panel.field_state_controller import (
-    EditorPanelFieldStateController,
-)
 from substitute.presentation.editor.panel.live_field_value_writer import (
     write_live_widget_value,
 )
@@ -35,6 +32,15 @@ from substitute.shared.logging.logger import get_logger, log_warning
 _LOGGER = get_logger("presentation.editor.panel.menus.node_input_preset_apply")
 JsonObject: TypeAlias = dict[str, object]
 JsonValue: TypeAlias = object
+
+
+class NodeInputPresetValueWriter(Protocol):
+    """Apply preset values through the mounted editor's mutation publisher."""
+
+    def set_field_value(
+        self, cube_state: object, binding: EditorFieldBinding, value: object
+    ) -> bool:
+        """Persist an authored value and report whether it changed."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +61,7 @@ class NodeInputPresetApplyReport:
 
 def apply_node_input_preset(
     *,
+    field_writer: NodeInputPresetValueWriter,
     cube_state: object,
     cube_alias: str | None,
     node_name: str,
@@ -71,7 +78,6 @@ def apply_node_input_preset(
 
     applied_keys: list[str] = []
     skipped_fields: list[NodeInputPresetSkippedField] = []
-    field_state = EditorPanelFieldStateController()
 
     for field_key, value in preset_inputs.items():
         skip_reason = _skip_reason(
@@ -94,7 +100,7 @@ def apply_node_input_preset(
                 )
             )
             continue
-        field_state.set_field_value(
+        field_writer.set_field_value(
             cube_state,
             EditorFieldBinding(
                 cube_alias=cube_alias,
@@ -205,6 +211,7 @@ def _log_skipped_field(
 
 __all__ = [
     "NodeInputPresetApplyReport",
+    "NodeInputPresetValueWriter",
     "NodeInputPresetSkippedField",
     "apply_node_input_preset",
 ]

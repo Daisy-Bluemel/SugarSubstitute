@@ -20,6 +20,18 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+from PySide6.QtCore import QObject, Signal
+from substitute.application.workflows.unsaved_work_service import UnsavedWorkService
+from substitute.domain.workflow import CubeState, WorkflowState
+from substitute.presentation.editor.panel.field_state_binding import EditorFieldBinding
+from substitute.presentation.editor.panel.runtime_access import (
+    field_state_controller_for_panel,
+)
+from substitute.presentation.shell.editor_section_unsaved_work_observer import (
+    EditorSectionUnsavedWorkObserver,
+)
+from tests.support.qt.lifecycle import destroy_qt_object, ensure_qt_application
+
 from substitute.presentation.shell.main_window_signal_binder import (
     MainWindowSignalBinder,
 )
@@ -27,22 +39,46 @@ from substitute.presentation.shell.main_window_signal_binder import (
 from .support import _Signal
 
 
+class _EditorPanel(QObject):
+    """Expose the real Qt lifetime and identified edit signal of an editor."""
+
+    sectionEdited = Signal(object)
+
+    def __init__(self) -> None:
+        """Retain unrelated routed signals as controlled external boundaries."""
+        super().__init__()
+        self.currentCubeVisibleChanged = _Signal()
+        self.inputImageChanged = _Signal()
+        self.inputImageClicked = _Signal()
+        self.inputMaskChanged = _Signal()
+        self.inputMaskClicked = _Signal()
+        self.inputMaskOpacityChanged = _Signal()
+        self.inputMaskOpacityCommitted = _Signal()
+        self.promptSceneQueueRequested = _Signal()
+        self.promptEditorLayoutChanged = _Signal()
+
+
 def test_editor_panel_signals_route_editor_events_and_layout_autosave() -> None:
     """Editor-panel wiring should bind image, mask, prompt, and layout events."""
 
     events: list[tuple[str, object]] = []
-    editor_panel = SimpleNamespace(
-        currentCubeVisibleChanged=_Signal(),
-        inputImageChanged=_Signal(),
-        inputImageClicked=_Signal(),
-        inputMaskChanged=_Signal(),
-        inputMaskClicked=_Signal(),
-        inputMaskOpacityChanged=_Signal(),
-        inputMaskOpacityCommitted=_Signal(),
-        promptSceneQueueRequested=_Signal(),
-        promptEditorLayoutChanged=_Signal(),
+    ensure_qt_application()
+    editor_panel = _EditorPanel()
+    section = CubeState(
+        cube_id="owned",
+        version="1",
+        alias="A",
+        original_cube={},
+        buffer={"nodes": {"1": {"inputs": {"text": "old"}}}},
     )
+    workflow = WorkflowState(cubes={"A": section}, stack_order=["A"])
+    unsaved = UnsavedWorkService()
     shell = SimpleNamespace(
+        unsaved_work_service=unsaved,
+        workflow_session_service=SimpleNamespace(workflows={"owner": workflow}),
+        session_autosave_controller=SimpleNamespace(
+            session_autosave_muted=lambda: False
+        ),
         workspace_cube_stack_actions=SimpleNamespace(
             highlight_tab_for_cube=lambda alias: events.append(("visible", alias)),
         ),
@@ -76,25 +112,45 @@ def test_editor_panel_signals_route_editor_events_and_layout_autosave() -> None:
         request_session_autosave=lambda: events.append(("autosave", None)),
     )
 
-    MainWindowSignalBinder(shell).connect_editor_panel_signals(editor_panel)
-    editor_panel.currentCubeVisibleChanged.fire("CubeA")
-    editor_panel.inputImageChanged.fire("CubeA", "ImageNode", "image.png")
-    editor_panel.inputImageClicked.fire("CubeA", "ImageNode", "image.png")
-    editor_panel.inputMaskChanged.fire("CubeA", "MaskNode", "mask.png")
-    editor_panel.inputMaskClicked.fire("CubeA", "MaskNode", "mask.png")
-    editor_panel.inputMaskOpacityChanged.fire("CubeA", "MaskNode", 0.37)
-    editor_panel.inputMaskOpacityCommitted.fire("CubeA", "MaskNode", 0.5, 0.37)
-    editor_panel.promptSceneQueueRequested.fire("portrait")
-    editor_panel.promptEditorLayoutChanged.fire()
+    try:
+        MainWindowSignalBinder(shell).connect_editor_panel_signals(editor_panel)
+        editor_panel.currentCubeVisibleChanged.fire("CubeA")
+        editor_panel.inputImageChanged.fire("CubeA", "ImageNode", "image.png")
+        editor_panel.inputImageClicked.fire("CubeA", "ImageNode", "image.png")
+        editor_panel.inputMaskChanged.fire("CubeA", "MaskNode", "mask.png")
+        editor_panel.inputMaskClicked.fire("CubeA", "MaskNode", "mask.png")
+        editor_panel.inputMaskOpacityChanged.fire("CubeA", "MaskNode", 0.37)
+        editor_panel.inputMaskOpacityCommitted.fire("CubeA", "MaskNode", 0.5, 0.37)
+        editor_panel.promptSceneQueueRequested.fire("portrait")
+        editor_panel.promptEditorLayoutChanged.fire()
 
-    assert events == [
-        ("visible", "CubeA"),
-        ("image_changed", ("CubeA", "ImageNode", "image.png")),
-        ("image_clicked", ("CubeA", "ImageNode", "image.png")),
-        ("mask_changed", ("CubeA", "MaskNode", "mask.png")),
-        ("mask_clicked", ("CubeA", "MaskNode", "mask.png")),
-        ("mask_opacity", ("CubeA", "MaskNode", 0.37)),
-        ("mask_opacity_commit", ("CubeA", "MaskNode", 0.5, 0.37)),
-        ("prompt_scene", "portrait"),
-        ("autosave", None),
-    ]
+        assert events == [
+            ("visible", "CubeA"),
+            ("image_changed", ("CubeA", "ImageNode", "image.png")),
+            ("image_clicked", ("CubeA", "ImageNode", "image.png")),
+            ("mask_changed", ("CubeA", "MaskNode", "mask.png")),
+            ("mask_clicked", ("CubeA", "MaskNode", "mask.png")),
+            ("mask_opacity", ("CubeA", "MaskNode", 0.37)),
+            ("mask_opacity_commit", ("CubeA", "MaskNode", 0.5, 0.37)),
+            ("prompt_scene", "portrait"),
+            ("autosave", None),
+        ]
+
+        MainWindowSignalBinder(shell).connect_editor_panel_signals(editor_panel)
+        assert len(editor_panel.findChildren(EditorSectionUnsavedWorkObserver)) == 1
+        controller = field_state_controller_for_panel(editor_panel)
+        binding = EditorFieldBinding(
+            cube_alias="A",
+            node_name="1",
+            field_key="text",
+            storage_kind="input",
+            value_source=None,
+            resolved_display_value=None,
+            prompt_field_identity="1.text",
+        )
+        assert controller.set_field_value(section, binding, "edited")
+        assert unsaved.state_for("owner").dirty
+        assert events[-1] == ("autosave", None)
+        assert len([event for event in events if event[0] == "autosave"]) == 2
+    finally:
+        destroy_qt_object(editor_panel)

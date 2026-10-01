@@ -138,6 +138,7 @@ def field_state_controller_for_panel(panel: object) -> EditorPanelFieldStateCont
     controller = getattr(panel, "_field_state_controller", None)
     if controller is None:
         field_change_coordinator = field_value_change_coordinator_for_panel(panel)
+        emit_section_edit = getattr(getattr(panel, "sectionEdited", None), "emit", None)
         controller = EditorPanelFieldStateController(
             cast(EditorPanelFieldStateHost, panel),
             field_value_changed=(
@@ -145,6 +146,7 @@ def field_state_controller_for_panel(panel: object) -> EditorPanelFieldStateCont
                 if field_change_coordinator is not None
                 else None
             ),
+            section_edited=emit_section_edit if callable(emit_section_edit) else None,
         )
         setattr(panel, "_field_state_controller", controller)
     return cast(EditorPanelFieldStateController, controller)

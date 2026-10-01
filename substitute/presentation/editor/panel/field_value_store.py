@@ -37,10 +37,13 @@ class EditorFieldValueStore:
     def __init__(
         self,
         field_value_changed: Callable[[EditorFieldBinding, object], None] | None = None,
+        *,
+        section_edited: Callable[[object], None] | None = None,
     ) -> None:
-        """Store the optional observer notified after successful mutations."""
+        """Separate authored edits from value-specific presentation observers."""
 
         self._field_value_changed = field_value_changed
+        self._section_edited = section_edited
 
     def field_value(self, cube_state: object, binding: EditorFieldBinding) -> object:
         """Return the persisted value for one field binding."""
@@ -85,6 +88,7 @@ class EditorFieldValueStore:
                 )
             )
             if changed:
+                self.mark_edited_state(cube_state)
                 self.notify_field_value_changed(binding, value)
             return changed
         node = self.mutable_node_payload(cube_state, binding)
@@ -95,7 +99,7 @@ class EditorFieldValueStore:
             if previous == value:
                 return False
             node[binding.field_key] = value
-            mark_cube_state_dirty(cube_state)
+            self.mark_edited_state(cube_state)
             self.notify_field_value_changed(binding, value)
             return True
 
@@ -107,9 +111,16 @@ class EditorFieldValueStore:
         if previous == value:
             return False
         inputs[binding.field_key] = value
-        mark_cube_state_dirty(cube_state)
+        self.mark_edited_state(cube_state)
         self.notify_field_value_changed(binding, value)
         return True
+
+    def mark_edited_state(self, cube_state: object) -> None:
+        """Publish each successful authored edit before fallible presentation work."""
+
+        mark_cube_state_dirty(cube_state)
+        if self._section_edited is not None:
+            self._section_edited(cube_state)
 
     def notify_field_value_changed(
         self,

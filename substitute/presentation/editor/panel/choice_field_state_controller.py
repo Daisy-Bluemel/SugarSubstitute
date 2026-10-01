@@ -30,7 +30,6 @@ from substitute.presentation.editor.panel.field_state_binding import (
 )
 from substitute.presentation.editor.panel.field_value_store import (
     EditorFieldValueStore,
-    mark_cube_state_dirty,
 )
 from substitute.presentation.editor.panel.prompt_field_state_controller import (
     connect_signal,
@@ -101,7 +100,7 @@ class ChoiceFieldStateController:
                 selected_value=selected_value,
             )
             if current_node != before:
-                mark_cube_state_dirty(current_state)
+                self._value_store.mark_edited_state(current_state)
                 self._value_store.notify_field_value_changed(
                     binding,
                     self._value_store.field_value(current_state, binding),
@@ -134,13 +133,17 @@ class ChoiceFieldStateController:
                 current_state,
                 binding,
             )
-            if (
+            cleared_link = (
                 current_node is not None
                 and not text.startswith("🔗 ")
                 and link_key in current_node
-            ):
+            )
+            if cleared_link and current_node is not None:
                 del current_node[link_key]
-            self._value_store.set_field_value(current_state, binding, text)
+            changed = self._value_store.set_field_value(current_state, binding, text)
+            if cleared_link and not changed:
+                self._value_store.mark_edited_state(current_state)
+                self._value_store.notify_field_value_changed(binding, text)
 
         connect_signal(
             string_signal(getattr(combo, "currentTextChanged")),
