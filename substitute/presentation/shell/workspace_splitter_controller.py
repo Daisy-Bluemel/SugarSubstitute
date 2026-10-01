@@ -91,16 +91,65 @@ class WorkspaceSplitterController:
             preferred_stack_width=preferred_stack_width,
         )
 
-    def apply_durable_sizes(self, sizes: tuple[int, ...]) -> bool:
-        """Apply and remember validated canonical sizes at a restore boundary."""
+    def apply_durable_sizes(
+        self,
+        sizes: tuple[int, ...],
+        *,
+        effective_stack_width: int,
+        preferred_stack_width: int,
+    ) -> bool:
+        """Remember canonical intent and project it into the current presentation."""
 
         normalized = tuple(int(size) for size in sizes)
         if len(normalized) < 2:
             return False
-        self._splitter.setSizes(list(normalized))
+        rendered = self.canonical_sizes(
+            normalized,
+            effective_stack_width=preferred_stack_width,
+            preferred_stack_width=effective_stack_width,
+        )
+        self._splitter.setSizes(list(rendered))
         self._remembered_sizes = normalized
         self._presentation_origin = None
         return True
+
+    def rebase_preferred_stack_width(
+        self,
+        *,
+        previous_stack_width: int,
+        preferred_stack_width: int,
+        effective_stack_width: int,
+    ) -> None:
+        """Move durable geometry into a new preference without capturing a frame."""
+
+        previous = self.sizes_for_snapshot(
+            effective_stack_width=effective_stack_width,
+            preferred_stack_width=previous_stack_width,
+        )
+        self.remember_sizes(
+            self.canonical_sizes(
+                previous,
+                effective_stack_width=previous_stack_width,
+                preferred_stack_width=preferred_stack_width,
+            )
+        )
+
+    def remember_rendered_sizes(
+        self,
+        sizes: tuple[int, ...],
+        *,
+        effective_stack_width: int,
+        preferred_stack_width: int,
+    ) -> tuple[int, ...]:
+        """Normalize explicitly supplied rendered geometry before storing intent."""
+
+        canonical = self.canonical_sizes(
+            sizes,
+            effective_stack_width=effective_stack_width,
+            preferred_stack_width=preferred_stack_width,
+        )
+        self.remember_sizes(canonical)
+        return canonical
 
     def remember_user_geometry(
         self,
@@ -110,13 +159,11 @@ class WorkspaceSplitterController:
     ) -> tuple[int, ...]:
         """Normalize a user drag to the durable cube-preference coordinate space."""
 
-        canonical = self.canonical_sizes(
+        return self.remember_rendered_sizes(
             self.current_sizes(),
             effective_stack_width=effective_stack_width,
             preferred_stack_width=preferred_stack_width,
         )
-        self.remember_sizes(canonical)
-        return canonical
 
     def begin_stack_width_transition(self, stack_width: int) -> bool:
         """Capture live geometry as the fixed origin for a retargeted transition."""
@@ -198,8 +245,9 @@ class WorkspaceSplitterController:
 
         delta = max(0, int(preferred_stack_width)) - max(0, int(effective_stack_width))
         canonical = list(normalized)
-        transferable = min(
-            delta, max(0, canonical[canvas_index] - _CANVAS_MINIMUM_WIDTH)
+        transferable = max(
+            _DETAILS_MINIMUM_WIDTH - canonical[details_index],
+            min(delta, max(0, canonical[canvas_index] - _CANVAS_MINIMUM_WIDTH)),
         )
         canonical[details_index] += transferable
         canonical[canvas_index] -= transferable

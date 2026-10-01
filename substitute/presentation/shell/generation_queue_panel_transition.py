@@ -235,7 +235,7 @@ class GenerationQueuePanelTransition(QObject):
         layout_controller = getattr(self._view, "workspace_layout_controller", None)
         remember_sizes = getattr(
             layout_controller,
-            "remember_workflow_splitter_sizes",
+            "remember_rendered_workflow_splitter_sizes",
             None,
         )
         if callable(remember_sizes):

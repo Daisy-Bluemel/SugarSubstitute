@@ -142,7 +142,9 @@ def _view(
         remembered=remembered,
     )
     view.workspace_layout_controller = SimpleNamespace(
-        remember_workflow_splitter_sizes=lambda sizes: remembered.append(list(sizes)),
+        remember_rendered_workflow_splitter_sizes=lambda sizes: remembered.append(
+            list(sizes)
+        ),
         log_editor_width_trace=lambda *_args, **_kwargs: None,
     )
     return view

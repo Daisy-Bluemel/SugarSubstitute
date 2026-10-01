@@ -51,7 +51,10 @@ class WorkspaceLayoutController:
     def initial_left_workspace_width(self) -> int:
         """Return the startup width that preserves the editor's two-column layout."""
 
-        width = int(self._shell.cube_stack_container.width()) + _EDITOR_TWO_COLUMN_WIDTH
+        width = (
+            int(self._shell.cube_stack_presentation_controller.preferred_stack_width)
+            + _EDITOR_TWO_COLUMN_WIDTH
+        )
         self.log_editor_width_trace(
             "computed initial left workspace width",
             initial_left_workspace_width=width,
@@ -143,7 +146,7 @@ class WorkspaceLayoutController:
         return live_sizes
 
     def apply_workflow_splitter_sizes(self, sizes: Sequence[int]) -> None:
-        """Apply and remember durable workflow splitter sizes on the live splitter."""
+        """Project durable workflow sizes through the current stack presentation."""
 
         normalized_sizes = tuple(int(size) for size in sizes)
         self.log_editor_width_trace(
@@ -157,34 +160,18 @@ class WorkspaceLayoutController:
                 rejection_reason="fewer than two sizes",
             )
             return
-        workspace_splitter = getattr(
-            self._shell,
-            "workspace_splitter_controller",
-            None,
-        )
-        apply_durable_sizes = getattr(
-            workspace_splitter,
-            "apply_durable_sizes",
-            None,
-        )
-        if callable(apply_durable_sizes):
-            apply_durable_sizes(normalized_sizes)
+        if self._shell.cube_stack_presentation_controller.apply_splitter_sizes(
+            normalized_sizes
+        ):
             self._shell._remembered_workflow_splitter_sizes = normalized_sizes
-            return
-        splitter = getattr(self._shell, "splitter", None)
-        set_sizes = getattr(splitter, "setSizes", None)
-        if callable(set_sizes):
-            set_sizes(list(normalized_sizes))
-            self.log_editor_width_trace(
-                "applied workflow splitter sizes to live splitter",
-                applied_sizes=normalized_sizes,
-            )
-        else:
-            self.log_editor_width_trace(
-                "live splitter setSizes unavailable during apply",
-                requested_sizes=normalized_sizes,
-            )
-        self.remember_workflow_splitter_sizes(normalized_sizes)
+
+    def remember_rendered_workflow_splitter_sizes(self, sizes: Sequence[int]) -> None:
+        """Normalize queue-panel geometry before storing durable workspace sizes."""
+
+        canonical = self._shell.cube_stack_presentation_controller.remember_rendered_splitter_sizes(
+            tuple(int(size) for size in sizes)
+        )
+        self._shell._remembered_workflow_splitter_sizes = canonical
 
     def can_apply_startup_default_splitter_layout(self) -> bool:
         """Return whether the shell still needs its first default splitter layout."""
@@ -240,7 +227,8 @@ class WorkspaceLayoutController:
             )
             return
         left_width = self.initial_left_workspace_width()
-        default_sizes = (left_width, max(100, self._shell.width() - left_width))
+        available_width = sum(self.current_main_splitter_sizes()) or self._shell.width()
+        default_sizes = (left_width, max(100, available_width - left_width))
         self.log_editor_width_trace(
             "applying startup default splitter layout",
             default_sizes=default_sizes,

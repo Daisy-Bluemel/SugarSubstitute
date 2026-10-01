@@ -245,11 +245,11 @@ class ShellLayoutRestoreController:
         target_pane_count = len(current_splitter_sizes) or len(
             snapshot.main_splitter_sizes
         )
-        available_width = self.safe_trace_width(getattr(self._shell, "splitter", None))
-        if available_width is None or available_width <= 0:
-            available_width = sum(current_splitter_sizes) or sum(
-                snapshot.main_splitter_sizes
-            )
+        available_width = sum(current_splitter_sizes)
+        if available_width <= 0:
+            available_width = self.safe_trace_width(
+                getattr(self._shell, "splitter", None)
+            ) or sum(snapshot.main_splitter_sizes)
         plan = build_shell_layout_restore_plan(
             snapshot,
             available_width=max(1, available_width),
@@ -482,8 +482,10 @@ class ShellLayoutRestoreController:
         main_splitter_sizes: tuple[int, ...],
         cube_stack_width: int,
     ) -> int | None:
-        """Return the durable editor-panel width for shell snapshot capture."""
+        """Derive editor intent from canonical panes before considering live widgets."""
 
+        if main_splitter_sizes:
+            return max(0, int(main_splitter_sizes[0]) - cube_stack_width)
         active_editor_panel = getattr(self._shell, "active_editor_panel", None)
         if callable(active_editor_panel):
             try:
@@ -493,8 +495,6 @@ class ShellLayoutRestoreController:
         width = self.safe_trace_width(active_editor_panel)
         if width is not None:
             return width
-        if main_splitter_sizes:
-            return max(0, int(main_splitter_sizes[0]) - cube_stack_width)
         return None
 
     def canvas_panel_width_for_snapshot(

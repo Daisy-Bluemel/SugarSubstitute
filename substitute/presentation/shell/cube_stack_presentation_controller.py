@@ -248,8 +248,14 @@ class CubeStackPresentationController(QObject):
         """Change durable cube presentation without overriding document availability."""
 
         self._cancel_expansion_leases()
+        previous_stack_width = self.preferred_stack_width
         self._preference = (
             CubeStackPreference.COMPACT if compact else CubeStackPreference.EXPANDED
+        )
+        self._splitter_controller.rebase_preferred_stack_width(
+            previous_stack_width=previous_stack_width,
+            preferred_stack_width=self.preferred_stack_width,
+            effective_stack_width=self._rendered_frame.container_width,
         )
         return self._request_derived_mode(
             animated=animated,
@@ -310,6 +316,26 @@ class CubeStackPresentationController(QObject):
         """Return canonical sizes without persisting an animation frame."""
 
         return self._splitter_controller.sizes_for_snapshot(
+            effective_stack_width=self._rendered_frame.container_width,
+            preferred_stack_width=self.preferred_stack_width,
+        )
+
+    def apply_splitter_sizes(self, sizes: tuple[int, ...]) -> bool:
+        """Restore canonical geometry through the current availability projection."""
+
+        return self._splitter_controller.apply_durable_sizes(
+            sizes,
+            effective_stack_width=self._rendered_frame.container_width,
+            preferred_stack_width=self.preferred_stack_width,
+        )
+
+    def remember_rendered_splitter_sizes(
+        self, sizes: tuple[int, ...]
+    ) -> tuple[int, ...]:
+        """Translate persistent pane changes from rendered to preferred coordinates."""
+
+        return self._splitter_controller.remember_rendered_sizes(
+            sizes,
             effective_stack_width=self._rendered_frame.container_width,
             preferred_stack_width=self.preferred_stack_width,
         )
