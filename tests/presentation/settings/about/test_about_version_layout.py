@@ -18,9 +18,12 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import cast
 
+import pytest
 from PySide6.QtCore import QPoint, QRect, Qt
+from PySide6.QtGui import QFontMetricsF, QTextLayout, QTextOption
 from PySide6.QtWidgets import QGridLayout, QLabel, QSizePolicy, QWidget
 
 from substitute.presentation.settings.about_page import AboutSettingsPage
@@ -29,6 +32,7 @@ from tests.presentation.settings.about.about_settings_harness import (
     AboutInfoServiceDouble,
     AboutPageFactory,
     application,
+    about_snapshot,
     bind_refreshed_snapshot,
 )
 
@@ -96,25 +100,48 @@ def test_about_version_group_bounds_subtitles_under_column_pressure(
     page = _shown_page(about_page_factory, width=940, height=720)
     group = _version_group(page)
     assert group.property("aboutVersionColumnCount") == 2
-    elided_keys: set[str] = set()
     for object_key in ("ComfyUI", "SubstituteBackend"):
         card = _version_card(page, object_key)
         subtitle = _version_child_label(card, f"AboutVersionSubtitle-{object_key}")
-        assert card.property("aboutVersionLayoutMode") == "wide"
-        assert subtitle.text().count("\n") <= 1
-        displayed_text = " ".join(subtitle.text().split())
-        complete_text = " ".join(subtitle.toolTip().split())
-        if "…" in displayed_text:
-            elided_keys.add(object_key)
-            assert displayed_text != complete_text
-        else:
-            assert displayed_text == complete_text
-        assert subtitle.height() >= (
-            subtitle.fontMetrics().lineSpacing()
-            * max(1, len(subtitle.text().splitlines()))
+        _assert_wide_subtitle_is_bounded(card, subtitle)
+
+
+@pytest.mark.parametrize(
+    ("subtitle_text", "overflows"),
+    (
+        ("Qt frontend", False),
+        ("Additional component metadata for the desktop application. " * 8, True),
+    ),
+    ids=("fitting", "overflowing"),
+)
+def test_about_version_subtitle_preserves_fitting_text_and_elides_overflow(
+    about_page_factory: AboutPageFactory,
+    subtitle_text: str,
+    overflows: bool,
+) -> None:
+    """Exercise measured fitting and overflowing copy with the active platform font."""
+
+    page = _shown_page(about_page_factory, width=940, height=720)
+    assert _version_group(page).property("aboutVersionColumnCount") == 2
+    card = _version_card(page, "ComfyUI")
+    subtitle = _version_child_label(card, "AboutVersionSubtitle-ComfyUI")
+    assert (_wrapped_line_count(subtitle, subtitle_text) > 2) is overflows
+    snapshot = about_snapshot("2.0.1")
+    page.bind_snapshot(
+        replace(
+            snapshot,
+            versions=tuple(
+                replace(row, subtitle=subtitle_text)
+                if row.component_key == "ComfyUI"
+                else row
+                for row in snapshot.versions
+            ),
         )
-        _assert_card_children_do_not_overlap(card)
-    assert "ComfyUI" in elided_keys
+    )
+
+    assert subtitle.toolTip() == subtitle_text
+    assert (_wrapped_line_count(subtitle, subtitle_text) > 2) is overflows
+    _assert_wide_subtitle_is_bounded(card, subtitle)
 
 
 def test_about_version_cards_use_compact_layout_at_narrow_width(
@@ -265,6 +292,49 @@ def _shown_page(
     page.show()
     application().processEvents()
     return page
+
+
+def _wrapped_line_count(label: QLabel, text: str) -> int:
+    """Measure full-text wrapping independently of the card's elision algorithm."""
+
+    layout = QTextLayout(" ".join(text.split()), label.font())
+    option = QTextOption()
+    option.setWrapMode(QTextOption.WrapMode.WordWrap)
+    layout.setTextOption(option)
+    layout.beginLayout()
+    count = 0
+    while (line := layout.createLine()).isValid():
+        line.setLineWidth(label.contentsRect().width())
+        count += 1
+    layout.endLayout()
+    return count
+
+
+def _assert_wide_subtitle_is_bounded(card: QWidget, subtitle: QLabel) -> None:
+    """Require complete fitting copy or explicit overflow within readable card bounds."""
+
+    assert card.property("aboutVersionLayoutMode") == "wide"
+    lines = subtitle.text().splitlines()
+    assert 1 <= len(lines) <= 2
+    displayed_text = " ".join(subtitle.text().split())
+    complete_text = " ".join(subtitle.toolTip().split())
+    if _wrapped_line_count(subtitle, complete_text) > 2:
+        assert len(lines) == 2
+        assert lines[-1].endswith("…")
+        assert displayed_text != complete_text
+        assert complete_text.startswith(displayed_text.removesuffix("…"))
+    else:
+        assert displayed_text == complete_text
+    metrics = QFontMetricsF(subtitle.font())
+    assert all(
+        metrics.horizontalAdvance(line) <= subtitle.contentsRect().width()
+        for line in lines
+    )
+    assert subtitle.height() >= max(
+        subtitle.sizeHint().height(),
+        subtitle.fontMetrics().lineSpacing() * len(lines),
+    )
+    _assert_card_children_do_not_overlap(card)
 
 
 def _version_group(page: AboutSettingsPage) -> QWidget:

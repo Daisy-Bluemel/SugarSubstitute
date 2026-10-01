@@ -123,9 +123,7 @@ def test_launcher_initial_screen_matches_onboarding_step_one_shell(
     assert abs(page_center.x() - viewport_center.x()) <= 1
     assert abs(combo_center.x() - viewport_center.x()) <= 1
     assert abs(visible_center - viewport_center.x()) <= 1
-    assert window.view.language_description_label.height() == (
-        window.view.language_description_label.sizeHint().height()
-    )
+    _assert_language_page_content_is_compact(window, language_badge)
     assert window.view.primary_button.text() == "Continue"
     assert window.view.findChild(QWidget, "OnboardingStepItem") is None
     window.view.primary_button.click()
@@ -162,6 +160,41 @@ def test_launcher_initial_screen_matches_onboarding_step_one_shell(
     assert header_pixel.alpha() == 0
     assert body_pixel.alpha() > 0
     close_and_delete_launcher_window(window)
+
+
+def _assert_language_page_content_is_compact(
+    window: LauncherMainWindow,
+    badge: QFrame,
+) -> None:
+    """Keep the language hero naturally sized, readable, and clear of its selector."""
+
+    page = window.view.language_page
+    title = window.view.language_title_label
+    description = window.view.language_description_label
+    selector = window.view.language_combo
+    assert page.height() == page.heightForWidth(page.width())
+    for label in (title, description):
+        assert label.height() >= label.heightForWidth(label.width())
+
+    rectangles = tuple(
+        QRect(widget.mapTo(page, QPoint()), widget.size())
+        for widget in (badge, title, description, selector)
+    )
+    badge_rect, title_rect, description_rect, selector_rect = rectangles
+    for index, rect in enumerate(rectangles):
+        assert page.contentsRect().contains(rect)
+        for other in rectangles[index + 1 :]:
+            assert not rect.intersects(other)
+    text_gap = description_rect.top() - title_rect.bottom() - 1
+    assert text_gap > 0
+    hero_rect = badge_rect.united(title_rect).united(description_rect)
+    natural_text_height = (
+        title.heightForWidth(title.width())
+        + text_gap
+        + description.heightForWidth(description.width())
+    )
+    assert hero_rect.height() == max(badge.sizeHint().height(), natural_text_height)
+    assert hero_rect.bottom() < selector_rect.top()
 
 
 def test_fresh_launcher_window_is_centered_on_its_assigned_screen(
