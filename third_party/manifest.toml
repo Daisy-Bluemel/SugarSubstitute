@@ -393,3 +393,37 @@ runtime_files = [
   "third_party/bin/mpv/windows-x64/zlib1.dll",
 ]
 preparation_tool = "tools/prepare_mpv_runtime.py"
+
+[[component]]
+name = "mpv Linux x64 qualification runtime"
+license = "GPL-2.0-or-later"
+license_file = "third_party/licenses/mpv.GPL.txt"
+additional_license_files = ["third_party/licenses/mpv.Copyright.txt"]
+source = "https://github.com/mpv-player/mpv"
+revision = "41f6a645068483470267271e1d09966ca3b9f413"
+source_version = "v0.41.0"
+source_tree = "d0cc1c088a9c72f52d6c232438215c50ceeb11a3"
+build_inputs = "third_party/mpv-linux-build-inputs.json"
+build_options = [
+  "--buildtype=release",
+  "--wrap-mode=nofallback",
+  "-Dauto_features=disabled",
+  "-Ddefault_library=shared",
+  "-Dlibmpv=true",
+  "-Dcplayer=false",
+  "-Dgpl=true",
+  "-Dgl=enabled",
+  "-Dplain-gl=enabled",
+  "-Dcplugins=enabled",
+  "-Dlua=disabled",
+  "-Djavascript=disabled",
+  "-Dpulse=enabled",
+  "-Dbuild-date=false",
+  "-Dmanpage-build=disabled",
+]
+source_paths = ["LICENSE.GPL", "Copyright", "libmpv/", "meson.build", "meson.options"]
+vendored_files = []
+runtime_files = ["third_party/bin/mpv/linux-x64/libmpv.so.2"]
+preparation_tool = "tools/prepare_linux_mpv_runtime.py"
+release_qualified = false
+qualification_note = "Host-specific preparation recipe; host dependency closure is not bundled. Actual compilation, playback and portable release qualification are separate."
