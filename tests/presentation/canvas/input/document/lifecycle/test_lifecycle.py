@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import cast
 from uuid import UUID, uuid4
 
+import pytest
 from cutecanvas import PreparedDocumentRestore
 from substitute.application.workspace_state import PreparedSessionPersistence
 from substitute.presentation.canvas.input.input_editable_document_lifecycle import (
@@ -260,10 +261,10 @@ def test_lifecycle_coalesces_two_prepared_saves_for_one_revision(
     assert document.saved == [archive]
 
 
-def test_lifecycle_invalidates_bad_archive_before_file_backed_rebuild(
+def test_lifecycle_preserves_rejected_archive_before_file_backed_rebuild(
     tmp_path: Path,
 ) -> None:
-    """Malformed cache state should be removed before file asset restoration."""
+    """Keep rejected authoritative bytes available after file-backed rebuilding."""
 
     archive = tmp_path / "input.ccanvas"
     archive.write_bytes(b"bad")
@@ -278,6 +279,13 @@ def test_lifecycle_invalidates_bad_archive_before_file_backed_rebuild(
     assert lifecycle.restore_before_workspace_assets() is False
     assert document.restored == [archive]
     assert not archive.exists()
+    recovery_paths = tuple(tmp_path.glob("input.ccanvas.rejected-*.recovery"))
+    assert len(recovery_paths) == 1
+    assert recovery_paths[0].read_bytes() == b"bad"
+    lifecycle.mark_changed()
+    lifecycle.prepare_session_persistence().persist()
+    assert document.saved == [archive]
+    assert recovery_paths[0].read_bytes() == b"bad"
 
 
 def test_lifecycle_preserves_cache_after_transient_restore_failure(
@@ -296,3 +304,56 @@ def test_lifecycle_preserves_cache_after_transient_restore_failure(
 
     assert lifecycle.restore_before_workspace_assets() is False
     assert archive.exists()
+
+
+@pytest.mark.parametrize("content", (False, True), ids=("empty", "editable"))
+def test_rejected_archive_preservation_failure_blocks_new_and_queued_persistence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    content: bool,
+) -> None:
+    """Neither writes nor empty-state cleanup may erase unpreserved recovery data."""
+    archive = tmp_path / "input.ccanvas"
+    archive.write_bytes(b"irreplaceable rejected authority")
+    document = _Document(content=content)
+    document.restore_error = ValueError("archive version not supported")
+    lifecycle = InputEditableDocumentLifecycle(document=document, archive_path=archive)
+    lifecycle.mark_changed()
+    queued = lifecycle.prepare_session_persistence()
+
+    def reject_preservation(source: Path, destination: Path) -> Path:
+        """Simulate a filesystem refusal without modifying either file."""
+        raise PermissionError("recovery rename denied")
+
+    monkeypatch.setattr(Path, "replace", reject_preservation)
+    assert not lifecycle.restore_before_workspace_assets()
+
+    with pytest.raises(OSError, match="persistence is blocked"):
+        queued.persist()
+    with pytest.raises(OSError, match="persistence is blocked"):
+        lifecycle.prepare_session_persistence()
+    assert archive.read_bytes() == b"irreplaceable rejected authority"
+    assert document.saved == []
+    assert list(tmp_path.glob("input.ccanvas.rejected-*.recovery")) == []
+
+
+def test_rejected_archives_from_separate_startups_keep_distinct_recovery_copies(
+    tmp_path: Path,
+) -> None:
+    """Repeated incompatible archives must never overwrite earlier recovery bytes."""
+    archive = tmp_path / "input.ccanvas"
+    for payload in (b"first rejected authority", b"second rejected authority"):
+        archive.write_bytes(payload)
+        document = _Document()
+        document.restore_error = TypeError("incompatible document")
+        lifecycle = InputEditableDocumentLifecycle(
+            document=document, archive_path=archive
+        )
+        assert not lifecycle.restore_before_workspace_assets()
+
+    paths = tuple(tmp_path.glob("input.ccanvas.rejected-*.recovery"))
+    assert len(paths) == 2
+    assert {path.read_bytes() for path in paths} == {
+        b"first rejected authority",
+        b"second rejected authority",
+    }

@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Protocol
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from cutecanvas import PreparedDocumentRestore
 
@@ -74,6 +74,7 @@ class InputEditableDocumentLifecycle:
         self._document = document
         self._archive_path = Path(archive_path)
         self._restore_attempted = False
+        self._archive_preservation_error: OSError | None = None
         self._restored_composition_ids: tuple[UUID, ...] = ()
         self._document_revision = 0
         self._persisted_revision = 0 if self._archive_path.is_file() else -1
@@ -98,6 +99,7 @@ class InputEditableDocumentLifecycle:
     def prepare_session_persistence(self) -> PreparedSessionPersistence:
         """Capture current authority and return background-safe persistence."""
 
+        self._ensure_archive_writable()
         if self._document.has_editable_content():
             captured_revision = self._document_revision
             prepared = self._document.prepare_editable_document_save(self._archive_path)
@@ -105,6 +107,7 @@ class InputEditableDocumentLifecycle:
             def persist_captured_document() -> None:
                 """Write one capture unless an earlier queued save made it current."""
 
+                self._ensure_archive_writable()
                 already_persisted = (
                     self._persisted_revision >= captured_revision
                     and self._archive_path.is_file()
@@ -125,6 +128,7 @@ class InputEditableDocumentLifecycle:
 
         def remove_stale_archive() -> None:
             """Remove obsolete persisted authority in the background phase."""
+            self._ensure_archive_writable()
             if not self._remove_stale_archive():
                 raise OSError("failed to remove stale editable Input document")
 
@@ -156,7 +160,7 @@ class InputEditableDocumentLifecycle:
                 else self._document.restore_prepared_editable_document(prepared)
             )
         except (TypeError, ValueError) as error:
-            self._invalidate_rejected_archive(error)
+            self._preserve_rejected_archive(error)
             return False
         except (OSError, RuntimeError) as error:
             log_exception(
@@ -185,25 +189,39 @@ class InputEditableDocumentLifecycle:
             archive_path=str(self._archive_path),
         )
 
-    def _invalidate_rejected_archive(self, error: Exception) -> None:
-        """Discard structurally rejected cache state before file-backed rebuild."""
+    def _ensure_archive_writable(self) -> None:
+        """Block captures and queued writes when rejected authority remains unpreserved."""
 
+        if self._archive_preservation_error is not None:
+            raise OSError(
+                "editable Input archive persistence is blocked until rejected state can be preserved"
+            ) from self._archive_preservation_error
+
+    def _preserve_rejected_archive(self, error: Exception) -> None:
+        """Retain rejected authoritative bytes before allowing a file-backed rebuild."""
+
+        recovery_path = self._archive_path.with_name(
+            f"{self._archive_path.name}.rejected-{uuid4().hex}.recovery"
+        )
         try:
-            self._archive_path.unlink(missing_ok=True)
-        except OSError as removal_error:
+            self._archive_path.replace(recovery_path)
+        except OSError as preservation_error:
+            self._archive_preservation_error = preservation_error
             log_exception(
                 _LOGGER,
-                "Failed to invalidate rejected editable Input document cache",
+                "Failed to preserve rejected editable Input document; archive persistence is blocked",
                 archive_path=str(self._archive_path),
-                error=removal_error,
+                recovery_path=str(recovery_path),
+                error=preservation_error,
                 rejection_reason=str(error),
             )
             return
         self._persisted_revision = -1
         log_warning(
             _LOGGER,
-            "Invalidated rejected editable Input document cache; file assets remain available",
+            "Preserved rejected editable Input document; file assets remain available",
             archive_path=str(self._archive_path),
+            recovery_path=str(recovery_path),
             error_type=type(error).__name__,
             rejection_reason=str(error),
         )

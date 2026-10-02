@@ -21,8 +21,14 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 from uuid import UUID
+from zipfile import BadZipFile
 
-from cutecanvas import CanvasDocument, CuteCanvas, PreparedDocumentRestore
+from cutecanvas import (
+    CanvasDocument,
+    CuteCanvas,
+    PreparedDocumentRestore,
+    prepare_document_restore,
+)
 
 from substitute.application.workspace_state.session_persistence import (
     PreparedSessionPersistence,
@@ -68,16 +74,14 @@ class InputDocumentPersistence:
         return PreparedSessionPersistence("editable_input_document", persist)
 
     def restore_editable_document(self, path: Path) -> tuple[UUID, ...]:
-        """Restore one complete Input document before image payload hydration."""
+        """Reject malformed archive bytes before installing any editable authority."""
         if self._document.composition_ids():
             raise RuntimeError("Input document restore requires an empty document")
-        handles = self._canvas.editor.persistence.load_document(
-            path,
-            open_first=False,
-        )
-        composition_ids = tuple(handle.id for handle in handles)
-        self._install_restored_compositions(composition_ids)
-        return composition_ids
+        try:
+            prepared = prepare_document_restore(path)
+        except (BadZipFile, KeyError) as error:
+            raise ValueError("invalid editable Input document archive") from error
+        return self.restore_prepared_editable_document(prepared)
 
     def restore_prepared_editable_document(
         self,

@@ -45,6 +45,9 @@ from substitute.presentation.shell.restore_projection_controller import (
 from substitute.presentation.shell.restored_document_state_adapter import (
     restore_document_states,
 )
+from substitute.presentation.shell.restored_editable_document_adapter import (
+    restore_initial_editable_document,
+)
 from substitute.presentation.shell.shell_workspace_prehydration_port import (
     ShellWorkspacePrehydrationPort,
 )
@@ -244,7 +247,7 @@ class WorkspaceRestoreController:
         captured_at: str | None = None,
         normalization_warnings: tuple[str, ...] = (),
     ) -> bool:
-        """Materialize one normalized workspace snapshot into the shell."""
+        """Restore startup editable authority before materializing workspace media."""
 
         trace_mark(
             "main_window.restore_initial_workspace_snapshot.start",
@@ -254,6 +257,7 @@ class WorkspaceRestoreController:
         )
         try:
             self._shell._shell_restore_lifecycle = "restoring"
+            restore_initial_editable_document(self._shell)
             with trace_span("main_window.restore_initial_workspace_snapshot.hydrate"):
                 hydrated_snapshot = self.hydrate_restored_workspace_snapshot(
                     snapshot,
