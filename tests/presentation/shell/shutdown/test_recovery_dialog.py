@@ -22,8 +22,8 @@ from collections.abc import Iterator
 
 import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QPlainTextEdit
+from PySide6.QtTest import QSignalSpy, QTest
+from PySide6.QtWidgets import QDialog, QPlainTextEdit, QWidget
 
 from substitute.app.bootstrap.lifecycle import (
     ManagedComfyCleanupOutcome,
@@ -38,14 +38,21 @@ from tests.support.qt.lifecycle import destroy_qt_object, ensure_qt_application
 pytestmark = pytest.mark.usefixtures("qt_clipboard_owner")
 
 
-@pytest.fixture()
-def shutdown_recovery_dialog() -> Iterator[ShutdownRecoveryDialog]:
-    """Create one recovery dialog with exact application and teardown owners."""
+@pytest.fixture(params=(False, True), ids=("parentless", "parented"))
+def shutdown_recovery_dialog(
+    request: pytest.FixtureRequest,
+) -> Iterator[ShutdownRecoveryDialog]:
+    """Exercise both supported parent lifecycles with exact teardown owners."""
 
     application = ensure_qt_application()
-    dialog = ShutdownRecoveryDialog()
+    parent = QWidget() if request.param else None
+    if parent is not None:
+        parent.show()
+    dialog = ShutdownRecoveryDialog(parent)
     yield dialog
     destroy_qt_object(dialog)
+    if parent is not None:
+        destroy_qt_object(parent)
     del application
 
 
@@ -92,11 +99,19 @@ def test_shutdown_recovery_dialog_failure_copy_matches_specification(
 def test_shutdown_recovery_dialog_retry_is_default_button(
     shutdown_recovery_dialog: ShutdownRecoveryDialog,
 ) -> None:
-    """Retry should remain the default focused action."""
+    """Enter should invoke the default retry callback without dismissing recovery."""
 
     dialog = shutdown_recovery_dialog
+    calls: list[str] = []
+    dialog.set_retry_callback(lambda: calls.append("retry"))
+    dialog.set_force_close_callback(lambda: calls.append("force_close"))
+    dialog.show_failed_outcome(_cleanup_result(ManagedComfyCleanupOutcome.FAILURE))
+    dialog.show()
 
     assert dialog.retry_button.isDefault() is True
+    QTest.keyClick(dialog, Qt.Key.Key_Return)
+    assert calls == ["retry"]
+    assert dialog.isVisible() is True
 
 
 def test_shutdown_recovery_dialog_blocks_close_button_and_escape(
@@ -105,6 +120,7 @@ def test_shutdown_recovery_dialog_blocks_close_button_and_escape(
     """The dialog should stay open until the coordinator handles an explicit action."""
 
     dialog = shutdown_recovery_dialog
+    finished = QSignalSpy(dialog.finished)
     dialog.show_failed_outcome(_cleanup_result(ManagedComfyCleanupOutcome.FAILURE))
     dialog.show()
 
@@ -116,10 +132,54 @@ def test_shutdown_recovery_dialog_blocks_close_button_and_escape(
 
     QTest.keyClick(dialog, Qt.Key.Key_Escape)
     assert dialog.isVisible() is True
+    assert finished.count() == 0
 
     dialog.allow_close()
     dialog.close()
     assert dialog.isVisible() is False
+    assert finished.count() == 1
+    assert finished.at(0) == [QDialog.DialogCode.Rejected]
+
+
+@pytest.mark.parametrize(
+    ("method", "result"),
+    (
+        ("accept", QDialog.DialogCode.Accepted),
+        ("reject", QDialog.DialogCode.Rejected),
+        ("done", 27),
+    ),
+)
+def test_shutdown_recovery_dialog_programmatic_completion_is_immediate(
+    shutdown_recovery_dialog: ShutdownRecoveryDialog,
+    method: str,
+    result: int,
+) -> None:
+    """Preserve direct QDialog completion independently of the user-close guard."""
+
+    dialog = shutdown_recovery_dialog
+    finished = QSignalSpy(dialog.finished)
+    accepted = QSignalSpy(dialog.accepted)
+    rejected = QSignalSpy(dialog.rejected)
+    calls: list[str] = []
+    dialog.set_retry_callback(lambda: calls.append("retry"))
+    dialog.set_force_close_callback(lambda: calls.append("force_close"))
+    dialog.show_failed_outcome(_cleanup_result(ManagedComfyCleanupOutcome.FAILURE))
+    dialog.show()
+
+    if method == "accept":
+        dialog.accept()
+    elif method == "reject":
+        dialog.reject()
+    else:
+        dialog.done(result)
+
+    assert dialog.isVisible() is False
+    assert dialog.result() == result
+    assert finished.count() == 1
+    assert finished.at(0) == [result]
+    assert accepted.count() == int(result == QDialog.DialogCode.Accepted)
+    assert rejected.count() == int(result == QDialog.DialogCode.Rejected)
+    assert calls == []
 
 
 def test_shutdown_recovery_dialog_hides_details_by_default(
@@ -170,17 +230,67 @@ def test_shutdown_recovery_dialog_details_are_selectable_and_copyable(
 def test_shutdown_recovery_dialog_actions_delegate_to_coordinator(
     shutdown_recovery_dialog: ShutdownRecoveryDialog,
 ) -> None:
-    """Publish each explicit recovery choice through its coordinator callback."""
+    """Rapid explicit actions should remain coordinator-owned without dismissal."""
 
     dialog = shutdown_recovery_dialog
+    finished = QSignalSpy(dialog.finished)
     calls: list[str] = []
 
     dialog.set_retry_callback(lambda: calls.append("retry"))
     dialog.set_force_close_callback(lambda: calls.append("force_close"))
-    dialog.retry_button.click()
-    dialog.force_close_button.click()
+    dialog.show_failed_outcome(_cleanup_result(ManagedComfyCleanupOutcome.FAILURE))
+    dialog.show()
+    for _ in range(3):
+        dialog.retry_button.click()
+        assert dialog.isVisible() is True
+        dialog.force_close_button.click()
+        assert dialog.isVisible() is True
 
-    assert calls == ["retry", "force_close"]
+    assert calls == ["retry", "force_close"] * 3
+    assert finished.count() == 0
+
+
+@pytest.mark.parametrize(
+    "next_outcome",
+    (ManagedComfyCleanupOutcome.FAILURE, ManagedComfyCleanupOutcome.UNCERTAIN_SUCCESS),
+)
+def test_shutdown_recovery_dialog_new_outcome_resets_and_copies_details(
+    shutdown_recovery_dialog: ShutdownRecoveryDialog,
+    next_outcome: ManagedComfyCleanupOutcome,
+) -> None:
+    """A replacement outcome should collapse details and replace copied evidence."""
+
+    dialog = shutdown_recovery_dialog
+    dialog.show_uncertain_outcome(
+        _cleanup_result(ManagedComfyCleanupOutcome.UNCERTAIN_SUCCESS)
+    )
+    dialog.show()
+    dialog.details_toggle_button.click()
+    dialog.details_editor.selectAll()
+    assert dialog.details_editor.textCursor().hasSelection() is True
+
+    result = _cleanup_result(next_outcome)
+    if next_outcome is ManagedComfyCleanupOutcome.FAILURE:
+        dialog.show_failed_outcome(result)
+        expected_evidence = "The termination command timed out before completion."
+    else:
+        dialog.show_uncertain_outcome(result)
+        expected_evidence = (
+            "Shutdown could not be confirmed before the verification timeout."
+        )
+
+    assert dialog.details_editor.isHidden() is True
+    assert dialog.details_toggle_button.isChecked() is False
+    assert dialog.details_toggle_button.text() == "Show Details"
+    assert dialog.details_editor.textCursor().position() == 0
+    assert dialog.details_editor.textCursor().hasSelection() is False
+    assert expected_evidence in dialog.details_editor.toPlainText()
+    dialog.copy_details_button.click()
+    assert (
+        ensure_qt_application().clipboard().text()
+        == dialog.details_editor.toPlainText()
+    )
+    assert dialog.isVisible() is True
 
 
 def _cleanup_result(

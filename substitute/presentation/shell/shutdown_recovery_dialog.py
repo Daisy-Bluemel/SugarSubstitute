@@ -27,22 +27,23 @@ from sugarsubstitute_shared.presentation.localization import (
     set_localized_window_title,
 )
 from substitute.presentation.localization import (
-    LocalizedLabel,
-    LocalizedNativePushButton,
+    LocalizedBodyLabel,
+    LocalizedPushButton,
 )
 
 from collections.abc import Callable
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QEvent, QSize, Qt
 from PySide6.QtGui import QCloseEvent, QGuiApplication, QKeyEvent, QTextCursor
 from PySide6.QtWidgets import (
-    QDialog,
     QHBoxLayout,
     QLabel,
-    QPlainTextEdit,
+    QLayout,
     QVBoxLayout,
     QWidget,
 )
+
+from qfluentwidgets import Dialog, PlainTextEdit  # type: ignore[import-untyped]
 
 from substitute.app.bootstrap.lifecycle import ManagedComfyCleanupResult
 from substitute.app.bootstrap.shutdown_recovery_report import (
@@ -50,39 +51,43 @@ from substitute.app.bootstrap.shutdown_recovery_report import (
 )
 
 
-class ShutdownRecoveryDialog(QDialog):
+class ShutdownRecoveryDialog(Dialog):  # type: ignore[misc]
     """Render the retry-or-force-close recovery surface."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         """Build the recovery dialog widgets and button wiring."""
 
-        super().__init__(parent)
         self._allow_close = False
+        super().__init__("", "", parent)
         set_localized_window_title(self, "Could Not Finish Closing")
         self.setModal(True)
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.setWindowFlag(Qt.WindowType.WindowContextHelpButtonHint, False)
         self.setWindowFlag(Qt.WindowType.WindowCloseButtonHint, False)
-        self.setMinimumWidth(600)
+        self.setTitleBarVisible(False)
+        self.vBoxLayout.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
+        self.setMinimumSize(600, 0)
+        self.setMaximumSize(16777215, 16777215)
+        self.setResizeEnabled(True)
 
-        self.primary_label = QLabel("", self)
-        self.secondary_label = QLabel("", self)
-        self.warning_label = LocalizedLabel(
+        self.primary_label: QLabel = self.titleLabel
+        self.secondary_label: QLabel = self.contentLabel
+        self.warning_label = LocalizedBodyLabel(
             app_text("If you close anyway, a background service may still be running."),
             self,
         )
-        self.details_toggle_button = LocalizedNativePushButton(
-            app_text("Show Details"), self
-        )
+        self.details_toggle_button = LocalizedPushButton(app_text("Show Details"), self)
         self.details_toggle_button.setCheckable(True)
-        self.copy_details_button = LocalizedNativePushButton(
-            app_text("Copy Details"), self
-        )
-        self.details_editor = QPlainTextEdit(self)
-        self.retry_button = LocalizedNativePushButton(app_text("Retry"), self)
-        self.force_close_button = LocalizedNativePushButton(
-            app_text("Close Substitute Anyway"), self
-        )
+        self.copy_details_button = LocalizedPushButton(app_text("Copy Details"), self)
+        self.details_editor = PlainTextEdit(self)
+        self.retry_button = self.yesButton
+        self.force_close_button = self.cancelButton
+        # Fluent's stock actions dismiss before notifying their consumer. Recovery
+        # must stay open when the coordinator declines a retry of active cleanup.
+        self.retry_button.clicked.disconnect()
+        self.force_close_button.clicked.disconnect()
+        set_localized_text(self.retry_button, "Retry")
+        set_localized_text(self.force_close_button, "Close Substitute Anyway")
 
         self.primary_label.setWordWrap(True)
         self.secondary_label.setWordWrap(True)
@@ -100,20 +105,27 @@ class ShutdownRecoveryDialog(QDialog):
         details_button_row.addStretch(1)
         details_button_row.addWidget(self.copy_details_button)
 
-        button_row = QHBoxLayout()
-        button_row.addWidget(self.retry_button)
-        button_row.addStretch(1)
-        button_row.addWidget(self.force_close_button)
+        self.textLayout.addWidget(self.warning_label)
+        self.textLayout.addLayout(details_button_row)
+        self.textLayout.addWidget(self.details_editor)
+        self._fit_layout()
 
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(24, 24, 24, 24)
-        layout.setSpacing(10)
-        layout.addWidget(self.primary_label)
-        layout.addWidget(self.secondary_label)
-        layout.addWidget(self.warning_label)
-        layout.addLayout(details_button_row)
-        layout.addWidget(self.details_editor)
-        layout.addLayout(button_row)
+    def event(self, event: QEvent) -> bool:
+        """Refit wrapped recovery copy when localization changes the shared layout."""
+
+        handled = bool(super().event(event))
+        if event.type() == QEvent.Type.LayoutRequest:
+            self._fit_layout()
+        return handled
+
+    def _fit_layout(self) -> None:
+        """Fit wrapped text and details without QWidget's two-thirds-screen cap."""
+
+        layout: QVBoxLayout = self.vBoxLayout
+        width = max(600, layout.minimumSize().width())
+        height = max(layout.minimumSize().height(), layout.totalHeightForWidth(width))
+        self.resize(QSize(width, height))
+        layout.activate()
 
     def show_uncertain_outcome(self, result: ManagedComfyCleanupResult) -> None:
         """Render the recovery copy for an uncertain shutdown outcome."""
@@ -186,6 +198,7 @@ class ShutdownRecoveryDialog(QDialog):
         self.details_toggle_button.setChecked(False)
         set_localized_text(self.details_toggle_button, "Show Details")
         self.details_editor.hide()
+        self._fit_layout()
 
     def _toggle_details_visibility(self) -> None:
         """Toggle the visibility of the sanitized detail text."""
@@ -196,7 +209,7 @@ class ShutdownRecoveryDialog(QDialog):
             "Hide Details" if details_visible else "Show Details",
         )
         self.details_editor.setVisible(details_visible)
-        self.adjustSize()
+        self._fit_layout()
 
     def _copy_details(self) -> None:
         """Copy the complete support report exactly as displayed."""
