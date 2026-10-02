@@ -124,7 +124,7 @@ class WorkflowRecipeSaveActions:
         )
 
     def on_save_clicked(self, *, sugar_scripts_dir: Path | None = None) -> bool:
-        """Save to the workflow-named script path and acknowledge only success."""
+        """Save to the current recipe target, using the named default for new scripts."""
 
         return self._save(sugar_scripts_dir=sugar_scripts_dir, file_dialog=None)
 
@@ -155,9 +155,12 @@ class WorkflowRecipeSaveActions:
             workflow = view.get_active_workflow()
             explicit_sugarscript_connections(workflow.direct_workflow)
             root = self._context.sugar_scripts_dir(sugar_scripts_dir)
-            destination = view.recipe_io_service.build_default_recipe_path(
-                workflow_name, root
-            )
+            destination = self._context.recipe_source_path(workflow_id)
+            uses_default_destination = destination is None
+            if destination is None:
+                destination = view.recipe_io_service.build_default_recipe_path(
+                    workflow_name, root
+                )
             if file_dialog is not None:
                 selected, _ = file_dialog.getSaveFileName(
                     view,
@@ -167,9 +170,10 @@ class WorkflowRecipeSaveActions:
                 )
                 if not selected:
                     return False
-                destination = view.recipe_io_service.validate_recipe_destination(
-                    Path(selected).resolve()
-                )
+                destination = Path(selected).resolve()
+            destination = view.recipe_io_service.validate_recipe_destination(
+                destination
+            )
             scopes = self._context.global_override_scopes()
             WorkflowRecipeSaveService(
                 recipes=view.recipe_io_service,
@@ -179,7 +183,7 @@ class WorkflowRecipeSaveActions:
                 workflow_id=workflow_id,
                 workflow_name=(
                     validate_top_level_name(workflow_name, subject="Workflow")
-                    if file_dialog is None
+                    if file_dialog is None and uses_default_destination
                     else workflow_name
                 ),
                 workflow=workflow,

@@ -22,6 +22,7 @@ from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Protocol, cast
 
+from substitute.application.workflows.unsaved_work_service import UnsavedWorkService
 from substitute.domain.common import GlobalOverrideScope
 from substitute.shared.logging.logger import get_logger, log_info
 
@@ -79,6 +80,18 @@ class WorkflowFileContext:
             )
             return None
         return cast(Mapping[str, GlobalOverrideScope], getter())
+
+    def recipe_source_path(self, workflow_id: str) -> Path | None:
+        """Read the document owner's current Sugar Script save target."""
+
+        service = cast(
+            UnsavedWorkService | None,
+            getattr(self._view, "unsaved_work_service", None),
+        )
+        source = service.state_for(workflow_id).source_path if service else None
+        if source is None or source.suffix.lower() != ".sugar":
+            return None
+        return source
 
     def mark_saved(self, workflow_id: str, source_path: Path) -> None:
         """Delegate successful save/load acknowledgement to the document-state owner."""

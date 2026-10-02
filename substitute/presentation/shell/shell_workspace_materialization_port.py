@@ -30,6 +30,10 @@ from substitute.domain.workspace_snapshot import (
     WorkflowSnapshot,
 )
 
+from substitute.presentation.shell.restored_document_state_adapter import (
+    restore_document_states,
+)
+
 
 class ShellWorkspaceMaterializationPort:
     """Expose only restored workspace materialization operations to the application."""
@@ -50,12 +54,13 @@ class ShellWorkspaceMaterializationPort:
         *,
         activate: bool,
     ) -> None:
-        """Create one restored workflow tab and its workflow-scoped widgets."""
+        """Install the workflow and document identity before restoring its media."""
 
         self._shell.restored_workflow_materializer.add_restored_workflow(
             snapshot,
             activate=activate,
         )
+        restore_document_states(self._shell, (snapshot,))
 
     def load_restored_input_image(self, path: Path) -> object | None:
         """Load an input image payload for restore."""

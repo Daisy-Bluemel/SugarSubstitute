@@ -54,6 +54,7 @@ class SaveDialog:
     destination: str
     calls: int = 0
     requested_filter: str = ""
+    requested_directory: str = ""
 
     def getSaveFileName(
         self, parent: object, caption: str, directory: str, filter: str = ""
@@ -62,6 +63,7 @@ class SaveDialog:
 
         self.calls += 1
         self.requested_filter = filter
+        self.requested_directory = directory
         return self.destination, filter
 
 
