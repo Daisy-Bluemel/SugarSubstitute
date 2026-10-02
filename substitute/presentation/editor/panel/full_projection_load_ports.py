@@ -193,6 +193,9 @@ class FullProjectionSessionRegistryPort(Protocol):
     def is_current(self, session: ActiveProjectionSession) -> bool:
         """Return whether the supplied session still owns projection publication."""
 
+    def mark_prepared(self, session: ActiveProjectionSession) -> None:
+        """Publish hidden construction readiness for a current session."""
+
 
 class FullProjectionBusyPort(Protocol):
     """Describe busy presentation used by staged full loads."""

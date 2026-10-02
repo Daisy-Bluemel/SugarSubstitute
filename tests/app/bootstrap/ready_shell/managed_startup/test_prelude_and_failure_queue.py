@@ -28,6 +28,8 @@ from substitute.app.bootstrap import (
     ready_shell_failure_queue,
     startup_warmup_controller,
 )
+from substitute.app.bootstrap.launch_splash_client import NullLaunchSplashClient
+from substitute.app.bootstrap.startup_estimate_splash import StartupEstimateSplashClient
 from substitute.app.bootstrap.startup_timing import StartupTimer
 
 PROJECT_ROOT = Path(__file__).resolve().parents[5]
@@ -58,7 +60,7 @@ FORBIDDEN_READY_SHELL_CONTROLLER_IMPORT_PREFIXES = (
 )
 
 
-class _FailureQueueSplash:
+class _FailureQueueSplash(NullLaunchSplashClient):
     """Record the cleanup-only splash close contract."""
 
     def __init__(self, calls: list[str]) -> None:
@@ -205,7 +207,8 @@ def test_ready_shell_failure_queue_cancels_owned_queue_on_startup_cancel() -> No
 def test_failure_queue_publishes_work_without_claiming_surface_readiness() -> None:
     """Count successful GUI tasks and reserve completion for the painted shell."""
     scheduled: list[Callable[[], None]] = []
-    splash = _FailureQueueSplash([])
+    transport = _FailureQueueSplash([])
+    splash = StartupEstimateSplashClient(transport)
     queue = ready_shell_failure_queue.create_ready_shell_failure_queue(
         is_startup_cancelled=lambda: False,
         mark_startup_cancelled=lambda: None,
@@ -226,12 +229,9 @@ def test_failure_queue_publishes_work_without_claiming_surface_readiness() -> No
     queue.start_queue()
     while scheduled:
         scheduled.pop(0)()
-    assert splash.progress == [
-        SplashProgress(0, 3),
-        SplashProgress(1, 3),
-        SplashProgress(1, 3),
-        SplashProgress(2, 3),
-    ]
+    assert len(transport.progress) == 1
+    assert 0 < transport.progress[0].completed < 4000
+    assert transport.progress[0].total == 10000
 
 
 def test_create_ready_shell_failure_queue_returns_failure_queue() -> None:

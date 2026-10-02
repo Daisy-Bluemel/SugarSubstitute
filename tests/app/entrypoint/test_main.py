@@ -27,6 +27,7 @@ import pytest
 
 import main as app_entrypoint
 from substitute.app.bootstrap.launch_splash_client import NullLaunchSplashClient
+from substitute.app.bootstrap.startup_estimate_splash import StartupEstimateSplashClient
 from substitute.app.bootstrap.startup_timing import StartupTimingRecord
 import sugarsubstitute_shared.localization as shared_localization
 from sugarsubstitute_shared.crash_reporting.protocol import CleanExitOutcome
@@ -104,13 +105,16 @@ def test_main_starts_early_splash_and_passes_it_to_bootstrap(
         app_entrypoint.main()
 
     assert exit_info.value.code == 7
+    handed_off = next(value for name, value in calls if name == "initial_splash")
+    assert isinstance(handed_off, StartupEstimateSplashClient)
+    assert handed_off.estimate.progress.completed == 0
     assert calls == [
         ("splash_argv", argv),
         ("splash_root", Path(app_entrypoint.__file__).resolve().parent),
         ("splash_locale", "ja"),
         ("env", Path(app_entrypoint.__file__).resolve().parent / ".env"),
         ("run_argv", argv),
-        ("initial_splash", splash),
+        ("initial_splash", handed_off),
         ("cancel_connector", relay.connect),
         (
             "prebootstrap_phases",

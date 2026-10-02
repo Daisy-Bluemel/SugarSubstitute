@@ -151,6 +151,11 @@ class EditorPanelProjectionHost:
             reason=reason,
         )
 
+    def when_projection_prepared(self, callback: Callable[[], None]) -> bool:
+        """Observe current hidden construction without claiming visible readiness."""
+
+        return projection_coordinator_for_panel(self).when_projection_prepared(callback)
+
     def has_pending_visible_projection_commit(self) -> bool:
         """Return whether a background projection awaits visible reveal."""
 

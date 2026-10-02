@@ -313,3 +313,102 @@ def _imported_module_names(source_path: Path) -> set[str]:
         elif isinstance(node, ast.ImportFrom) and node.module is not None:
             modules.add(node.module)
     return modules
+
+
+@pytest.mark.parametrize("old_signal", ["complete", "timeout"])
+def test_replaced_preparation_attempt_rejects_old_signal(old_signal: str) -> None:
+    """Only the latest preparation attempt can release shell reveal."""
+
+    state = PreShowRestoreProjectionState()
+    completions: list[Callable[[], None]] = []
+    scheduled: list[Callable[[], None]] = []
+    reveals: list[str] = []
+    for _attempt in range(2):
+        assert start_pre_show_restore_projection_if_available(
+            state=state,
+            hidden_restore_runtime_prepared=True,
+            start_projection=_starter_that_captures(completions),
+            provisional_restore_projection=None,
+            fallback_workflow_id="workflow",
+            startup_cancelled=lambda: False,
+            reveal_main_window=lambda: reveals.append("reveal"),
+            scheduler=lambda _delay, callback: scheduled.append(callback),
+            trace_fields=lambda: {},
+        )
+    (completions if old_signal == "complete" else scheduled)[0]()
+    assert reveals == []
+    assert state.pending
+    completions[1]()
+    scheduled[1]()
+    completions[1]()
+    assert reveals == ["reveal"]
+    assert not state.pending
+
+
+@pytest.mark.parametrize("started", [False, True])
+def test_synchronous_preparation_never_schedules_timeout(started: bool) -> None:
+    """Real synchronous completion reveals once without a stale timeout wake."""
+
+    state = PreShowRestoreProjectionState()
+    reveals: list[str] = []
+    scheduled: list[Callable[[], None]] = []
+
+    def start(
+        artifact: object | None,
+        *,
+        fallback_workflow_id: str,
+        on_complete: Callable[[], None],
+    ) -> bool:
+        """Complete preparation before returning the start result."""
+
+        on_complete()
+        return started
+
+    assert start_pre_show_restore_projection_if_available(
+        state=state,
+        hidden_restore_runtime_prepared=True,
+        start_projection=start,
+        provisional_restore_projection=None,
+        fallback_workflow_id="workflow",
+        startup_cancelled=lambda: False,
+        reveal_main_window=lambda: reveals.append("reveal"),
+        scheduler=lambda _delay, callback: scheduled.append(callback),
+        trace_fields=lambda: {},
+    )
+    assert reveals == ["reveal"]
+    assert scheduled == []
+    assert not state.pending
+
+
+def test_refused_preparation_ignores_unexpected_late_callback() -> None:
+    """A declined start cannot later reveal a shell through a retained callback."""
+
+    state = PreShowRestoreProjectionState()
+    completions: list[Callable[[], None]] = []
+    reveals: list[str] = []
+
+    def start(
+        artifact: object | None,
+        *,
+        fallback_workflow_id: str,
+        on_complete: Callable[[], None],
+    ) -> bool:
+        """Retain a callback but decline ownership of preparation work."""
+
+        completions.append(on_complete)
+        return False
+
+    assert not start_pre_show_restore_projection_if_available(
+        state=state,
+        hidden_restore_runtime_prepared=True,
+        start_projection=start,
+        provisional_restore_projection=None,
+        fallback_workflow_id="workflow",
+        startup_cancelled=lambda: False,
+        reveal_main_window=lambda: reveals.append("reveal"),
+        scheduler=lambda _delay, _callback: None,
+        trace_fields=lambda: {},
+    )
+    completions[0]()
+    assert reveals == []
+    assert not state.pending

@@ -97,7 +97,9 @@ def start_or_adopt_launch_splash(
     else:
         trace_mark("launch_splash.adopted", splash_type=type(splash).__name__)
     trace_mark("launch_splash.started", splash_type=type(splash).__name__)
-    return splash
+    from substitute.app.bootstrap.startup_estimate_splash import adopt_startup_estimate
+
+    return adopt_startup_estimate(splash)
 
 
 def create_startup_splash_ports() -> StartupSplashPorts:

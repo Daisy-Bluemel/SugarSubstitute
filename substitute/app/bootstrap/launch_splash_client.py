@@ -45,8 +45,8 @@ class SplashPresentationPort(Protocol):
 class LaunchSplashClient(SplashPresentationPort, Protocol):
     """Expose the transport-independent splash lifecycle used by startup."""
 
-    def close(self) -> None:
-        """Close the launch splash if it is still available."""
+    def close(self) -> object:
+        """Close the splash and preserve an explicit failed acknowledgement."""
 
 
 class InProcessSplashPort(SplashPresentationPort, Protocol):
@@ -78,7 +78,7 @@ class NullLaunchSplashClient:
     def clear_activity(self) -> None:
         """Complete a no-op activity clear."""
 
-    def close(self) -> None:
+    def close(self) -> object:
         """Complete a no-op close."""
 
 

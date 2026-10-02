@@ -202,3 +202,51 @@ def test_activate_target_detaches_unresponsive_splash_after_first_failure(
         "first output",
         "second output",
     ]
+
+
+def test_relaunch_keeps_old_output_in_diagnostics_without_advancing_new_estimate(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Bind progress to the actual activation attempt while retaining old pipe output."""
+    from collections.abc import Callable
+
+    from substitute.app.bootstrap.launch_splash_client import NullLaunchSplashClient
+    from substitute.app.bootstrap.startup_estimate_splash import (
+        StartupEstimateSplashClient,
+    )
+
+    callbacks: list[Callable[[str], None]] = []
+    state = ManagedComfyState(registry=ManagedProcessRegistry(tmp_path))
+
+    def start(**kwargs: object) -> ManagedComfyState:
+        """Capture each real activation's output callback without starting a process."""
+        callbacks.append(cast(Callable[[str], None], kwargs["on_log"]))
+        return state
+
+    monkeypatch.setattr(process_manager, "start_comfyui_background_managed", start)
+    splash = StartupEstimateSplashClient(NullLaunchSplashClient())
+    splash.observe_startup("gui.prepare_main_window")
+    stream = _Stream()
+    diagnostics = _Diagnostics()
+    context = _context(tmp_path, launch_owned=True)
+    for attempt in range(2):
+        if attempt:
+            splash.observe_startup("backend.restart")
+        managed_target_activation.activate_target(
+            installation_context=context,
+            splash=splash,
+            comfy_output_stream=stream,
+            startup_diagnostics=cast(ComfyStartupDiagnosticsCollector, diagnostics),
+            launch_task_factory=cast(Any, _task_factory),
+            process_pump_task_factory=cast(Any, _task_factory),
+        )
+        if not attempt:
+            callbacks[0]("To see the GUI go to: http://old:8188")
+    before = splash.estimate.progress
+    callbacks[0]("To see the GUI go to: http://stale:8188")
+    assert splash.estimate.progress == before
+    assert diagnostics.lines[-1] == "To see the GUI go to: http://stale:8188"
+    assert stream.lines[-1] == diagnostics.lines[-1]
+    callbacks[1]("Device: cpu")
+    assert before.completed < splash.estimate.progress.completed < 10000

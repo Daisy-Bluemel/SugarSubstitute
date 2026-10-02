@@ -37,6 +37,10 @@ from substitute.app.bootstrap.splash_surface_handoff import (
     SplashCloseProtocol,
     close_splash_before_reveal,
 )
+from substitute.app.bootstrap.startup_estimate_splash import (
+    StartupEstimateReporter,
+    report_startup_milestone,
+)
 from substitute.app.bootstrap.startup_trace import trace_mark, trace_span
 from substitute.app.bootstrap.startup_warmup_controller import (
     StartupWarmupState,
@@ -75,6 +79,8 @@ class ReadyShellReadinessSchedulerProtocol(Protocol):
     def __call__(
         self,
         window: object,
+        *,
+        before_publish: Callable[[], None] | None = None,
     ) -> bool:
         """Schedule one painted-shell readiness receipt."""
 
@@ -128,7 +134,14 @@ def reveal_ready_shell_main_window(
     set_current_shell(revealed_shell_frame)
     startup_timer.mark("main_shell_shown")
     trace_mark("main_shell.shown", **dict(trace_fields()))
-    schedule_readiness_receipt(revealed_shell_frame)
+    schedule_readiness_receipt(
+        revealed_shell_frame,
+        before_publish=(
+            (lambda: report_startup_milestone(splash, "shell.painted"))
+            if isinstance(splash, StartupEstimateReporter)
+            else None
+        ),
+    )
     schedule_main_shell_qualification(revealed_shell_frame)
     update_backend_state("ready" if comfy_http_ready else "starting")
     log_info(
@@ -265,16 +278,17 @@ def _close_splash_before_main_reveal(
     trace_fields: Callable[[], Mapping[str, object]],
     on_splash_closed: Callable[[], None] | None,
 ) -> None:
-    """Complete the launch splash before any main-shell window can appear."""
+    """Close startup feedback without claiming that the replacement has painted."""
 
     try:
-        splash.set_progress(
-            SplashProgress(1, 1),
+        report_startup_milestone(
+            splash,
+            "shell.reveal",
             status=render_application_text(app_text("Starting SugarSubstitute.")),
         )
     except Exception:
         log_exception(
-            _LOGGER, "Failed to publish splash completion before shell reveal"
+            _LOGGER, "Failed to publish estimated progress before shell reveal"
         )
     with startup_timer.phase("startup.close_launch_splash"):
         with trace_span("launch_splash.close"):

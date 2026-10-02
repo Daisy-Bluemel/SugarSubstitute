@@ -22,6 +22,7 @@ from collections.abc import Callable
 from enum import Enum
 
 from substitute.app.bootstrap.launch_splash_client import LaunchSplashClient
+from substitute.app.bootstrap.startup_estimate_splash import report_startup_milestone
 from sugarsubstitute_shared.launch_splash.activity import SplashActivity
 from sugarsubstitute_shared.localization import app_text
 
@@ -29,6 +30,7 @@ from sugarsubstitute_shared.localization import app_text
 class BootstrapStage(Enum):
     """Name meaningful pre-shell work independently of its localized presentation."""
 
+    ENTRYPOINT = "entrypoint"
     COMPONENTS = "components"
     INSTALLATION = "installation"
     SERVICES = "services"
@@ -50,10 +52,11 @@ class StartupBootstrapFeedback:
         self._translate = translate
 
     def report(self, stage: BootstrapStage) -> None:
-        """Announce actual work before it begins without inventing completion percentages."""
+        """Announce real boundaries and credit only their preceding estimated work."""
         if self._splash is None:
             return
         messages = {
+            BootstrapStage.ENTRYPOINT: app_text("Loading application components."),
             BootstrapStage.COMPONENTS: app_text("Loading application components."),
             BootstrapStage.INSTALLATION: app_text("Checking the installation."),
             BootstrapStage.SERVICES: app_text("Preparing application services."),
@@ -61,6 +64,9 @@ class StartupBootstrapFeedback:
             BootstrapStage.INTERFACE: app_text("Preparing the application interface."),
         }
         message = self._translate(messages[stage])
+        report_startup_milestone(
+            self._splash, f"bootstrap.{stage.value}", status=message
+        )
         self._splash.clear_activity()
         self._splash.append_log(message)
         self._splash.start_activity(SplashActivity(message, message, message))

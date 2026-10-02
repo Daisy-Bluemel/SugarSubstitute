@@ -47,6 +47,7 @@ class PendingProjectionCompletion:
     aliases: frozenset[str]
     on_complete: Callable[[], None]
     reason: str
+    completion_phase: Literal["prepared", "visible"] = "visible"
     superseded_reason: str | None = None
     resolved: bool = False
 
@@ -60,6 +61,7 @@ class ActiveProjectionSession:
     token: object
     claimed_completions: list[PendingInsertCompletion]
     projection_completions: list[PendingProjectionCompletion]
+    prepared: bool = False
     resolved: bool = False
 
 

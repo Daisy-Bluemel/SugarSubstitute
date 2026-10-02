@@ -58,8 +58,8 @@ class ManagedComfyStopStateProtocol(Protocol):
 class SplashCloseProtocol(Protocol):
     """Close the active startup splash window."""
 
-    def close(self) -> None:
-        """Close the splash window."""
+    def close(self) -> object:
+        """Close the splash while retaining an optional native acknowledgement."""
 
 
 @dataclass(frozen=True)

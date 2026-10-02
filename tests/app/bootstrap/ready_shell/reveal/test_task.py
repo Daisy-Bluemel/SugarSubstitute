@@ -30,6 +30,8 @@ from substitute.app.bootstrap import (
     ready_shell_reveal,
     startup_warmup_controller,
 )
+from substitute.app.bootstrap.startup_estimate_splash import StartupEstimateSplashClient
+from substitute.app.bootstrap.launch_splash_client import LaunchSplashClient
 from substitute.app.bootstrap.splash_surface_handoff import SplashHandoffError
 
 from ..support.restore_signals import _Signal
@@ -435,14 +437,15 @@ def test_real_shell_closes_splash_before_replacement_surface_paints(
     )
     calls: list[str] = []
     window = QWidget()
-    splash = _CloseSplash(calls)
+    transport = _CloseSplash(calls)
+    splash = StartupEstimateSplashClient(cast(LaunchSplashClient, transport))
     if progress_fails:
 
         def fail_progress(progress: SplashProgress, *, status: str) -> None:
             """Simulate a unavailable completion presentation during handoff."""
             raise RuntimeError("completion presentation unavailable")
 
-        monkeypatch.setattr(splash, "set_progress", fail_progress)
+        monkeypatch.setattr(transport, "set_progress", fail_progress)
 
     def show(frame: object, **_kwargs: object) -> object:
         """Show the exact production-shaped QWidget without pumping events."""
@@ -465,11 +468,17 @@ def test_real_shell_closes_splash_before_replacement_surface_paints(
         request_startup_diagnostics_update=lambda: None,
         schedule_post_show_hydration=lambda: None,
         trace_fields=lambda: {},
-        schedule_readiness_receipt=lambda _window: True,
     )
 
-    assert splash.progress == ([] if progress_fails else [SplashProgress(1, 1)])
+    assert splash.estimate.progress.completed < 10000
+    if progress_fails:
+        assert transport.progress == []
+    else:
+        assert transport.progress and transport.progress[-1].completed < 10000
     assert calls.index("splash:close") < calls.index("show")
+    application.processEvents()
+    application.processEvents()
+    assert splash.estimate.progress.completed == 10000
     window.close()
     application.processEvents()
 

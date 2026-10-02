@@ -31,6 +31,7 @@ from substitute.app.bootstrap.startup_splash_controller import (
     launch_splash_backdrop_mode_value,
     start_or_adopt_launch_splash,
 )
+from substitute.app.bootstrap.startup_estimate_splash import StartupEstimateSplashClient
 from substitute.app.bootstrap.startup_timing import StartupTimer
 from substitute.domain.appearance import AppearanceBackdropMode
 
@@ -149,7 +150,7 @@ def test_start_or_adopt_launch_splash_starts_with_resolved_appearance() -> None:
         launch_splash=lambda **kwargs: _record_launch(launched, splash, kwargs),
     )
 
-    assert result is splash
+    assert isinstance(result, StartupEstimateSplashClient)
     assert launched["startup_timer"] is timer
     assert isinstance(launched["cwd"], Path)
     assert launched["theme_mode"] == "dark"
@@ -162,7 +163,7 @@ def test_start_or_adopt_launch_splash_starts_with_resolved_appearance() -> None:
 def test_start_or_adopt_launch_splash_returns_existing_splash() -> None:
     """Existing launch splash clients should be adopted without relaunch."""
 
-    splash = cast(LaunchSplashClient, _Splash())
+    splash = StartupEstimateSplashClient(cast(LaunchSplashClient, _Splash()))
 
     result = start_or_adopt_launch_splash(
         splash=splash,

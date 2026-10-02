@@ -56,6 +56,11 @@ from substitute.app.bootstrap.update_rollback_notice_startup import (
     schedule_update_rollback_notice_with_post_show_hydration,
 )
 from substitute.application.execution import DirectExecutionDispatcher
+from substitute.app.bootstrap.startup_estimate_splash import (
+    observe_backend_ready_phase,
+    observe_backend_restart_phase,
+    observe_hidden_restore_runtime_prepared,
+)
 from substitute.domain.onboarding import InstallationContext
 from substitute.presentation.qt.execution import QtOwnerThreadDispatcher
 from substitute.shared.cutecanvas_sam_warmup_state import (
@@ -219,8 +224,9 @@ class StartupManagedReadyShellLauncher:
                 set_comfy_state=self.ready_shell_runtime_state.set_comfy_state,
                 is_startup_cancelled=lambda: self.startup_cancellation_state.cancelled,
                 trace_fields=ready_trace_fields,
-                relaunch_phase=lambda: self.startup_timer.phase(
-                    "startup.runtime_compatibility.relaunch"
+                relaunch_phase=lambda: observe_backend_restart_phase(
+                    self.ready_shell_reference_state.splash,
+                    self.startup_timer.phase("startup.runtime_compatibility.relaunch"),
                 ),
             )
         )
@@ -317,8 +323,12 @@ class StartupManagedReadyShellLauncher:
             ),
             reveal_main_window=shell_reveal_task.reveal,
             scheduler=self.startup_qt_schedulers.single_shot,
-            set_hidden_restore_runtime_prepared=(
-                self.ready_shell_reference_state.set_hidden_restore_runtime_prepared
+            set_hidden_restore_runtime_prepared=lambda prepared: (
+                observe_hidden_restore_runtime_prepared(
+                    self.ready_shell_reference_state.splash,
+                    self.ready_shell_reference_state.set_hidden_restore_runtime_prepared,
+                    prepared,
+                )
             ),
             trace_fields=ready_trace_fields,
         )
@@ -331,8 +341,9 @@ class StartupManagedReadyShellLauncher:
                 failure_queue.handle_managed_startup_failure
             ),
             start_managed_compatibility_recovery=recovery_controller.start,
-            backend_ready_phase=lambda: self.startup_timer.phase(
-                "startup.backend_ready_transition"
+            backend_ready_phase=lambda: observe_backend_ready_phase(
+                self.ready_shell_reference_state.splash,
+                self.startup_timer.phase("startup.backend_ready_transition"),
             ),
             release_nonessential_startup_warmups=nonessential_warmup_runtime.start,
             try_show_main_window=shell_show_gate_task.run,

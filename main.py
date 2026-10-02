@@ -96,10 +96,17 @@ def main() -> None:
                 source_text=source,
             )
 
+        from substitute.app.bootstrap.startup_estimate_splash import (
+            adopt_startup_estimate,
+        )
+
+        if early_splash is not None:
+            early_splash = adopt_startup_estimate(early_splash)
+
         feedback = StartupBootstrapFeedback(
             early_splash, translate=translate_startup_message
         )
-        feedback.report(BootstrapStage.COMPONENTS)
+        feedback.report(BootstrapStage.ENTRYPOINT)
         from substitute.app.bootstrap.env_file import load_env_file
 
         load_env_file(app_root / ".env")

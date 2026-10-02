@@ -20,7 +20,13 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 
-from .projection_session_models import ActiveProjectionSession
+from substitute.shared.startup_trace import trace_mark
+
+from .projection_completion_resolution import resolve_projection_completions
+from .projection_session_models import (
+    ActiveProjectionSession,
+    PendingProjectionCompletion,
+)
 
 
 class ActiveProjectionSessionRegistry:
@@ -111,6 +117,59 @@ class ActiveProjectionSessionRegistry:
 
         return self._active_session is session and not session.resolved
 
+    def when_prepared(self, callback: Callable[[], None]) -> bool:
+        """Observe preparation through the existing projection completion ownership.
+
+        Compatible replacements adopt the waiter using the same workflow and alias
+        contract as visible completion. Only a current build can publish readiness.
+        """
+
+        session = self._active_session
+        trace_mark(
+            "editor_projection.preparation.observe",
+            session_present=session is not None,
+            workflow_id=session.workflow_id if session is not None else "",
+            prepared=session.prepared if session is not None else False,
+        )
+        if session is None or not self.is_current(session):
+            return False
+        if session.prepared:
+            callback()
+        else:
+            session.projection_completions.append(
+                PendingProjectionCompletion(
+                    workflow_id=session.workflow_id,
+                    aliases=frozenset(session.aliases),
+                    on_complete=callback,
+                    reason="hidden_projection_preparation",
+                    completion_phase="prepared",
+                )
+            )
+        return True
+
+    def mark_prepared(self, session: ActiveProjectionSession) -> None:
+        """Publish construction readiness without resolving visible completion."""
+
+        if not self.is_current(session) or session.prepared:
+            return
+        session.prepared = True
+        completions = tuple(
+            completion
+            for completion in session.projection_completions
+            if completion.completion_phase == "prepared" and not completion.resolved
+        )
+        trace_mark(
+            "editor_projection.preparation.ready",
+            workflow_id=session.workflow_id,
+            waiting_count=len(completions),
+        )
+        for completion in completions:
+            if not self.is_current(session):
+                break
+            resolve_projection_completions(
+                (completion,), reason="hidden_projection_prepared"
+            )
+
     def resolve(
         self,
         session: ActiveProjectionSession,
@@ -149,5 +208,10 @@ class ActiveProjectionSessionRegistry:
         del reason
         if self._active_session is not session:
             return False
+        session.projection_completions[:] = [
+            completion
+            for completion in session.projection_completions
+            if completion.completion_phase != "prepared"
+        ]
         self._active_session = None
         return True

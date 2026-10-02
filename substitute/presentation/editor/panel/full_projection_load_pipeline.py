@@ -458,7 +458,7 @@ class EditorFullProjectionLoadPipeline:
     ) -> bool:
         """Commit or defer a finished staged projection batch."""
 
-        return bool(
+        committed = bool(
             self._ports.visible_commits.commit_or_defer(
                 workflow_id=plan.request.workflow_id,
                 projection_session=plan.projection_session,
@@ -474,6 +474,9 @@ class EditorFullProjectionLoadPipeline:
                 ),
             )
         )
+        if not committed:
+            self._ports.projection_sessions.mark_prepared(plan.projection_session)
+        return committed
 
     def _commit_partial_projected_refresh(
         self,

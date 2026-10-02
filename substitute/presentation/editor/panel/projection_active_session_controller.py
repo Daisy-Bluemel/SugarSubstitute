@@ -21,6 +21,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 
 from substitute.shared.logging.logger import get_logger, log_debug
+from substitute.shared.startup_trace import trace_mark
 
 from .projection_completion_registry import ProjectionSessionCompletionController
 from .projection_session_models import ActiveProjectionSession
@@ -118,6 +119,15 @@ class EditorActiveProjectionSessionController:
             session,
             replacement_session=replacement_session,
             reason=reason,
+        )
+        trace_mark(
+            "editor_projection.preparation.transferred",
+            workflow_id=session.workflow_id,
+            replacement_workflow_id=replacement_session.workflow_id,
+            waiting_count=sum(
+                completion.completion_phase == "prepared" and not completion.resolved
+                for completion in replacement_session.projection_completions
+            ),
         )
         log_debug(
             _LOGGER,

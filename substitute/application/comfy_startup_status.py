@@ -19,12 +19,27 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from sugarsubstitute_shared.localization import ApplicationText, app_text
 
 _ANSI = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
 
 
+@dataclass(frozen=True, slots=True)
+class ComfyStartupObservation:
+    """Pair localized console meaning with optional estimated-work evidence."""
+
+    text: ApplicationText
+    milestone: str | None = None
+
+
 def describe_comfy_startup_output(record: str) -> ApplicationText | None:
+    """Render the same semantic observation used by startup estimation."""
+    observation = observe_comfy_startup_output(record)
+    return None if observation is None else observation.text
+
+
+def observe_comfy_startup_output(record: str) -> ComfyStartupObservation | None:
     """Translate recognized upstream markers; leave unknown output in diagnostics.
 
     These messages describe observed activity only. The readiness probe remains
@@ -34,25 +49,30 @@ def describe_comfy_startup_output(record: str) -> ApplicationText | None:
     if line.startswith("[INFO] "):
         line = line[7:]
     if line.startswith(("Adding extra search path ", "Setting models directory to:")):
-        return app_text("Configuring ComfyUI model folders.")
+        return ComfyStartupObservation(app_text("Configuring ComfyUI model folders."))
     if line.startswith("[START] Security scan"):
-        return app_text("Checking ComfyUI extensions.")
+        return ComfyStartupObservation(app_text("Checking ComfyUI extensions."))
     if line.startswith("[ComfyUI-Manager] Starting dependency installation"):
-        return app_text("Preparing custom-node dependencies.")
+        return ComfyStartupObservation(app_text("Preparing custom-node dependencies."))
     if line.startswith("Install: pip packages for "):
-        return app_text(
-            "Installing dependencies for %1.",
-            _extension_name(line.removeprefix("Install: pip packages for ")),
+        return ComfyStartupObservation(
+            app_text(
+                "Installing dependencies for %1.",
+                _extension_name(line.removeprefix("Install: pip packages for ")),
+            )
         )
     for prefix in ("Install: install script for ", "## Execute management script for "):
         if line.startswith(prefix):
-            return app_text(
-                "Running setup for %1.", _extension_name(line[len(prefix) :])
+            return ComfyStartupObservation(
+                app_text("Running setup for %1.", _extension_name(line[len(prefix) :]))
             )
     if line.startswith(
         "[ComfyUI-Manager] Restarting to reapply dependency installation."
     ):
-        return app_text("Restarting ComfyUI to apply updated dependencies.")
+        return ComfyStartupObservation(
+            app_text("Restarting ComfyUI to apply updated dependencies."),
+            "backend.restart",
+        )
     if line.startswith(
         (
             "[DONE] Security scan",
@@ -61,13 +81,17 @@ def describe_comfy_startup_output(record: str) -> ApplicationText | None:
             "Checkpoint files will always be loaded safely.",
         )
     ):
-        return app_text("Loading the ComfyUI runtime.")
+        return ComfyStartupObservation(
+            app_text("Loading the ComfyUI runtime."), "backend.runtime"
+        )
     if line.startswith(
         ("Total VRAM ", "pytorch version:", "Set vram state to:", "Device:")
     ):
-        return app_text("Preparing ComfyUI's compute device.")
+        return ComfyStartupObservation(
+            app_text("Preparing ComfyUI's compute device."), "backend.device"
+        )
     if line.startswith("Using ") and "attention" in line.lower():
-        return app_text("Configuring ComfyUI attention.")
+        return ComfyStartupObservation(app_text("Configuring ComfyUI attention."))
     for prefix in (
         "### Loading:",
         "Trying to load custom node ",
@@ -76,40 +100,57 @@ def describe_comfy_startup_output(record: str) -> ApplicationText | None:
         if line.startswith(prefix):
             name = _extension_name(line[len(prefix) :])
             if name:
-                return app_text("Loading custom node: %1.", name)
+                return ComfyStartupObservation(
+                    app_text("Loading custom node: %1.", name)
+                )
     if line.startswith("[Prompt Server] web root:"):
-        return app_text("Loading ComfyUI custom nodes.")
+        return ComfyStartupObservation(
+            app_text("Loading ComfyUI custom nodes."), "backend.custom_nodes"
+        )
     if line.startswith("Import times for custom nodes:"):
-        return app_text("Finishing ComfyUI custom node loading.")
+        return ComfyStartupObservation(
+            app_text("Finishing ComfyUI custom node loading."),
+            "backend.imports_complete",
+        )
     imported = re.fullmatch(r"[0-9]+\.[0-9]+ seconds( \(IMPORT FAILED\))?: (.+)", line)
     if imported and "custom_nodes/" in imported[2].replace("\\", "/"):
         name = _extension_name(imported[2])
         if imported[1]:
-            return app_text("Custom node %1 could not load.", name)
-        return app_text("Loaded custom node: %1.", name)
+            return ComfyStartupObservation(
+                app_text("Custom node %1 could not load.", name)
+            )
+        return ComfyStartupObservation(app_text("Loaded custom node: %1.", name))
     if line.startswith(
         ("Context impl SQLiteImpl.", "Running upgrade ", "Database upgraded from ")
     ):
-        return app_text("Preparing the ComfyUI database.")
+        return ComfyStartupObservation(app_text("Preparing the ComfyUI database."))
     if line.startswith("Background asset scan initiated"):
-        return app_text("Scanning ComfyUI models and assets.")
+        return ComfyStartupObservation(app_text("Scanning ComfyUI models and assets."))
     if line == "Starting server":
-        return app_text("Starting the ComfyUI server.")
+        return ComfyStartupObservation(
+            app_text("Starting the ComfyUI server."), "backend.server"
+        )
     if line.startswith("To see the GUI go to:"):
-        return app_text("Connecting to ComfyUI.")
+        return ComfyStartupObservation(
+            app_text("Connecting to ComfyUI."), "backend.connecting"
+        )
     fetched = re.fullmatch(r"FETCH ComfyRegistry Data: (\d+)/(\d+)", line)
     if fetched and 0 <= int(fetched[1]) <= int(fetched[2]) and int(fetched[2]) > 0:
-        return app_text(
-            "Updating the ComfyUI extension catalog (%1/%2).",
-            int(fetched[1]),
-            int(fetched[2]),
+        return ComfyStartupObservation(
+            app_text(
+                "Updating the ComfyUI extension catalog (%1/%2).",
+                int(fetched[1]),
+                int(fetched[2]),
+            )
         )
     if line.startswith(
         ("FETCH ComfyRegistry Data", "[ComfyUI-Manager] default cache updated:")
     ):
-        return app_text("Updating the ComfyUI extension catalog.")
+        return ComfyStartupObservation(
+            app_text("Updating the ComfyUI extension catalog.")
+        )
     if line == "[ComfyUI-Manager] All startup tasks have been completed.":
-        return app_text("ComfyUI extension setup is complete.")
+        return ComfyStartupObservation(app_text("ComfyUI extension setup is complete."))
     return None
 
 

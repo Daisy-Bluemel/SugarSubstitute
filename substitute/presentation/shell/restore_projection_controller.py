@@ -36,6 +36,9 @@ from substitute.presentation.shell.editor_viewport_restore import (
 from substitute.presentation.shell.restored_workflow_materializer import (
     restored_workflow_materializer_for,
 )
+from substitute.presentation.shell.restored_projection_preparation_completion import (
+    RestoredProjectionPreparationCompletion,
+)
 from substitute.shared.logging.logger import (
     get_logger,
     log_exception,
@@ -406,12 +409,16 @@ class RestoreProjectionController:
             bind_previews = getattr(coordinator, "bind_panel", None)
             if callable(bind_previews):
                 bind_previews(self._shell.active_editor_panel)
-            on_complete()
 
+        completion = RestoredProjectionPreparationCompletion(
+            on_prepared=on_complete,
+            on_visible_complete=finish_projection,
+        )
         self._shell.active_workflow_surface_refresher.refresh_active_workflow_surface(
             force_refresh=force_refresh,
-            on_complete=finish_projection,
+            on_complete=completion.visible_complete,
         )
+        completion.observe(getattr(self._shell, "active_editor_panel", None))
 
     def queue_restore_projection_cache_capture(self, workflow_id: str) -> None:
         """Remember that live restored editor projection can be cached when running."""

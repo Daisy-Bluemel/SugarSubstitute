@@ -31,6 +31,9 @@ from sugarsubstitute_shared.localization import ApplicationText, app_text
 from sugarsubstitute_shared.presentation.localization import render_application_text
 
 from substitute.app.bootstrap.launch_splash_client import LaunchSplashClient
+from substitute.app.bootstrap.startup_estimate_splash import (
+    startup_backend_output_observer,
+)
 from substitute.application.comfy_startup_diagnostics import (
     ComfyStartupDiagnosticsCollector,
 )
@@ -112,6 +115,7 @@ def activate_target(
         )
     )
     if target.launch_owned and target.workspace_path is not None:
+        observe_output = startup_backend_output_observer(splash)
         return process_manager.start_comfyui_background_managed(
             endpoint=target.endpoint,
             workspace=target.workspace_path,
@@ -126,6 +130,7 @@ def activate_target(
             ),
             on_log=lambda line: collect_and_fan_out_comfy_output(
                 startup_diagnostics=startup_diagnostics,
+                observe_output=observe_output,
                 splash=active_splash,
                 comfy_output_stream=comfy_output_stream,
                 line=line,
@@ -133,6 +138,7 @@ def activate_target(
             ),
             on_status=lambda line: collect_and_fan_out_comfy_output(
                 startup_diagnostics=startup_diagnostics,
+                observe_output=observe_output,
                 splash=active_splash,
                 comfy_output_stream=comfy_output_stream,
                 line=line,
@@ -151,6 +157,7 @@ def activate_target(
 def collect_and_fan_out_comfy_output(
     *,
     startup_diagnostics: ComfyStartupDiagnosticsCollector,
+    observe_output: Callable[[str], None] | None = None,
     splash: LaunchSplashClient | None,
     comfy_output_stream: ComfyOutputStreamProtocol,
     line: ApplicationText,
@@ -169,6 +176,8 @@ def collect_and_fan_out_comfy_output(
                 "Failed to classify Comfy startup output",
                 error=repr(error),
             )
+        if observe_output is not None:
+            observe_output(rendered_line)
         mirror_managed_comfy_output_for_harness(rendered_line)
         mirror_managed_comfy_output_timeline_for_harness(rendered_line)
         fan_out_splash_and_shell_output(

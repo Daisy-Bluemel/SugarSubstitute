@@ -46,6 +46,7 @@ class PreShowRestoreProjectionState:
 
     pending: bool = False
     completion_handled: bool = False
+    attempt: object | None = None
 
 
 def start_pre_show_restore_projection_if_available(
@@ -63,6 +64,10 @@ def start_pre_show_restore_projection_if_available(
 ) -> bool:
     """Start pre-show restore projection and return whether reveal is deferred."""
 
+    attempt = object()
+    state.attempt = attempt
+    state.pending = False
+    state.completion_handled = False
     if not hidden_restore_runtime_prepared or start_projection is None:
         trace_mark(
             "main_shell.pre_show_restore_projection.skip",
@@ -89,7 +94,7 @@ def start_pre_show_restore_projection_if_available(
     def finish_projection(*, reason: str) -> None:
         """Reveal the shell after hidden projection completes or times out."""
 
-        if state.completion_handled:
+        if state.attempt is not attempt or state.completion_handled:
             trace_mark(
                 "main_shell.pre_show_restore_projection.late_completion",
                 reason=reason,
@@ -116,6 +121,8 @@ def start_pre_show_restore_projection_if_available(
     def timeout_projection() -> None:
         """Fail open if hidden editor projection does not report completion."""
 
+        if state.attempt is not attempt or state.completion_handled:
+            return
         trace_mark(
             "main_shell.pre_show_restore_projection.timeout",
             timeout_ms=timeout_ms,
@@ -131,6 +138,8 @@ def start_pre_show_restore_projection_if_available(
         )
     )
     if started:
+        if state.attempt is not attempt or state.completion_handled:
+            return True
         trace_mark(
             "main_shell.pre_show_restore_projection.timeout",
             delay_ms=timeout_ms,
@@ -143,7 +152,11 @@ def start_pre_show_restore_projection_if_available(
         )
         return True
 
+    if state.attempt is not attempt:
+        return True
+    completed_synchronously = state.completion_handled
     state.pending = False
+    state.completion_handled = True
     trace_mark(
         "main_shell.pre_show_restore_projection.skip",
         reason="start_returned_false",
@@ -151,7 +164,7 @@ def start_pre_show_restore_projection_if_available(
         restored_active_workflow_id=fallback_workflow_id,
         **dict(trace_fields()),
     )
-    return state.completion_handled
+    return completed_synchronously
 
 
 def _projection_source(provisional_restore_projection: object | None) -> str:

@@ -177,8 +177,10 @@ def test_load_all_cubes_defers_missing_widget_builds(
     assert "busy_started=True" in caplog.text
 
 
+@pytest.mark.parametrize("deactivate_workflow", [False, True])
 def test_load_all_cubes_continues_hidden_build_and_defers_visible_commit(
     monkeypatch: pytest.MonkeyPatch,
+    deactivate_workflow: bool,
 ) -> None:
     """Inactive full projection should keep building without revealing hidden widgets."""
 
@@ -193,6 +195,8 @@ def test_load_all_cubes_continues_hidden_build_and_defers_visible_commit(
     scrollbar = SimpleNamespace(valueChanged=_Signal(), value=lambda: 11)
     registry_calls: list[str] = []
     completion_calls: list[str] = []
+    preparation_calls: list[str] = []
+    visibility = SimpleNamespace(visible=True)
     busy_calls: list[tuple[str, object]] = []
     new_widget = _FinalizingWidget("built", registry_calls)
     build_session = _BuildSession(new_widget, step_results=[False, True])
@@ -224,7 +228,7 @@ def test_load_all_cubes_continues_hidden_build_and_defers_visible_commit(
         ),
         mainwindow=SimpleNamespace(workflow_session_service=workflow_session_service),
         node_definition_gateway=object(),
-        isVisible=lambda: workflow_session_service.active_workflow_id == "workflow-a",
+        isVisible=lambda: visibility.visible,
         sanitize_prompt_link_state=lambda: registry_calls.append("sanitize"),
         reconcile_prompt_link_state=lambda **_kwargs: registry_calls.append(
             "reconcile"
@@ -265,8 +269,14 @@ def test_load_all_cubes_continues_hidden_build_and_defers_visible_commit(
         stack_order=["New"],
         on_complete=lambda: completion_calls.append("complete"),
     )
+    assert coordinator.when_projection_prepared(
+        lambda: preparation_calls.append("prepared")
+    )
+    assert preparation_calls == []
     timer_queue.run_next()
-    workflow_session_service.active_workflow_id = "workflow-b"
+    visibility.visible = False
+    if deactivate_workflow:
+        workflow_session_service.active_workflow_id = "workflow-b"
     timer_queue.run_all()
 
     assert build_session.step_calls == 2
@@ -281,3 +291,20 @@ def test_load_all_cubes_continues_hidden_build_and_defers_visible_commit(
     assert "prompt_values" not in registry_calls
     assert "links" not in registry_calls
     assert "visibility" not in registry_calls
+
+    assert preparation_calls == ["prepared"]
+    assert not coordinator.finalize_pending_visible_projection()
+    assert completion_calls == []
+    assert coordinator.when_projection_prepared(
+        lambda: preparation_calls.append("replayed")
+    )
+    assert preparation_calls == ["prepared", "replayed"]
+    workflow_session_service.active_workflow_id = "workflow-a"
+    visibility.visible = True
+    assert coordinator.finalize_pending_visible_projection()
+    assert completion_calls == ["complete"]
+    assert not coordinator.has_pending_visible_projection_commit()
+    assert not coordinator.when_projection_prepared(
+        lambda: preparation_calls.append("late")
+    )
+    assert preparation_calls == ["prepared", "replayed"]

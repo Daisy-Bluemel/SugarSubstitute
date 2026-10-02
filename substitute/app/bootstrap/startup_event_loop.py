@@ -37,7 +37,7 @@ class StartupApplicationProtocol(Protocol):
 class StartupSplashProtocol(Protocol):
     """Expose launch-splash cleanup behavior."""
 
-    def close(self) -> None:
+    def close(self) -> object:
         """Close the launch splash."""
 
 

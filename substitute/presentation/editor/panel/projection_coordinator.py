@@ -118,6 +118,11 @@ class EditorPanelProjectionCoordinator:
             stack_order=stack_order,
         )
 
+    def when_projection_prepared(self, callback: Callable[[], None]) -> bool:
+        """Observe current hidden construction without claiming visible readiness."""
+
+        return self._composition.projection_sessions.when_prepared(callback)
+
     def has_pending_visible_projection_commit(self) -> bool:
         """Return whether completed staged builds are waiting for visible reveal."""
 

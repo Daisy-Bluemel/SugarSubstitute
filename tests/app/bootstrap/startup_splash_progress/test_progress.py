@@ -21,9 +21,11 @@ from __future__ import annotations
 from substitute.app.bootstrap.gui_startup_queue import GuiStartupProgress
 from substitute.app.bootstrap.startup_splash_progress import StartupSplashProgress
 from sugarsubstitute_shared.launch_splash.progress import SplashProgress
+from substitute.app.bootstrap.launch_splash_client import NullLaunchSplashClient
+from substitute.app.bootstrap.startup_estimate_splash import StartupEstimateSplashClient
 
 
-class _Splash:
+class _Splash(NullLaunchSplashClient):
     """Record queue projection without importing a Qt surface."""
 
     def __init__(self) -> None:
@@ -51,10 +53,15 @@ def test_queue_boundaries_pulse_and_reserve_ready_surface_completion() -> None:
     """Relay every real task boundary while retaining the final paint unit."""
 
     splash = _Splash()
-    projection = StartupSplashProgress(lambda: splash)
+    estimate = StartupEstimateSplashClient(splash)
+    projection = StartupSplashProgress(lambda: estimate)
 
-    projection.queue_progress(GuiStartupProgress("build_shell", 2, 4, False))
-    projection.queue_progress(GuiStartupProgress("build_shell", 3, 6, True))
-
-    assert splash.activity_calls == 2
-    assert splash.progress == [SplashProgress(2, 5), SplashProgress(3, 7)]
+    projection.queue_progress(GuiStartupProgress("prepare_main_window", 0, 8, False))
+    assert splash.progress == []
+    projection.queue_progress(GuiStartupProgress("prepare_main_window", 1, 8, True))
+    assert 0 < splash.progress[-1].completed < 4000
+    before = splash.progress[-1]
+    projection.queue_progress(GuiStartupProgress("start_readiness_timer", 2, 100, True))
+    projection.queue_progress(GuiStartupProgress("prepare_main_window", 3, 100, True))
+    assert splash.progress[-1] == before
+    assert splash.activity_calls == 4

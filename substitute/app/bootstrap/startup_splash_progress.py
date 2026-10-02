@@ -23,6 +23,7 @@ from typing import Protocol
 from substitute.app.bootstrap.gui_startup_queue import GuiStartupProgress
 from substitute.app.bootstrap.startup_failure_controller import SplashCloseProtocol
 from sugarsubstitute_shared.launch_splash.progress import SplashProgress
+from substitute.app.bootstrap.startup_estimate_splash import report_startup_milestone
 from sugarsubstitute_shared.localization import app_text
 from sugarsubstitute_shared.presentation.localization.application_message import (
     render_application_text,
@@ -40,21 +41,23 @@ class StartupProgressSplash(SplashCloseProtocol, Protocol):
 
 
 class StartupSplashProgress:
-    """Translate authoritative queue boundaries into stage-based splash completion."""
+    """Forward named queue completions into the single startup estimate owner."""
 
     def __init__(self, splash: Callable[[], StartupProgressSplash | None]) -> None:
         """Resolve the current splash after any early startup handoff."""
         self._splash = splash
 
     def queue_progress(self, progress: GuiStartupProgress) -> None:
-        """Reserve the final unit until the ready application surface has painted."""
+        """Report actual task completions independently of equal-count queue totals."""
         splash = self._splash()
         if splash is None:
             return
         splash.record_activity()
-        splash.set_progress(
-            SplashProgress(progress.completed, progress.total + 1),
-            status=render_application_text(
-                app_text("Preparing the application interface.")
-            ),
-        )
+        if progress.finished:
+            report_startup_milestone(
+                splash,
+                f"gui.{progress.task_name}",
+                status=render_application_text(
+                    app_text("Preparing the application interface.")
+                ),
+            )
